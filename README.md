@@ -1,4 +1,4 @@
-# datadog-metrics for NodeJS
+# datadog-metrics
 > Buffered metrics reporting via the DataDog HTTP API.
 
 [![NPM Version][npm-image]][npm-url]
