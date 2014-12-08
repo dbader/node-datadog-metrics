@@ -1,0 +1,75 @@
+{
+    // JSHint options
+    // http://www.jshint.com/docs/options/
+
+    // Environments
+    // ------------
+    //
+    "predef": [ ],
+    "globals": {
+    },
+    "node": true,
+    "browser": false,
+    "jquery": false,
+    "devel": "console",
+
+    // Enforcing options
+    // -----------------
+    //
+    // Setting to true ENABLES a check
+
+    // Enforce === instead of ==
+    "eqeqeq": true,
+    // Force hasOwnProperty checks within `for in`
+    "forin": true,
+    // Prohibits overwriting native types like `Array` or `Date`
+    "freeze": true,
+    // Immediate invocations must be wrapped in parentheses
+    "immed": true,
+    // Tab width
+    "indent": 4,
+    // Prevents usage of a variable before declaration, but functions can be
+    // used before declaration
+    "latedef": "nofunc",
+    // Capitalize constructor functions
+    "newcap": true,
+    // Prevent arguments.callee and arguments.caller
+    "noarg": true,
+    // Warn when you have empty blocks in code
+    "noempty": true,
+    // Warns about non-breaking space
+    "nonbsp": true,
+    "quotmark": "single",
+    // Warn about using undeclared variables
+    "undef": true,
+    // Warn about declaring but not using variables
+    // Disabled to prevent errors about unused function variables
+    "unused": false,
+    // Enforce 'use strict;' in functions to force functions to run in ECMA5
+    // script mode
+    "strict": true,
+    // Prevents leaving trailing whitespace in code
+    "trailing": true,
+    // Maximum formal parameters per function
+    "maxparams": 10,
+    // Maximum nesting depth
+    "maxdepth": 5,
+    // Maximum statements per function
+    "maxstatements": 25,
+    // Enforce reducing cyclomatic complexity
+    // (http://en.wikipedia.org/wiki/Cyclomatic_complexity)
+    "maxcomplexity": false,
+
+    "maxlen": 110,
+
+    // Relaxing options
+    // ----------------
+    //
+    // Setting to true DISABLES a check
+
+    // Don't enforce semi-colons
+    "asi": false,
+    // Allow expression statements, like `typeof x !== 'undefined' && x.hello()`
+    // instead of requiring function calls
+    "expr": true
+}
