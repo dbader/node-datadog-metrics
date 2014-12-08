@@ -1,5 +1,5 @@
 {
-  "name": "node-datadog-metrics",
+  "name": "datadog-metrics",
   "version": "0.0.0",
   "description": "Buffered metrics reporting via the DataDog HTTP API",
   "main": "index.js",
