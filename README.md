@@ -1,6 +1,8 @@
-# node-datadog-metrics
+# datadog-metrics for NodeJS
 
-(This is a work in progress.)
+Buffered metrics reporting via the DataDog HTTP API.
+
+**This is a work in progress.**
 
 ## Installation
 
@@ -14,7 +16,7 @@ Make sure the `DD_API_KEY` environment variable is set to your DataDog
 API key.
 
 ```js
-var metrics = require('node-datadog-metrics');
+var metrics = require('datadog-metrics');
 metrics.gauge('test.mem_free', 23);
 metrics.counter('test.requests_served', 1);
 ```
