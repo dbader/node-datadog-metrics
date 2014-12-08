@@ -1,5 +1,8 @@
 # datadog-metrics for NodeJS
 
+[![TravisCI build status](https://travis-ci.org/dbader/node-datadog-metrics.svg)](https://travis-ci.org/dbader/node-datadog-metrics/)
+
+
 Buffered metrics reporting via the DataDog HTTP API.
 
 **This is a work in progress.**
