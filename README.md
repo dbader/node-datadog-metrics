@@ -1,16 +1,15 @@
 # datadog-metrics for NodeJS
+> Buffered metrics reporting via the DataDog HTTP API.
 
-[![TravisCI build status](https://travis-ci.org/dbader/node-datadog-metrics.svg)](https://travis-ci.org/dbader/node-datadog-metrics/)
-
-
-Buffered metrics reporting via the DataDog HTTP API.
+[![NPM Version][npm-image]][npm-url]
+[![Build Status][travis-image]][travis-url]
 
 **This is a work in progress.**
 
 ## Installation
 
 ```sh
-npm install node-datadog-metrics --save
+npm install datadog-metrics --save
 ```
 
 ## Usage
@@ -33,3 +32,8 @@ npm test
 ## Release History
 
 * 0.0.0 Work in progress
+
+[npm-image]: https://img.shields.io/npm/v/datadog-metrics.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/datadog-metrics
+[travis-image]: https://img.shields.io/travis/dbader/node-datadog-metrics.svg?style=flat-square
+[travis-url]: https://travis-ci.org/dbader/datadog-metrics
