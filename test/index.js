@@ -180,3 +180,9 @@ describe('Aggregator', function() {
         //   function() {console.log('onerror', arguments);});
     });
 });
+
+// describe('metrics module', function() {
+//     it('should have a gauge() metric', function() {
+//         metrics.gauge('test.gauge', 23);
+//     });
+// });
