@@ -14,13 +14,48 @@ npm install datadog-metrics --save
 
 ## Usage
 
-Make sure the `DD_API_KEY` environment variable is set to your DataDog
+Make sure the `DATADOG_API_KEY` environment variable is set to your DataDog
 API key.
 
 ```js
 var metrics = require('datadog-metrics');
+```
+
+### Gauges -- `metrics.gauge(key, value, tags)`
+
+Record the current *value* of a metric. They most recent value in
+a given flush interval will be recorded. Optionally, specify a set of
+tags to associate with the metric. This should be used for sum values
+such as total hard disk space, process uptime, total number of active
+users, or number of rows in a database table.
+
+Example:
+
+```js
 metrics.gauge('test.mem_free', 23);
+```
+
+### Counters -- `metrics.counter(key, value, tags)`
+Increment the counter by the given *value*. Optionally, specify a list of
+*tags* to associate with the metric. This is useful for counting things
+such as incrementing a counter each time a page is requested.
+
+Example:
+
+```js
 metrics.counter('test.requests_served', 1);
+```
+
+### Histograms -- `metrics.histogram(key, value, tags)`
+Sample a histogram value. Histograms will produce metrics that
+describe the distribution of the recorded values, namely the minimum,
+maximum, average, count and the 75th, 85th, 95th and 99th percentiles.
+Optionally, specify a list of *tags* to associate with the metric.
+
+Example:
+
+```js
+metrics.histogram('test.requests_served', 1);
 ```
 
 ## Tests
