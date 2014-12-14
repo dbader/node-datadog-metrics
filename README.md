@@ -21,7 +21,9 @@ API key.
 var metrics = require('datadog-metrics');
 ```
 
-### Gauges -- `metrics.gauge(key, value, tags)`
+### Gauges
+
+`metrics.gauge(key, value, tags)`
 
 Record the current *value* of a metric. They most recent value in
 a given flush interval will be recorded. Optionally, specify a set of
@@ -35,7 +37,10 @@ Example:
 metrics.gauge('test.mem_free', 23);
 ```
 
-### Counters -- `metrics.counter(key, value, tags)`
+### Counters
+
+`metrics.counter(key, value, tags)`
+
 Increment the counter by the given *value*. Optionally, specify a list of
 *tags* to associate with the metric. This is useful for counting things
 such as incrementing a counter each time a page is requested.
@@ -46,7 +51,10 @@ Example:
 metrics.counter('test.requests_served', 1);
 ```
 
-### Histograms -- `metrics.histogram(key, value, tags)`
+### Histograms
+
+`metrics.histogram(key, value, tags)`
+
 Sample a histogram value. Histograms will produce metrics that
 describe the distribution of the recorded values, namely the minimum,
 maximum, average, count and the 75th, 85th, 95th and 99th percentiles.
