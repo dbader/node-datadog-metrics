@@ -153,6 +153,7 @@ npm test
 
 * 0.0.0 Work in progress
 * 0.1.0 The first real release
+* 0.1.1 Allow increment() to be called with just a key
 
 [npm-image]: https://img.shields.io/npm/v/datadog-metrics.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/datadog-metrics
