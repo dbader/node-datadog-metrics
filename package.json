@@ -29,6 +29,7 @@
     "jscs": "^1.8.1"
   },
   "dependencies": {
-    "dogapi": "^0.1.5"
+    "dogapi": "^0.1.5",
+    "debug": "^2.1.0"
   }
 }

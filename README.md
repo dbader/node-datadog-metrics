@@ -4,8 +4,6 @@
 [![NPM Version][npm-image]][npm-url]
 [![Build Status][travis-image]][travis-url]
 
-**This is a work in progress.**
-
 ## Installation
 
 ```sh
@@ -94,6 +92,22 @@ metrics.gauge('memory.basic_bytes_free', 38911);
 // Reports as 'commodore64.memory.basic_bytes_free'
 ```
 
+### Changing the flush interval
+
+By default, metrics are flushed to DataDog every 15 seconds. You can control
+this setting with the `DATADOG_FLUSH_INTERVAL_SECONDS` environment variable.
+
+## Logging
+
+Datadog-metrics uses the [debug](https://github.com/visionmedia/debug)
+library for logging at runtime. You can enable debug logging by setting
+the `DEBUG` environment variable to `metrics` when you run your app.
+
+Example:
+
+```sh
+DEBUG=metrics node app.js
+```
 
 ## Tests
 
@@ -104,6 +118,7 @@ npm test
 ## Release History
 
 * 0.0.0 Work in progress
+* 0.1.0 The first real release
 
 [npm-image]: https://img.shields.io/npm/v/datadog-metrics.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/datadog-metrics
