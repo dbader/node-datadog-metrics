@@ -1,6 +1,6 @@
 {
   "name": "datadog-metrics",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Buffered metrics reporting via the DataDog HTTP API",
   "main": "index.js",
   "repository": {
@@ -23,11 +23,13 @@
   "devDependencies": {
     "mocha": "^2.0.1",
     "chai": "^1.10.0",
+    "chai-string": "^1.1.0",
     "jshint-stylish-ex": "^0.2.0",
     "jshint": "^2.5.10",
     "jscs": "^1.8.1"
   },
   "dependencies": {
-    "dogapi": "^0.1.5"
+    "dogapi": "^0.1.5",
+    "debug": "^2.1.0"
   }
 }
