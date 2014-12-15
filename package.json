@@ -25,7 +25,8 @@
     "chai": "^1.10.0",
     "jshint-stylish-ex": "^0.2.0",
     "jshint": "^2.5.10",
-    "jscs": "^1.8.1"
+    "jscs": "^1.8.1",
+    "chai-string": "^1.1.0"
   },
   "dependencies": {
     "dogapi": "^0.1.5"

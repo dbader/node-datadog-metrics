@@ -14,8 +14,14 @@ npm install datadog-metrics --save
 
 ## Usage
 
+### DataDog API key
+
 Make sure the `DATADOG_API_KEY` environment variable is set to your DataDog
-API key.
+API key. **You only need to provide the API key, not the APP key.**
+
+### Module setup
+
+Just require `datadog-metrics` and you're ready to go.
 
 ```js
 var metrics = require('datadog-metrics');
@@ -66,11 +72,27 @@ Example:
 metrics.histogram('test.requests_served', 1);
 ```
 
-### Setting defaults
+### Setting a default host
 
 `metrics.setDefaultHost(host)`
 
 Set the default value for `host` reported by all metrics.
+
+### Setting a default prefix
+
+`metrics.setDefaultPrefix(prefix)`
+
+Set the default prefix for all metric keys. Usually you want to end the prefix
+with a dot at the end, e.g `somesystem.`.
+
+Example:
+
+```js
+metrics.setDefaultPrefix('commodore64.');
+metrics.gauge('memory.basic_bytes_free', 38911);
+// Reports as 'commodore64.memory.basic_bytes_free'
+```
+
 
 ## Tests
 

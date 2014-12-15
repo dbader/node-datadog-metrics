@@ -2,7 +2,10 @@
 
 'use strict';
 
-var should = require('chai').should();
+var chai = require('chai');
+chai.use(require('chai-string'));
+
+var should = chai.should();
 
 var metrics = require('../lib/metrics');
 
@@ -203,6 +206,19 @@ describe('BufferedMetricsLogger', function() {
         l.aggregator = {
             addPoint: function(Type, key, value, tags, host) {
                 host.should.equal('myhost');
+            }
+        };
+        l.gauge('test.counter', 23);
+        l.counter('test.gauge', 23);
+        l.histogram('test.histogram', 23);
+    });
+
+    it('setDefaultPrefix should work', function() {
+        var l = new metrics.BufferedMetricsLogger({});
+        l.setDefaultPrefix('mynamespace.');
+        l.aggregator = {
+            addPoint: function(Type, key, value, tags, host) {
+                key.should.startsWith('mynamespace.test.');
             }
         };
         l.gauge('test.counter', 23);
