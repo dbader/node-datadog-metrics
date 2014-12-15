@@ -10,6 +10,38 @@
 npm install datadog-metrics --save
 ```
 
+## Example
+
+This example app gives you a quick overview of what you can do with
+datadog-metrics. Save the following snippet as `example_app.js` and run
+it like this:
+
+```sh
+DATADOG_API_KEY=YOUR_KEY DEBUG=metrics node example_app.js
+```
+
+```js
+var metrics = require('datadog-metrics');
+
+// Optional: Configure some defaults.
+metrics.setDefaultHost('myhost');
+metrics.setDefaultPrefix('myapp.');
+
+// Gauges keep the most recent value.
+metrics.gauge('test.cpu_usage', 32);
+
+// Counters ... count stuff.
+metrics.increment('test.num_requests');
+metrics.increment('test.num_requests', 2);
+
+// Histograms describe the distribution of the recorded values.
+metrics.histogram('test.service_time', 50);
+metrics.histogram('test.service_time', 100);
+
+// Wait for the auto-flush to kick in.
+setTimeout(function(){}, 20000);
+```
+
 ## Usage
 
 ### DataDog API key
@@ -75,14 +107,16 @@ metrics.histogram('test.service_time', 0.248);
 
 `metrics.setDefaultHost(host)`
 
-Set the default value for `host` reported by all metrics.
+Set the default value for `host` reported by all metrics. You'd typically use
+this to report the name of your Heroku dyno, for example.
 
 ### Setting a default prefix
 
 `metrics.setDefaultPrefix(prefix)`
 
 Set the default prefix for all metric keys. Usually you want to end the prefix
-with a dot at the end, e.g `somesystem.`.
+with a dot at the end, e.g `my-system.`. This will save you some typing when
+reporting metrics.
 
 Example:
 
