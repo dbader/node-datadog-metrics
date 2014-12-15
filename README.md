@@ -66,6 +66,12 @@ Example:
 metrics.histogram('test.requests_served', 1);
 ```
 
+### Setting defaults
+
+`metrics.setDefaultHost(host)`
+
+Set the default value for `host` reported by all metrics.
+
 ## Tests
 
 ```sh
