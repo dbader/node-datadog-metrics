@@ -181,8 +181,32 @@ describe('Aggregator', function() {
     });
 });
 
-// describe('metrics module', function() {
-//     it('should have a gauge() metric', function() {
-//         metrics.gauge('test.gauge', 23);
-//     });
-// });
+describe('BufferedMetricsLogger', function() {
+    it('should have a gauge() metric', function() {
+        var l = new metrics.BufferedMetricsLogger({});
+        l.gauge('test.gauge', 23);
+    });
+
+    it('should have a counter() metric', function() {
+        var l = new metrics.BufferedMetricsLogger({});
+        l.gauge('test.counter', 23);
+    });
+
+    it('should have a histogram() metric', function() {
+        var l = new metrics.BufferedMetricsLogger({});
+        l.gauge('test.histogram', 23);
+    });
+
+    it('setDefaultHost should work', function() {
+        var l = new metrics.BufferedMetricsLogger({});
+        l.setDefaultHost('myhost');
+        l.aggregator = {
+            addPoint: function(Type, key, value, tags, host) {
+                host.should.equal('myhost');
+            }
+        };
+        l.gauge('test.counter', 23);
+        l.counter('test.gauge', 23);
+        l.histogram('test.histogram', 23);
+    });
+});
