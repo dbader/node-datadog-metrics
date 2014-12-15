@@ -190,7 +190,7 @@ describe('BufferedMetricsLogger', function() {
         l.gauge('test.gauge', 23);
     });
 
-    it('should have a counter() metric', function() {
+    it('should have a increment() metric', function() {
         var l = new metrics.BufferedMetricsLogger({});
         l.gauge('test.counter', 23);
     });
@@ -209,7 +209,7 @@ describe('BufferedMetricsLogger', function() {
             }
         };
         l.gauge('test.counter', 23);
-        l.counter('test.gauge', 23);
+        l.increment('test.gauge', 23);
         l.histogram('test.histogram', 23);
     });
 
@@ -222,7 +222,7 @@ describe('BufferedMetricsLogger', function() {
             }
         };
         l.gauge('test.counter', 23);
-        l.counter('test.gauge', 23);
+        l.increment('test.gauge', 23);
         l.histogram('test.histogram', 23);
     });
 });

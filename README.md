@@ -17,7 +17,7 @@ npm install datadog-metrics --save
 ### DataDog API key
 
 Make sure the `DATADOG_API_KEY` environment variable is set to your DataDog
-API key. **You only need to provide the API key, not the APP key.**
+API key. You can find the API key under [Integrations > APIs](https://app.datadoghq.com/account/settings#api). **You only need to provide the API key, not the APP key.**
 
 ### Module setup
 
@@ -45,16 +45,17 @@ metrics.gauge('test.mem_free', 23);
 
 ### Counters
 
-`metrics.counter(key, value, tags)`
+`metrics.increment(key, value, tags)`
 
-Increment the counter by the given *value*. Optionally, specify a list of
-*tags* to associate with the metric. This is useful for counting things
-such as incrementing a counter each time a page is requested.
+Increment the counter by the given *value* (or `1` by default). Optionally,
+specify a list of *tags* to associate with the metric. This is useful for
+counting things such as incrementing a counter each time a page is requested.
 
 Example:
 
 ```js
-metrics.counter('test.requests_served', 1);
+metrics.increment('test.requests_served');
+metrics.increment('test.awesomeness_factor', 10);
 ```
 
 ### Histograms
@@ -69,7 +70,7 @@ Optionally, specify a list of *tags* to associate with the metric.
 Example:
 
 ```js
-metrics.histogram('test.requests_served', 1);
+metrics.histogram('test.service_time', 0.248);
 ```
 
 ### Setting a default host
