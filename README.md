@@ -108,3 +108,11 @@ npm test
 [npm-url]: https://npmjs.org/package/datadog-metrics
 [travis-image]: https://img.shields.io/travis/dbader/node-datadog-metrics.svg?style=flat-square
 [travis-url]: https://travis-ci.org/dbader/datadog-metrics
+
+## Meta
+
+Daniel Bader – [@dbader_org](https://twitter.com/dbader_org) – mail@dbader.org
+
+Distributed under the MIT license. See ``LICENSE`` for more information.
+
+[https://github.com/dbader/node-datadog-metrics](https://github.com/dbader/node-datadog-metrics)
