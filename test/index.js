@@ -200,7 +200,7 @@ describe('BufferedMetricsLogger', function() {
         l.gauge('test.histogram', 23);
     });
 
-    it('setDefaultHost should work', function() {
+    it('should allow setting a default host', function() {
         var l = new metrics.BufferedMetricsLogger({});
         l.setDefaultHost('myhost');
         l.aggregator = {
@@ -213,7 +213,7 @@ describe('BufferedMetricsLogger', function() {
         l.histogram('test.histogram', 23);
     });
 
-    it('setDefaultPrefix should work', function() {
+    it('should allow setting a default key prefix', function() {
         var l = new metrics.BufferedMetricsLogger({});
         l.setDefaultPrefix('mynamespace.');
         l.aggregator = {
