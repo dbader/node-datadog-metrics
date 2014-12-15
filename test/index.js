@@ -208,8 +208,8 @@ describe('BufferedMetricsLogger', function() {
                 host.should.equal('myhost');
             }
         };
-        l.gauge('test.counter', 23);
-        l.increment('test.gauge', 23);
+        l.gauge('test.gauge', 23);
+        l.increment('test.counter', 23);
         l.histogram('test.histogram', 23);
     });
 
@@ -221,8 +221,8 @@ describe('BufferedMetricsLogger', function() {
                 key.should.startsWith('mynamespace.test.');
             }
         };
-        l.gauge('test.counter', 23);
-        l.increment('test.gauge', 23);
+        l.gauge('test.gauge', 23);
+        l.increment('test.counter', 23);
         l.histogram('test.histogram', 23);
     });
 });
