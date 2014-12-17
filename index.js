@@ -1,15 +1,31 @@
 'use strict';
-
 var loggers = require('./lib/loggers');
 
-var dataDogApiKey = process.env.DATADOG_API_KEY;
-if (!dataDogApiKey) {
-    throw new Error('DATADOG_API_KEY environment variable not set');
+// var flushInterval = parseInt(process.env.DATADOG_FLUSH_INTERVAL_SECONDS, 10);
+
+var sharedLogger = null;
+
+function init(opts) {
+    opts = opts || {};
+    opts.flushIntervalSeconds = opts.flushIntervalSeconds || 15;
+    sharedLogger = new loggers.BufferedMetricsLogger(opts);
 }
 
-var flushInterval = parseInt(process.env.DATADOG_FLUSH_INTERVAL_SECONDS, 10);
+function addMetric(funcName) {
+    if (sharedLogger === null) {
+        init();
+    }
+    var args = Array.prototype.slice.call(arguments, 1);
+    sharedLogger[funcName].apply(sharedLogger, args);
+}
 
-module.exports = new loggers.BufferedMetricsLogger({
-    apiKey: dataDogApiKey,
-    flushIntervalSeconds: flushInterval || 15
-});
+
+module.exports = {
+    init: init,
+
+    gauge: addMetric.bind(undefined, 'gauge'),
+    increment: addMetric.bind(undefined, 'increment'),
+    histogram: addMetric.bind(undefined, 'histogram'),
+
+    BufferedMetricsLogger: loggers.BufferedMetricsLogger
+};

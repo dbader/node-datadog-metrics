@@ -8,15 +8,21 @@ chai.use(require('chai-string'));
 var should = chai.should();
 
 var loggers = require('../lib/loggers');
+var reporters = require('../lib/reporters');
+var BufferedMetricsLogger = loggers.BufferedMetricsLogger;
 
 describe('BufferedMetricsLogger', function() {
     it('should have a gauge() metric', function() {
-        var l = new loggers.BufferedMetricsLogger({});
+        var l = new BufferedMetricsLogger({
+            reporter: new reporters.NullReporter()
+        });
         l.gauge('test.gauge', 23);
     });
 
     it('should have a increment() metric', function() {
-        var l = new loggers.BufferedMetricsLogger({});
+        var l = new BufferedMetricsLogger({
+            reporter: new reporters.NullReporter()
+        });
 
         l.aggregator = {
             addPoint: function(Type, key, value, tags, host) {
@@ -36,12 +42,16 @@ describe('BufferedMetricsLogger', function() {
     });
 
     it('should have a histogram() metric', function() {
-        var l = new loggers.BufferedMetricsLogger({});
+        var l = new BufferedMetricsLogger({
+            reporter: new reporters.NullReporter()
+        });
         l.histogram('test.histogram', 23);
     });
 
     it('should allow setting a default host', function() {
-        var l = new loggers.BufferedMetricsLogger({});
+        var l = new BufferedMetricsLogger({
+            reporter: new reporters.NullReporter()
+        });
         l.setDefaultHost('myhost');
         l.aggregator = {
             addPoint: function(Type, key, value, tags, host) {
@@ -54,7 +64,9 @@ describe('BufferedMetricsLogger', function() {
     });
 
     it('should allow setting a default key prefix', function() {
-        var l = new loggers.BufferedMetricsLogger({});
+        var l = new BufferedMetricsLogger({
+            reporter: new reporters.NullReporter()
+        });
         l.setDefaultPrefix('mynamespace.');
         l.aggregator = {
             addPoint: function(Type, key, value, tags, host) {
