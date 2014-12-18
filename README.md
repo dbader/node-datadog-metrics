@@ -16,7 +16,7 @@ npm install datadog-metrics --save
 
 Save the following into a file named `example_app.js`:
 ```js
-var metrics = require('./index.js');
+var metrics = require('datadog-metrics');
 metrics.init({ host: 'testbox', prefix: 'test.' });
 
 function collectMemoryStats() {
