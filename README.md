@@ -12,35 +12,26 @@ npm install datadog-metrics --save
 
 ## Example
 
-This example app gives you a quick overview of what you can do with
-datadog-metrics. Save the following snippet as `example_app.js` and run
-it like this:
+`example_app.js`:
+```js
+var metrics = require('./index.js');
+metrics.init({ host: 'testbox', prefix: 'test.' });
 
+function collectMemoryStats() {
+    var memUsage = process.memoryUsage();
+    metrics.gauge('memory.rss', memUsage.rss);
+    metrics.gauge('memory.heapTotal', memUsage.heapTotal);
+    metrics.gauge('memory.heapUsed', memUsage.heapUsed);
+};
+
+setInterval(collectMemoryStats, 5000);
+```
+
+Run it:
 ```sh
 DATADOG_API_KEY=YOUR_KEY DEBUG=metrics node example_app.js
 ```
 
-```js
-var metrics = require('datadog-metrics');
-
-// Optional: Configure some defaults.
-metrics.setDefaultHost('myhost');
-metrics.setDefaultPrefix('myapp.');
-
-// Gauges keep the most recent value.
-metrics.gauge('test.cpu_usage', 32);
-
-// Counters ... count stuff.
-metrics.increment('test.num_requests');
-metrics.increment('test.num_requests', 2);
-
-// Histograms describe the distribution of the recorded values.
-metrics.histogram('test.service_time', 50);
-metrics.histogram('test.service_time', 100);
-
-// Wait for the auto-flush to kick in.
-setTimeout(function(){}, 20000);
-```
 
 ## Usage
 
@@ -57,9 +48,49 @@ Just require `datadog-metrics` and you're ready to go.
 var metrics = require('datadog-metrics');
 ```
 
+At this point you can call `gauge`, `increment` and `histogram` to start
+reporting metrics.
+
+If you want more control you can configure the module with a call to `init()`:
+
+```js
+metrics.init({
+    // Sets the hostname reported with each metric.
+    host: 'myhost',
+
+    // Sets a default prefix for all metrics.
+    // Use this to namespace your metrics.
+    prefix: 'test_app.',
+
+    // How often to send metrics to DataDog.
+    // This defaults to 15 seconds. Set it to 0 to disable
+    // auto-flushing which means you must call metrics.flush() yourself.
+    flushIntervalSeconds: 10,
+
+    // DataDog API key. It's usually better to keep this
+    // in an environment variable. datadog-metrics looks for
+    // the API key in `DATADOG_API_KEY` by default.
+    apiKey: 'MYTESTKEY'
+});
+```
+
+If you need even more control you can create a `BufferedMetricsLogger` instance
+and manage it yourself:
+
+```js
+var metrics = require('datadog-metrics');
+var metricsLogger = new metrics.BufferedMetricsLogger({
+    apiKey: 'TESTKEY',
+    host: 'myhost',
+    prefix: 'myapp.',
+    flushIntervalSeconds: 15
+});
+metricsLogger.gauge('mygauge', 42);
+```
+
 ### Gauges
 
-`metrics.gauge(key, value, tags)`
+`metrics.gauge(key, value[, tags])`
 
 Record the current *value* of a metric. They most recent value in
 a given flush interval will be recorded. Optionally, specify a set of
@@ -75,7 +106,7 @@ metrics.gauge('test.mem_free', 23);
 
 ### Counters
 
-`metrics.increment(key, value, tags)`
+`metrics.increment(key[, value[, tags]])`
 
 Increment the counter by the given *value* (or `1` by default). Optionally,
 specify a list of *tags* to associate with the metric. This is useful for
@@ -90,7 +121,7 @@ metrics.increment('test.awesomeness_factor', 10);
 
 ### Histograms
 
-`metrics.histogram(key, value, tags)`
+`metrics.histogram(key, value[, tags])`
 
 Sample a histogram value. Histograms will produce metrics that
 describe the distribution of the recorded values, namely the minimum,
@@ -102,34 +133,6 @@ Example:
 ```js
 metrics.histogram('test.service_time', 0.248);
 ```
-
-### Setting a default host
-
-`metrics.setDefaultHost(host)`
-
-Set the default value for `host` reported by all metrics. You'd typically use
-this to report the name of your Heroku dyno, for example.
-
-### Setting a default prefix
-
-`metrics.setDefaultPrefix(prefix)`
-
-Set the default prefix for all metric keys. Usually you want to end the prefix
-with a dot at the end, e.g `my-system.`. This will save you some typing when
-reporting metrics.
-
-Example:
-
-```js
-metrics.setDefaultPrefix('commodore64.');
-metrics.gauge('memory.basic_bytes_free', 38911);
-// Reports as 'commodore64.memory.basic_bytes_free'
-```
-
-### Changing the flush interval
-
-By default, metrics are flushed to DataDog every 15 seconds. You can control
-this setting with the `DATADOG_FLUSH_INTERVAL_SECONDS` environment variable.
 
 ## Logging
 
@@ -154,16 +157,19 @@ npm test
 * 0.0.0 Work in progress
 * 0.1.0 The first real release
 * 0.1.1 Allow increment() to be called with just a key
-
-[npm-image]: https://img.shields.io/npm/v/datadog-metrics.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/datadog-metrics
-[travis-image]: https://img.shields.io/travis/dbader/node-datadog-metrics.svg?style=flat-square
-[travis-url]: https://travis-ci.org/dbader/datadog-metrics
+* 0.2.0 API redesign, removed setDefaultXYZ() and added init()
 
 ## Meta
+
+This module is heavily inspired by the Python [dogapi module](https://github.com/DataDog/dogapi).
 
 Daniel Bader – [@dbader_org](https://twitter.com/dbader_org) – mail@dbader.org
 
 Distributed under the MIT license. See ``LICENSE`` for more information.
 
 [https://github.com/dbader/node-datadog-metrics](https://github.com/dbader/node-datadog-metrics)
+
+[npm-image]: https://img.shields.io/npm/v/datadog-metrics.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/datadog-metrics
+[travis-image]: https://img.shields.io/travis/dbader/node-datadog-metrics/master.svg?style=flat-square
+[travis-url]: https://travis-ci.org/dbader/node-datadog-metrics
