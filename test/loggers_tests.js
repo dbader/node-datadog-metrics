@@ -19,7 +19,7 @@ describe('BufferedMetricsLogger', function() {
         l.gauge('test.gauge', 23);
     });
 
-    it('should have a increment() metric', function() {
+    it('should have an increment() metric', function() {
         var l = new BufferedMetricsLogger({
             reporter: new reporters.NullReporter()
         });
@@ -50,9 +50,9 @@ describe('BufferedMetricsLogger', function() {
 
     it('should allow setting a default host', function() {
         var l = new BufferedMetricsLogger({
-            reporter: new reporters.NullReporter()
+            reporter: new reporters.NullReporter(),
+            host: 'myhost'
         });
-        l.setDefaultHost('myhost');
         l.aggregator = {
             addPoint: function(Type, key, value, tags, host) {
                 host.should.equal('myhost');
@@ -65,9 +65,9 @@ describe('BufferedMetricsLogger', function() {
 
     it('should allow setting a default key prefix', function() {
         var l = new BufferedMetricsLogger({
-            reporter: new reporters.NullReporter()
+            reporter: new reporters.NullReporter(),
+            prefix: 'mynamespace.'
         });
-        l.setDefaultPrefix('mynamespace.');
         l.aggregator = {
             addPoint: function(Type, key, value, tags, host) {
                 key.should.startsWith('mynamespace.test.');

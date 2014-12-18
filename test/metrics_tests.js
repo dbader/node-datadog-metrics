@@ -38,6 +38,27 @@ describe('Gauge', function() {
         f[0].should.have.deep.property('metric', 'the.key');
         f[0].should.have.deep.property('tags[0]', 'mytag');
         f[0].should.have.deep.property('host', 'myhost');
+        f[0].should.have.deep.property('type', 'gauge');
+        f[0].should.have.deep.property('points[0][0]', g.timestamp);
+        f[0].should.have.deep.property('points[0][1]', 1);
+    });
+});
+
+describe('Counter', function() {
+    it('should extend Metric', function() {
+        var g = new metrics.Counter();
+        g.updateTimestamp.should.exist();
+    });
+
+    it('should flush correctly', function() {
+        var g = new metrics.Counter('the.key', ['mytag'], 'myhost');
+        g.addPoint(1);
+        var f = g.flush();
+        f.should.have.length(1);
+        f[0].should.have.deep.property('metric', 'the.key');
+        f[0].should.have.deep.property('tags[0]', 'mytag');
+        f[0].should.have.deep.property('host', 'myhost');
+        f[0].should.have.deep.property('type', 'counter');
         f[0].should.have.deep.property('points[0][0]', g.timestamp);
         f[0].should.have.deep.property('points[0][1]', 1);
     });
