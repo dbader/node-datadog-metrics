@@ -1,15 +1,45 @@
 'use strict';
+var loggers = require('./lib/loggers');
 
-var m = require('./lib/metrics');
+var sharedLogger = null;
 
-var dataDogApiKey = process.env.DATADOG_API_KEY;
-if (!dataDogApiKey) {
-    throw new Error('DATADOG_API_KEY environment variable not set');
+//
+// opts can include:
+//
+//     - apiKey: DataDog API key
+//     - host: Default host for all reported metrics
+//     - prefix: Default key prefix for all metrics
+//     - flushIntervalSeconds:
+//
+// You can also use it to override (dependency-inject) the aggregator
+// and reporter instance, which is useful for testing:
+//
+//     - aggregator: an Aggregator instance
+//     - reporter: a Reporter instance
+//
+function init(opts) {
+    opts = opts || {};
+    opts.flushIntervalSeconds = opts.flushIntervalSeconds || 15;
+    sharedLogger = new loggers.BufferedMetricsLogger(opts);
 }
 
-var flushInterval = parseInt(process.env.DATADOG_FLUSH_INTERVAL_SECONDS, 10);
+// This is meant to be curried via bind() so we don't have
+// to write wrappers for each metric individually.
+function callOnSharedLogger(funcName) {
+    if (sharedLogger === null) {
+        init();
+    }
+    var args = Array.prototype.slice.call(arguments, 1);
+    sharedLogger[funcName].apply(sharedLogger, args);
+}
 
-module.exports = new m.BufferedMetricsLogger({
-    apiKey: dataDogApiKey,
-    flushIntervalSeconds: flushInterval || 15
-});
+
+module.exports = {
+    init: init,
+    flush: callOnSharedLogger.bind(undefined, 'flush'),
+    gauge: callOnSharedLogger.bind(undefined, 'gauge'),
+    increment: callOnSharedLogger.bind(undefined, 'increment'),
+    histogram: callOnSharedLogger.bind(undefined, 'histogram'),
+
+    BufferedMetricsLogger: loggers.BufferedMetricsLogger
+};

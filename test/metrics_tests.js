@@ -38,6 +38,27 @@ describe('Gauge', function() {
         f[0].should.have.deep.property('metric', 'the.key');
         f[0].should.have.deep.property('tags[0]', 'mytag');
         f[0].should.have.deep.property('host', 'myhost');
+        f[0].should.have.deep.property('type', 'gauge');
+        f[0].should.have.deep.property('points[0][0]', g.timestamp);
+        f[0].should.have.deep.property('points[0][1]', 1);
+    });
+});
+
+describe('Counter', function() {
+    it('should extend Metric', function() {
+        var g = new metrics.Counter();
+        g.updateTimestamp.should.exist();
+    });
+
+    it('should flush correctly', function() {
+        var g = new metrics.Counter('the.key', ['mytag'], 'myhost');
+        g.addPoint(1);
+        var f = g.flush();
+        f.should.have.length(1);
+        f[0].should.have.deep.property('metric', 'the.key');
+        f[0].should.have.deep.property('tags[0]', 'mytag');
+        f[0].should.have.deep.property('host', 'myhost');
+        f[0].should.have.deep.property('type', 'counter');
         f[0].should.have.deep.property('points[0][0]', g.timestamp);
         f[0].should.have.deep.property('points[0][1]', 1);
     });
@@ -141,103 +162,5 @@ describe('Histogram', function() {
         f.should.have.deep.property('[7].points[0][1]', 95);
         f.should.have.deep.property('[8].metric', 'hist.99percentile');
         f.should.have.deep.property('[8].points[0][1]', 99);
-    });
-});
-
-describe('Aggregator', function() {
-    it('should flush correctly when empty', function() {
-        var agg = new metrics.Aggregator();
-        agg.flush().should.have.length(0);
-    });
-
-    it('should flush a single metric correctly', function() {
-        var agg = new metrics.Aggregator();
-        agg.addPoint(metrics.Gauge, 'mykey', 23, ['mytag'], 'myhost');
-        agg.flush().should.have.length(1);
-    });
-
-    it('should flush multiple metrics correctly', function() {
-        var agg = new metrics.Aggregator();
-        agg.addPoint(metrics.Gauge, 'mykey', 23, ['mytag'], 'myhost');
-        agg.addPoint(metrics.Gauge, 'mykey2', 42, ['mytag'], 'myhost');
-        agg.flush().should.have.length(2);
-    });
-
-    it('should clear the buffer after flushing', function() {
-        var agg = new metrics.Aggregator();
-        agg.addPoint(metrics.Gauge, 'mykey', 23, ['mytag'], 'myhost');
-        agg.flush().should.have.length(1);
-        agg.flush().should.have.length(0);
-    });
-
-    it('should update an existing metric correctly', function() {
-        var agg = new metrics.Aggregator();
-        agg.addPoint(metrics.Counter, 'test.mykey', 2, ['mytag'], 'myhost');
-        agg.addPoint(metrics.Counter, 'test.mykey', 3, ['mytag'], 'myhost');
-        var f = agg.flush();
-        f.should.have.length(1);
-        f[0].should.have.deep.property('points[0][1]', 5);
-        // console.log(JSON.stringify(f));
-        // metrics.sendToDataDog('', f,
-        //   function() {console.log('onsuccess');},
-        //   function() {console.log('onerror', arguments);});
-    });
-});
-
-describe('BufferedMetricsLogger', function() {
-    it('should have a gauge() metric', function() {
-        var l = new metrics.BufferedMetricsLogger({});
-        l.gauge('test.gauge', 23);
-    });
-
-    it('should have a increment() metric', function() {
-        var l = new metrics.BufferedMetricsLogger({});
-
-        l.aggregator = {
-            addPoint: function(Type, key, value, tags, host) {
-                key.should.equal('test.counter');
-                value.should.equal(1);
-            }
-        };
-        l.increment('test.counter');
-
-        l.aggregator = {
-            addPoint: function(Type, key, value, tags, host) {
-                key.should.equal('test.counter2');
-                value.should.equal(23);
-            }
-        };
-        l.increment('test.counter2', 23);
-    });
-
-    it('should have a histogram() metric', function() {
-        var l = new metrics.BufferedMetricsLogger({});
-        l.histogram('test.histogram', 23);
-    });
-
-    it('should allow setting a default host', function() {
-        var l = new metrics.BufferedMetricsLogger({});
-        l.setDefaultHost('myhost');
-        l.aggregator = {
-            addPoint: function(Type, key, value, tags, host) {
-                host.should.equal('myhost');
-            }
-        };
-        l.gauge('test.gauge', 23);
-        l.increment('test.counter', 23);
-        l.histogram('test.histogram', 23);
-    });
-
-    it('should allow setting a default key prefix', function() {
-        var l = new metrics.BufferedMetricsLogger({});
-        l.setDefaultPrefix('mynamespace.');
-        l.aggregator = {
-            addPoint: function(Type, key, value, tags, host) {
-                key.should.startsWith('mynamespace.test.');
-            }
-        };
-        l.gauge('test.gauge', 23);
-        l.increment('test.counter', 23);
-        l.histogram('test.histogram', 23);
     });
 });
