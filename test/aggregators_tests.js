@@ -43,10 +43,6 @@ describe('Aggregator', function() {
         var f = agg.flush();
         f.should.have.length(1);
         f[0].should.have.deep.property('points[0][1]', 5);
-        // console.log(JSON.stringify(f));
-        // metrics.sendToDataDog('', f,
-        //   function() {console.log('onsuccess');},
-        //   function() {console.log('onerror', arguments);});
     });
 });
 

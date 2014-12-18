@@ -1,8 +1,6 @@
 'use strict';
 var loggers = require('./lib/loggers');
 
-// var flushInterval = parseInt(process.env.DATADOG_FLUSH_INTERVAL_SECONDS, 10);
-
 var sharedLogger = null;
 
 function init(opts) {
