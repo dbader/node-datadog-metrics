@@ -25,7 +25,7 @@ function init(opts) {
 
 // This is meant to be curried via bind() so we don't have
 // to write wrappers for each metric individually.
-function addMetric(funcName) {
+function callOnSharedLogger(funcName) {
     if (sharedLogger === null) {
         init();
     }
@@ -36,10 +36,10 @@ function addMetric(funcName) {
 
 module.exports = {
     init: init,
-
-    gauge: addMetric.bind(undefined, 'gauge'),
-    increment: addMetric.bind(undefined, 'increment'),
-    histogram: addMetric.bind(undefined, 'histogram'),
+    flush: callOnSharedLogger.bind(undefined, 'flush'),
+    gauge: callOnSharedLogger.bind(undefined, 'gauge'),
+    increment: callOnSharedLogger.bind(undefined, 'increment'),
+    histogram: callOnSharedLogger.bind(undefined, 'histogram'),
 
     BufferedMetricsLogger: loggers.BufferedMetricsLogger
 };

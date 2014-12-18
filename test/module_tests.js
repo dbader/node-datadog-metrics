@@ -27,7 +27,7 @@ describe('datadog-metrics', function() {
     it('should let me configure a shared metrics logger instance', function(done) {
         metrics.init.should.exist();
         metrics.init({
-            flushIntervalSeconds: 0.01,
+            flushIntervalSeconds: 0,
             reporter: {
                 report: function(series, onSuccess, onError) {
                     series.should.have.length(11); // 3 + 8 for the histogram.
@@ -43,6 +43,7 @@ describe('datadog-metrics', function() {
         metrics.increment('test.counter');
         metrics.increment('test.counter', 23);
         metrics.histogram('test.histogram', 23);
+        metrics.flush();
     });
 
     it('should lazily provide a shared metrics logger instance', function() {
