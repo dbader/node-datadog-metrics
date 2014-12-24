@@ -69,30 +69,14 @@ metrics.gauge('mygauge', 42);
 
 If you want more control you can configure the module with a call to `init`.
 Make sure you call this before you use the `gauge`, `increment` and `histogram`
-functions.
+functions. See the documentation for `init` below to learn more.
 
 ```js
-metrics.init({
-    // Sets the hostname reported with each metric. (optional)
-    host: 'myhost',
-
-    // Sets a default prefix for all metrics. (optional)
-    // Use this to namespace your metrics.
-    prefix: 'myapp.',
-
-    // How often to send metrics to DataDog. (optional)
-    // This defaults to 15 seconds. Set it to 0 to disable
-    // auto-flushing which means you must call
-    // metrics.flush() yourself.
-    flushIntervalSeconds: 10,
-
-    // DataDog API key. (optional)
-    // It's usually best to keep this in an environment
-    // variable. datadog-metrics looks for the API key
-    // in `DATADOG_API_KEY` by default.
-    apiKey: 'MYTESTKEY'
-});
+var metrics = require('datadog-metrics');
+metrics.init({ host: 'myhost', prefix: 'myapp.' });
+metrics.gauge('mygauge', 42);
 ```
+
 
 #### Use case #3: Must. Control. Everything.
 
@@ -108,6 +92,33 @@ var metricsLogger = new metrics.BufferedMetricsLogger({
 });
 metricsLogger.gauge('mygauge', 42);
 ```
+
+## API
+
+### Initialization
+
+`metrics.init(options)`
+
+Where `options` is an object and can contain the following:
+
+* `host`: Sets the hostname reported with each metric. (optional)
+    * Setting a hostname is useful when you're running the same application
+      on multiple machines and you want to track them separately in DataDog.
+* `prefix`: Sets a default prefix for all metrics. (optional)
+    * Use this to namespace your metrics.
+* `flushIntervalSeconds`: How often to send metrics to DataDog. (optional)
+    * This defaults to 15 seconds. Set it to 0 to disable auto-flushing which
+      means you must call `flush()` manually.
+* `apiKey`: Sets the DataDog API key. (optional)
+    * It's usually best to keep this in an environment variable.
+      Datadog-metrics looks for the API key in `DATADOG_API_KEY` by default.
+
+Example:
+
+```js
+metrics.init({ host: 'myhost', prefix: 'myapp.' });
+```
+
 
 ### Gauges
 
