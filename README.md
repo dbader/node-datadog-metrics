@@ -4,7 +4,7 @@
 [![NPM Version][npm-image]][npm-url]
 [![Build Status][travis-image]][travis-url]
 
-Datadog-metrics lets you collect application metrics using DataDog's HTTP API.
+Datadog-metrics lets you collect application metrics through DataDog's HTTP API.
 Using the HTTP API has the benefit that you **don't need to install the DataDog
 Agent (StatsD)**. Just get an API key, install the module and you're ready to go.
 
