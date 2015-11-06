@@ -163,4 +163,30 @@ describe('Histogram', function() {
         f.should.have.deep.property('[8].metric', 'hist.99percentile');
         f.should.have.deep.property('[8].points[0][1]', 99);
     });
+
+    it('should use custom percentiles and aggregates', function() {
+        var histAggregates = ['avg'];
+        var histPercentiles = [0.85];
+        var h = new metrics.Histogram('hist', [], 'myhost',
+            { histAggregates: histAggregates, histPercentiles: histPercentiles});
+        h.addPoint(1);
+        var f = h.flush();
+
+        f.should.have.deep.property('[0].metric', 'hist.avg');
+        f.should.have.deep.property('[0].points[0][1]', 1);
+
+        f.should.have.deep.property('[1].metric', 'hist.85percentile');
+        f.should.have.deep.property('[1].points[0][1]', 1);
+
+        // Create 100 samples from [1..100] so we can
+        // verify the calculated percentiles.
+        for (var i = 2; i <= 100; i++) {
+            h.addPoint(i);
+        }
+        f = h.flush();
+
+        f.should.have.deep.property('[1].metric', 'hist.85percentile');
+        f.should.have.deep.property('[1].points[0][1]', 85);
+
+    });
 });
