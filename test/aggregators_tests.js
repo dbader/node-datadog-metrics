@@ -44,5 +44,34 @@ describe('Aggregator', function() {
         f.should.have.length(1);
         f[0].should.have.deep.property('points[0][1]', 5);
     });
+
+    it('should aggregate by key + tag', function() {
+        var agg = new aggregators.Aggregator();
+        agg.addPoint(metrics.Counter, 'test.mykey', 2, ['mytag1'], 'myhost');
+        agg.addPoint(metrics.Counter, 'test.mykey', 3, ['mytag2'], 'myhost');
+        var f = agg.flush();
+        f.should.have.length(2);
+        f[0].should.have.deep.property('points[0][1]', 2);
+        f[1].should.have.deep.property('points[0][1]', 3);
+    });
+
+    it('should treat all empty tags definitions the same', function() {
+        var agg = new aggregators.Aggregator();
+        agg.addPoint(metrics.Gauge, 'noTagsKey', 1, null, 'myhost');
+        agg.addPoint(metrics.Gauge, 'noTagsKey', 2, undefined, 'myhost');
+        agg.addPoint(metrics.Gauge, 'noTagsKey', 3, [], 'myhost');
+        var f = agg.flush();
+        f.should.have.length(1);
+        f[0].should.have.deep.property('points[0][1]', 3);
+    });
+
+    it('should normalize the tag order', function() {
+        var agg = new aggregators.Aggregator();
+        agg.addPoint(metrics.Gauge, 'mykey', 1, ['t1', 't2', 't3'], 'myhost');
+        agg.addPoint(metrics.Gauge, 'mykey', 2, ['t3', 't2', 't1'], 'myhost');
+        var f = agg.flush();
+        f.should.have.length(1);
+        f[0].should.have.deep.property('points[0][1]', 2);
+    });
 });
 
