@@ -21,15 +21,15 @@
   "author": "Daniel Bader <mail@dbader.org> (http://dbader.org/)",
   "license": "MIT",
   "devDependencies": {
-    "mocha": "^2.0.1",
-    "chai": "^1.10.0",
-    "chai-string": "^1.1.0",
-    "jshint-stylish-ex": "^0.2.0",
-    "jshint": "^2.5.10",
-    "jscs": "^1.8.1"
+    "chai": "3.5.0",
+    "chai-string": "1.1.6",
+    "jscs": "2.9.0",
+    "jshint": "2.9.1",
+    "jshint-stylish-ex": "0.2.0",
+    "mocha": "2.4.5"
   },
   "dependencies": {
-    "dogapi": "^0.1.5",
-    "debug": "^2.1.0"
+    "debug": "2.2.0",
+    "dogapi": "1.1.0"
   }
 }
