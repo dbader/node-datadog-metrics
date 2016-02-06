@@ -4,9 +4,10 @@ var loggers = require('./lib/loggers');
 var sharedLogger = null;
 
 //
-// opts can include:
+// opts may include:
 //
 //     - apiKey: DataDog API key
+//     - appKey: DataDog APP key
 //     - host: Default host for all reported metrics
 //     - prefix: Default key prefix for all metrics
 //     - flushIntervalSeconds:
