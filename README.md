@@ -5,13 +5,9 @@
 [![Build Status][travis-image]][travis-url]
 [![Downloads Stats][npm-downloads]][npm-url]
 
-Datadog-metrics lets you collect application metrics through DataDog's HTTP API.
-Using the HTTP API has the benefit that you **don't need to install the DataDog
-Agent (StatsD)**. Just get an API key, install the module and you're ready to go.
+Datadog-metrics lets you collect application metrics through DataDog's HTTP API. Using the HTTP API has the benefit that you **don't need to install the DataDog Agent (StatsD)**. Just get an API key, install the module and you're ready to go.
 
-The downside of using the HTTP API is that it can negatively affect your app's
-performance. Datadog-metrics **solves this issue by buffering metrics locally
-and periodically flushing them** to DataDog.
+The downside of using the HTTP API is that it can negatively affect your app's performance. Datadog-metrics **solves this issue by buffering metrics locally and periodically flushing them** to DataDog.
 
 ## Installation
 
@@ -42,6 +38,10 @@ Run it:
 ```sh
 DATADOG_API_KEY=YOUR_KEY DEBUG=metrics node example_app.js
 ```
+
+## Tutorial
+
+There's also a longer [tutorial](https://dbader.org/blog/monitoring-your-nodejs-app-with-datadog) that walks you through setting up a monitoring dashboard on DataDog using datadog-metrics.
 
 
 ## Usage
@@ -202,6 +202,12 @@ npm test
 
 ## Release History
 
+* 0.3.0
+    * FIX: Don't overwrite metrics with the same key but different tags when aggregating them (Thanks @akrylysov and @RavivIsraeli!)
+    * ADD: Add success/error callbacks to `metrics.flush()` (Thanks @akrylysov!)
+    * ADD: Allow DataDog APP key to be configured (Thanks @gert-fresh!)
+    * Bump dependencies to latest
+    * Update docs
 * 0.2.1
     * Update docs (module code remains unchanged)
 * 0.2.0
