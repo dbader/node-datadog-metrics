@@ -20,14 +20,14 @@ describe('Metric', function() {
     it('should update the timestamp when a data point is added', function() {
         var m = new metrics.Metric();
         m.updateTimestamp(123);
-        m.timestamp.should.exist();
+        m.timestamp.should.be.a('number');
     });
 });
 
 describe('Gauge', function() {
     it('should extend Metric', function() {
         var g = new metrics.Gauge();
-        g.updateTimestamp.should.exist();
+        g.updateTimestamp.should.be.a('function');
     });
 
     it('should flush correctly', function() {
@@ -47,7 +47,7 @@ describe('Gauge', function() {
 describe('Counter', function() {
     it('should extend Metric', function() {
         var g = new metrics.Counter();
-        g.updateTimestamp.should.exist();
+        g.updateTimestamp.should.be.a('function');
     });
 
     it('should flush correctly', function() {
@@ -67,7 +67,7 @@ describe('Counter', function() {
 describe('Histogram', function() {
     it('should extend Metric', function() {
         var h = new metrics.Histogram();
-        h.updateTimestamp.should.exist();
+        h.updateTimestamp.should.be.a('function');
     });
 
     it('should report the min and max of all values', function() {
