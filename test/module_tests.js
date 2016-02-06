@@ -17,7 +17,7 @@ beforeEach(function() {
 
 describe('datadog-metrics', function() {
     it('should let me create a metrics logger instance', function() {
-        metrics.BufferedMetricsLogger.should.exist();
+        metrics.BufferedMetricsLogger.should.be.a('function');
         var logger = new metrics.BufferedMetricsLogger({
             reporter: new reporters.NullReporter()
         });
@@ -25,7 +25,7 @@ describe('datadog-metrics', function() {
     });
 
     it('should let me configure a shared metrics logger instance', function(done) {
-        metrics.init.should.exist();
+        metrics.init.should.be.a('function');
         metrics.init({
             flushIntervalSeconds: 0,
             reporter: {
