@@ -173,7 +173,7 @@ metrics.histogram('test.service_time', 0.248);
 
 ### Flushing
 
-`metrics.flush()`
+`metrics.flush([onSuccess[, onError]])`
 
 Calling `flush` sends any buffered metrics to DataDog. Unless you set
 `flushIntervalSeconds` to 0 it won't be necessary to call this function.
