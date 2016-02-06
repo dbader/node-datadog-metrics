@@ -49,7 +49,7 @@ DATADOG_API_KEY=YOUR_KEY DEBUG=metrics node example_app.js
 ### DataDog API key
 
 Make sure the `DATADOG_API_KEY` environment variable is set to your DataDog
-API key. You can find the API key under [Integrations > APIs](https://app.datadoghq.com/account/settings#api). *You only need to provide the API key, not the APP key.*
+API key. You can find the API key under [Integrations > APIs](https://app.datadoghq.com/account/settings#api). *You only need to provide the API key, not the APP key. However, you can provide an APP key if you want by setting the `DATADOG_APP_KEY` environment variable.*
 
 ### Module setup
 
@@ -113,6 +113,10 @@ Where `options` is an object and can contain the following:
 * `apiKey`: Sets the DataDog API key. (optional)
     * It's usually best to keep this in an environment variable.
       Datadog-metrics looks for the API key in `DATADOG_API_KEY` by default.
+* `appKey`: Sets the DataDog APP key. (optional)
+    * It's usually best to keep this in an environment variable.
+      Datadog-metrics looks for the APP key in `DATADOG_APP_KEY` by default.
+
 
 Example:
 
