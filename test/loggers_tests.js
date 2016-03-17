@@ -77,4 +77,12 @@ describe('BufferedMetricsLogger', function() {
         l.increment('test.counter', 23);
         l.histogram('test.histogram', 23);
     });
+
+    it('should allow setting default tags', function() {
+        var l = new BufferedMetricsLogger({
+            reporter: new reporters.NullReporter(),
+            defaultTags: ['one', 'two']
+        });
+        l.aggregator.defaultTags.should.deep.equal(['one', 'two']);
+    });
 });

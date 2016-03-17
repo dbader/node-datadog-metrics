@@ -73,5 +73,16 @@ describe('Aggregator', function() {
         f.should.have.length(1);
         f[0].should.have.deep.property('points[0][1]', 2);
     });
+
+    it('should report default tags', function() {
+        var defaultTags = ['one', 'two'];
+        var agg = new aggregators.Aggregator(defaultTags);
+        agg.addPoint(metrics.Counter, 'test.mykey', 2, ['mytag1'], 'myhost');
+        agg.addPoint(metrics.Counter, 'test.mykey', 3, ['mytag2'], 'myhost');
+        var f = agg.flush();
+        f.should.have.length(2);
+        f[0].should.have.deep.property('tags[0]', 'one');
+        f[1].should.have.deep.property('tags[1]', 'two');
+    });
 });
 

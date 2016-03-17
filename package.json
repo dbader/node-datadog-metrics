@@ -1,6 +1,6 @@
 {
   "name": "datadog-metrics",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Buffered metrics reporting via the DataDog HTTP API",
   "main": "index.js",
   "repository": {

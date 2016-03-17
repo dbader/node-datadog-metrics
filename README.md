@@ -89,7 +89,8 @@ var metricsLogger = new metrics.BufferedMetricsLogger({
     apiKey: 'TESTKEY',
     host: 'myhost',
     prefix: 'myapp.',
-    flushIntervalSeconds: 15
+    flushIntervalSeconds: 15,
+    defaultTags: ['env:staging', 'region:us-east-1']
 });
 metricsLogger.gauge('mygauge', 42);
 ```
@@ -116,6 +117,8 @@ Where `options` is an object and can contain the following:
 * `appKey`: Sets the DataDog APP key. (optional)
     * It's usually best to keep this in an environment variable.
       Datadog-metrics looks for the APP key in `DATADOG_APP_KEY` by default.
+* `defaultTags`: Default tags used for all metric reporting. (optional)
+    * Set tags that are common to all metrics.
 
 
 Example:
@@ -202,6 +205,8 @@ npm test
 
 ## Release History
 
+* 0.4.0
+    * ADD: Initialize with a default set of tags
 * 0.3.0
     * FIX: Don't overwrite metrics with the same key but different tags when aggregating them (Thanks @akrylysov and @RavivIsraeli!)
     * ADD: Add success/error callbacks to `metrics.flush()` (Thanks @akrylysov!)
