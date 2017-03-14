@@ -17,10 +17,17 @@ describe('Metric', function() {
         m.host.should.equal('myhost');
     });
 
-    it('should update the timestamp when a data point is added', function() {
+    it('should update the timestamp with Date.now when a data point is added', function() {
         var m = new metrics.Metric();
-        m.updateTimestamp(123);
-        m.timestamp.should.be.a('number');
+        var now = Date.now();
+        m.updateTimestamp();
+        var diff = (m.timestamp * 1000) - now;
+        Math.abs(diff).should.lessThan(1000); // within one second
+    });
+    it('should update the timestamp when a data point is added with a timestamp in ms', function() {
+        var m = new metrics.Metric();
+        m.updateTimestamp(123000);
+        m.timestamp.should.equal(123);
     });
 });
 
@@ -42,6 +49,19 @@ describe('Gauge', function() {
         f[0].should.have.deep.property('points[0][0]', g.timestamp);
         f[0].should.have.deep.property('points[0][1]', 1);
     });
+
+    it('should flush correctly when given timestamp', function() {
+        var g = new metrics.Gauge('the.key', ['mytag'], 'myhost');
+        g.addPoint(1, 123000);
+        var f = g.flush();
+        f.should.have.length(1);
+        f[0].should.have.deep.property('metric', 'the.key');
+        f[0].should.have.deep.property('tags[0]', 'mytag');
+        f[0].should.have.deep.property('host', 'myhost');
+        f[0].should.have.deep.property('type', 'gauge');
+        f[0].should.have.deep.property('points[0][0]', 123);
+        f[0].should.have.deep.property('points[0][1]', 1);
+    });
 });
 
 describe('Counter', function() {
@@ -60,6 +80,19 @@ describe('Counter', function() {
         f[0].should.have.deep.property('host', 'myhost');
         f[0].should.have.deep.property('type', 'counter');
         f[0].should.have.deep.property('points[0][0]', g.timestamp);
+        f[0].should.have.deep.property('points[0][1]', 1);
+    });
+
+    it('should flush correctly', function() {
+        var g = new metrics.Counter('the.key', ['mytag'], 'myhost');
+        g.addPoint(1, 123000);
+        var f = g.flush();
+        f.should.have.length(1);
+        f[0].should.have.deep.property('metric', 'the.key');
+        f[0].should.have.deep.property('tags[0]', 'mytag');
+        f[0].should.have.deep.property('host', 'myhost');
+        f[0].should.have.deep.property('type', 'counter');
+        f[0].should.have.deep.property('points[0][0]', 123);
         f[0].should.have.deep.property('points[0][1]', 1);
     });
 });
