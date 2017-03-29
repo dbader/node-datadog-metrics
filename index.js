@@ -10,6 +10,7 @@ var sharedLogger = null;
 //     - appKey: DataDog APP key
 //     - host: Default host for all reported metrics
 //     - prefix: Default key prefix for all metrics
+//     - defaultTags: Common tags for all metrics
 //     - flushIntervalSeconds:
 //
 // You can also use it to override (dependency-inject) the aggregator
