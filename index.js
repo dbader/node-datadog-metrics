@@ -21,7 +21,9 @@ var sharedLogger = null;
 //
 function init(opts) {
     opts = opts || {};
-    opts.flushIntervalSeconds = opts.flushIntervalSeconds || 15;
+    if (!opts.flushIntervalSeconds && opts.flushIntervalSeconds !== 0) {
+        opts.flushIntervalSeconds = 15;
+    }
     sharedLogger = new loggers.BufferedMetricsLogger(opts);
 }
 
