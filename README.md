@@ -130,13 +130,14 @@ metrics.init({ host: 'myhost', prefix: 'myapp.' });
 
 ### Gauges
 
-`metrics.gauge(key, value[, tags])`
+`metrics.gauge(key, value[, tags[, timestamp]])`
 
 Record the current *value* of a metric. They most recent value in
 a given flush interval will be recorded. Optionally, specify a set of
 tags to associate with the metric. This should be used for sum values
 such as total hard disk space, process uptime, total number of active
-users, or number of rows in a database table.
+users, or number of rows in a database table. The optional timestamp
+is in milliseconds since 1 Jan 1970 00:00:00 UTC, e.g. from `Date.now()`.
 
 Example:
 
@@ -146,11 +147,13 @@ metrics.gauge('test.mem_free', 23);
 
 ### Counters
 
-`metrics.increment(key[, value[, tags]])`
+`metrics.increment(key[, value[, tags[, timestamp]]])`
 
 Increment the counter by the given *value* (or `1` by default). Optionally,
 specify a list of *tags* to associate with the metric. This is useful for
 counting things such as incrementing a counter each time a page is requested.
+The optional timestamp is in milliseconds since 1 Jan 1970 00:00:00 UTC,
+e.g. from `Date.now()`.
 
 Example:
 
@@ -161,12 +164,14 @@ metrics.increment('test.awesomeness_factor', 10);
 
 ### Histograms
 
-`metrics.histogram(key, value[, tags])`
+`metrics.histogram(key, value[, tags[, timestamp]])`
 
 Sample a histogram value. Histograms will produce metrics that
 describe the distribution of the recorded values, namely the minimum,
 maximum, average, count and the 75th, 85th, 95th and 99th percentiles.
 Optionally, specify a list of *tags* to associate with the metric.
+The optional timestamp is in milliseconds since 1 Jan 1970 00:00:00 UTC,
+e.g. from `Date.now()`.
 
 Example:
 
