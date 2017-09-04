@@ -210,8 +210,11 @@ npm test
 
 ## Release History
 
+* 0.5.0
+    * ADD: ability to set custom timestamps (Thanks to @ronny)
+    * FIX: 0 as valid option for flushIntervalSeconds (thanks to @dkMorlok)
 * 0.4.0
-    * ADD: Initialize with a default set of tags
+    * ADD: Initialize with a default set of tags (thanks to @spence)
 * 0.3.0
     * FIX: Don't overwrite metrics with the same key but different tags when aggregating them (Thanks @akrylysov and @RavivIsraeli!)
     * ADD: Add success/error callbacks to `metrics.flush()` (Thanks @akrylysov!)
