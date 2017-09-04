@@ -46,6 +46,29 @@ describe('datadog-metrics', function() {
         metrics.flush();
     });
 
+    it('should report gauges with the same name but different tags separately', function(done) {
+        metrics.init.should.be.a('function');
+        metrics.init({
+            flushIntervalSeconds: 0,
+            reporter: {
+                report: function(series, onSuccess, onError) {
+                    series.should.have.length(2);
+                    series[0].should.have.deep.property('points[0][1]', 1);
+                    series[0].should.have.deep.property('metric', 'test.gauge');
+                    series[0].should.have.deep.property('tags[0]', 'tag1');
+                    series[1].should.have.deep.property('points[0][1]', 2);
+                    series[1].should.have.deep.property('metric', 'test.gauge');
+                    series[1].should.have.deep.property('tags[0]', 'tag2');
+                    onSuccess && onSuccess();
+                    done();
+                }
+            }
+        });
+        metrics.gauge('test.gauge', 1, ['tag1']);
+        metrics.gauge('test.gauge', 2, ['tag2']);
+        metrics.flush();
+    });
+
     it('should lazily provide a shared metrics logger instance', function() {
         process.env.DATADOG_API_KEY = 'TESTKEY';
         metrics.gauge('test.gauge', 23);
