@@ -29,6 +29,13 @@ describe('Aggregator', function() {
         agg.flush().should.have.length(2);
     });
 
+    it('should flush multiple metrics correctly even if only the tag differs', function() {
+        var agg = new aggregators.Aggregator();
+        agg.addPoint(metrics.Gauge, 'mykey', 23, ['mytag1'], 'myhost');
+        agg.addPoint(metrics.Gauge, 'mykey', 23, ['mytag2'], 'myhost');
+        agg.flush().should.have.length(2);
+    });
+
     it('should clear the buffer after flushing', function() {
         var agg = new aggregators.Aggregator();
         agg.addPoint(metrics.Gauge, 'mykey', 23, ['mytag'], 'myhost');
