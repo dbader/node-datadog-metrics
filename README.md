@@ -210,6 +210,8 @@ npm test
 
 ## Release History
 
+* 0.6.0
+    * FIX: call onSuccess on flush even if buffer is empty (Thanks to @mousavian)
 * 0.5.0
     * ADD: ability to set custom timestamps (Thanks to @ronny)
     * FIX: 0 as valid option for flushIntervalSeconds (thanks to @dkMorlok)
