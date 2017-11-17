@@ -81,6 +81,21 @@ describe('BufferedMetricsLogger', function() {
         l.histogram('test.histogram', 23);
     });
 
+    it('should allow setting a host override', function() {
+        var l = new BufferedMetricsLogger({
+            reporter: new reporters.NullReporter(),
+            host: 'myhost'
+        });
+        l.aggregator = {
+            addPoint: function(Type, key, value, tags, host) {
+                host.should.equal('overrideHost');
+            }
+        };
+        l.gauge('test.gauge', 23, null, null, 'overrideHost');
+        l.increment('test.counter', 23, null, null, 'overrideHost');
+        l.histogram('test.histogram', 23, null, null, 'overrideHost');
+    });
+
     it('should allow setting a default key prefix', function() {
         var l = new BufferedMetricsLogger({
             reporter: new reporters.NullReporter(),
