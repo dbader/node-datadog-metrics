@@ -78,7 +78,7 @@ describe('Counter', function() {
         f[0].should.have.deep.property('metric', 'the.key');
         f[0].should.have.deep.property('tags[0]', 'mytag');
         f[0].should.have.deep.property('host', 'myhost');
-        f[0].should.have.deep.property('type', 'counter');
+        f[0].should.have.deep.property('type', 'count');
         f[0].should.have.deep.property('points[0][0]', g.timestamp);
         f[0].should.have.deep.property('points[0][1]', 1);
     });
@@ -91,7 +91,7 @@ describe('Counter', function() {
         f[0].should.have.deep.property('metric', 'the.key');
         f[0].should.have.deep.property('tags[0]', 'mytag');
         f[0].should.have.deep.property('host', 'myhost');
-        f[0].should.have.deep.property('type', 'counter');
+        f[0].should.have.deep.property('type', 'count');
         f[0].should.have.deep.property('points[0][0]', 123);
         f[0].should.have.deep.property('points[0][1]', 1);
     });
