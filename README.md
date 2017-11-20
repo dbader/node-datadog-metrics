@@ -210,6 +210,8 @@ npm test
 
 ## Release History
 
+* 0.7.0
+    * update metric type `counter` to `count` as `counter` is deprecated by Datadog (Thanks to @dustingibbs)
 * 0.6.1
     * FIX: bump debug to 3.1.0 to fix [NSP Advisory #534](https://nodesecurity.io/advisories/534) (Thanks to @kirkstrobeck)
 * 0.6.0
