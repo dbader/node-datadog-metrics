@@ -210,6 +210,8 @@ npm test
 
 ## Release History
 
+* 0.8.0
+    * allow passing in custom https agent (Thanks to @flovilmart)
 * 0.7.0
     * update metric type `counter` to `count` as `counter` is deprecated by Datadog (Thanks to @dustingibbs)
 * 0.6.1
