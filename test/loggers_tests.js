@@ -42,14 +42,30 @@ describe('BufferedMetricsLogger', function() {
         l.increment('test.counter');
 
         l.aggregator = {
-            addPoint: function(Type, key, value, tags, host, timestampInMillis) {
+            addPoint: function(Type, key, value, tags, host) {
                 key.should.equal('test.counter2');
+                value.should.equal(0);
+            }
+        };
+        l.increment('test.counter2', 0);
+
+        l.aggregator = {
+            addPoint: function(Type, key, value, tags, host) {
+                key.should.equal('test.counter3');
+                value.should.equal(1);
+            }
+        };
+        l.increment('test.counter3', null);
+
+        l.aggregator = {
+            addPoint: function(Type, key, value, tags, host, timestampInMillis) {
+                key.should.equal('test.counter4');
                 value.should.equal(23);
                 tags.should.eql(['z:z', 'a:a']);
                 timestampInMillis.should.equal(1234567890);
             }
         };
-        l.increment('test.counter2', 23, ['z:z', 'a:a'], 1234567890);
+        l.increment('test.counter4', 23, ['z:z', 'a:a'], 1234567890);
     });
 
     it('should have a histogram() metric', function() {
