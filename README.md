@@ -211,6 +211,8 @@ npm test
 
 ## Release History
 
+* 0.8.1
+    * FIX: don't increment count when value is 0 (Thanks to @haspriyank)
 * 0.8.0
     * allow passing in custom https agent (Thanks to @flovilmart)
 * 0.7.0
