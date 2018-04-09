@@ -188,12 +188,12 @@ describe('Histogram', function() {
         f = h.flush();
 
         f.should.have.deep.property('[5].metric', 'hist.75percentile');
-        f.should.have.deep.property('[5].points[0][1]', 75);
+        f.should.have.deep.property('[5].points[0][1]', 75.5);
         f.should.have.deep.property('[6].metric', 'hist.85percentile');
-        f.should.have.deep.property('[6].points[0][1]', 85);
+        f.should.have.deep.property('[6].points[0][1]', 85.5);
         f.should.have.deep.property('[7].metric', 'hist.95percentile');
-        f.should.have.deep.property('[7].points[0][1]', 95);
+        f.should.have.deep.property('[7].points[0][1]', 95.5);
         f.should.have.deep.property('[8].metric', 'hist.99percentile');
-        f.should.have.deep.property('[8].points[0][1]', 99);
+        f.should.have.deep.property('[8].points[0][1]', 99.5);
     });
 });
