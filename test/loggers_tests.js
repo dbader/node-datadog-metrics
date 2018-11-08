@@ -131,4 +131,85 @@ describe('BufferedMetricsLogger', function() {
         dogapi.client.proxy_agent.keepAliveMsecs.should.equal(10);
         // jscs:enable requireCamelCaseOrUpperCaseIdentifiers
     });
+
+    describe('for intervalHandler option', function() {
+        var dummySeries = [1,2,3];
+        var dummyTid = 123;
+
+        it('should allow setting a never interval handler', function() {
+            var flushCalled = 0;
+            var neverIntervalHandler = function(_callback, _msInterval) {
+                return dummyTid;
+            };
+            var testAggregator = {
+                flush: function() {
+                    flushCalled = flushCalled + 1;
+                    return dummySeries;
+                }
+            };
+            new BufferedMetricsLogger({
+                reporter: new reporters.NullReporter(),
+                aggregator: testAggregator,
+                intervalHandler: neverIntervalHandler,
+                flushIntervalSeconds: 1,
+            });
+
+            // flush should've been called twice
+            // - from constructor
+            flushCalled.should.eq(1);
+        });
+
+        it('should allow setting an immediate interval handler', function() {
+            var flushCalled = 0;
+            var intervalTicked = 0;
+            var immediateIntervalHandler = function(callback, _msInterval) {
+                // call right away but ONLY once
+                intervalTicked++;
+                if (intervalTicked < 2) {
+                    callback();
+                }
+                return dummyTid;
+            };
+            var testAggregator = {
+                flush: function() {
+                    flushCalled = flushCalled + 1;
+                    return dummySeries;
+                }
+            };
+            new BufferedMetricsLogger({
+                reporter: new reporters.NullReporter(),
+                aggregator: testAggregator,
+                intervalHandler: immediateIntervalHandler,
+                flushIntervalSeconds: 1,
+            });
+
+            // flush should've been called twice
+            // - from constructor
+            // - from interval callback
+            flushCalled.should.eq(2);
+        });
+
+        it('should allow setting an immediate interval handler', function() {
+            var unrefCalled = 0;
+            var unrefIntervalHandler = function(callback, _msInterval) {
+                return {
+                    unref: function() { unrefCalled = unrefCalled + 1; }
+                };
+            };
+            var testAggregator = {
+                flush: function() {
+                    return dummySeries;
+                }
+            };
+            new BufferedMetricsLogger({
+                reporter: new reporters.NullReporter(),
+                aggregator: testAggregator,
+                intervalHandler: unrefIntervalHandler,
+                flushIntervalSeconds: 1,
+            });
+
+            // .unref() should be called if provided
+            unrefCalled.should.eq(1);
+        });
+    });
 });
