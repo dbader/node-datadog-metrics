@@ -120,6 +120,8 @@ Where `options` is an object and can contain the following:
 * `defaultTags`: Default tags used for all metric reporting. (optional)
     * Set tags that are common to all metrics.
 * `agent`: custom https agent (optional)
+* `apiHost`: Sets the hostname of the target API endpoint. (optional)
+    * Defaults to `api.datadoghq.com`
 
 
 Example:
