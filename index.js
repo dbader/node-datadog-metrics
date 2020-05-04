@@ -9,6 +9,7 @@ var sharedLogger = null;
 //     - apiKey: DataDog API key
 //     - appKey: DataDog APP key
 //     - host: Default host for all reported metrics
+//     - apiHost: If you are on the Datadog EU site, you need to overwrite the default value of api_host key
 //     - prefix: Default key prefix for all metrics
 //     - defaultTags: Common tags for all metrics
 //     - flushIntervalSeconds:
