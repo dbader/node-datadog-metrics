@@ -1,13 +1,13 @@
 # datadog-metrics
-> Buffered metrics reporting via the DataDog HTTP API.
+> Buffered metrics reporting via the Datadog HTTP API.
 
 [![NPM Version][npm-image]][npm-url]
 [![Build Status][travis-image]][travis-url]
 [![Downloads Stats][npm-downloads]][npm-url]
 
-Datadog-metrics lets you collect application metrics through DataDog's HTTP API. Using the HTTP API has the benefit that you **don't need to install the DataDog Agent (StatsD)**. Just get an API key, install the module and you're ready to go.
+Datadog-metrics lets you collect application metrics through Datadog's HTTP API. Using the HTTP API has the benefit that you **don't need to install the Datadog Agent (StatsD)**. Just get an API key, install the module and you're ready to go.
 
-The downside of using the HTTP API is that it can negatively affect your app's performance. Datadog-metrics **solves this issue by buffering metrics locally and periodically flushing them** to DataDog.
+The downside of using the HTTP API is that it can negatively affect your app's performance. Datadog-metrics **solves this issue by buffering metrics locally and periodically flushing them** to Datadog.
 
 ## Installation
 
@@ -41,14 +41,14 @@ DATADOG_API_KEY=YOUR_KEY DEBUG=metrics node example_app.js
 
 ## Tutorial
 
-There's also a longer [tutorial](https://dbader.org/blog/monitoring-your-nodejs-app-with-datadog) that walks you through setting up a monitoring dashboard on DataDog using datadog-metrics.
+There's also a longer [tutorial](https://dbader.org/blog/monitoring-your-nodejs-app-with-datadog) that walks you through setting up a monitoring dashboard on Datadog using datadog-metrics.
 
 
 ## Usage
 
-### DataDog API key
+### Datadog API key
 
-Make sure the `DATADOG_API_KEY` environment variable is set to your DataDog
+Make sure the `DATADOG_API_KEY` environment variable is set to your Datadog
 API key. You can find the API key under [Integrations > APIs](https://app.datadoghq.com/account/settings#api). *You only need to provide the API key, not the APP key. However, you can provide an APP key if you want by setting the `DATADOG_APP_KEY` environment variable.*
 
 ### Module setup
@@ -105,16 +105,16 @@ Where `options` is an object and can contain the following:
 
 * `host`: Sets the hostname reported with each metric. (optional)
     * Setting a hostname is useful when you're running the same application
-      on multiple machines and you want to track them separately in DataDog.
+      on multiple machines and you want to track them separately in Datadog.
 * `prefix`: Sets a default prefix for all metrics. (optional)
     * Use this to namespace your metrics.
-* `flushIntervalSeconds`: How often to send metrics to DataDog. (optional)
+* `flushIntervalSeconds`: How often to send metrics to Datadog. (optional)
     * This defaults to 15 seconds. Set it to 0 to disable auto-flushing which
       means you must call `flush()` manually.
-* `apiKey`: Sets the DataDog API key. (optional)
+* `apiKey`: Sets the Datadog API key. (optional)
     * It's usually best to keep this in an environment variable.
       Datadog-metrics looks for the API key in `DATADOG_API_KEY` by default.
-* `appKey`: Sets the DataDog APP key. (optional)
+* `appKey`: Sets the Datadog APP key. (optional)
     * It's usually best to keep this in an environment variable.
       Datadog-metrics looks for the APP key in `DATADOG_APP_KEY` by default.
 * `defaultTags`: Default tags used for all metric reporting. (optional)
@@ -184,7 +184,7 @@ metrics.histogram('test.service_time', 0.248);
 
 `metrics.flush([onSuccess[, onError]])`
 
-Calling `flush` sends any buffered metrics to DataDog. Unless you set
+Calling `flush` sends any buffered metrics to Datadog. Unless you set
 `flushIntervalSeconds` to 0 it won't be necessary to call this function.
 
 It can be useful to trigger a manual flush by calling if you want to
@@ -229,7 +229,7 @@ npm test
 * 0.3.0
     * FIX: Don't overwrite metrics with the same key but different tags when aggregating them (Thanks @akrylysov and @RavivIsraeli!)
     * ADD: Add success/error callbacks to `metrics.flush()` (Thanks @akrylysov!)
-    * ADD: Allow DataDog APP key to be configured (Thanks @gert-fresh!)
+    * ADD: Allow Datadog APP key to be configured (Thanks @gert-fresh!)
     * Bump dependencies to latest
     * Update docs
 * 0.2.1
