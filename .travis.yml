@@ -11,4 +11,8 @@ jobs:
       node_js: "5"
       before_install:
         - npm i -g npm@4.6.1
+
+    - name: "Check codestyle"
+      script: npm run check-codestyle
+
 sudo: false
