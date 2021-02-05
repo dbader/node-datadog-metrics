@@ -14,5 +14,3 @@ jobs:
 
     - name: "Check codestyle"
       script: npm run check-codestyle
-
-sudo: false
