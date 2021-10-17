@@ -6,8 +6,6 @@ var chai = require('chai');
 chai.use(require('chai-string'));
 
 var should = chai.should();
-var https = require('https');
-var dogapi = require('dogapi');
 var loggers = require('../lib/loggers');
 var reporters = require('../lib/reporters');
 var BufferedMetricsLogger = loggers.BufferedMetricsLogger;
