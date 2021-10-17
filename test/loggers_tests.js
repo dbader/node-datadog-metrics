@@ -120,15 +120,4 @@ describe('BufferedMetricsLogger', function() {
         });
         l.aggregator.defaultTags.should.deep.equal(['one', 'two']);
     });
-
-    it('should allow setting the agent tags', function() {
-        var agent = new https.Agent({ keepAlive: true, keepAliveMsecs: 10 });
-        var l = new BufferedMetricsLogger({
-            reporter: new reporters.DataDogReporter('yolo', 'yolo', agent),
-        });
-        // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-        dogapi.client.proxy_agent.keepAlive.should.equal(true);
-        dogapi.client.proxy_agent.keepAliveMsecs.should.equal(10);
-        // jscs:enable requireCamelCaseOrUpperCaseIdentifiers
-    });
 });
