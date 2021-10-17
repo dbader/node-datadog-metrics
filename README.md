@@ -122,8 +122,6 @@ Where `options` is an object and can contain the following:
       Datadog-metrics looks for the APP key in `DATADOG_APP_KEY` by default.
 * `defaultTags`: Default tags used for all metric reporting. (optional)
     * Set tags that are common to all metrics.
-* `agent`: custom https agent (optional)
-
 
 Example:
 
