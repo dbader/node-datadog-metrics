@@ -1,7 +1,7 @@
 'use strict';
-var loggers = require('./lib/loggers');
+const loggers = require('./lib/loggers');
 
-var sharedLogger = null;
+let sharedLogger = null;
 
 //
 // opts may include:
@@ -33,7 +33,7 @@ function callOnSharedLogger(funcName) {
     if (sharedLogger === null) {
         init();
     }
-    var args = Array.prototype.slice.call(arguments, 1);
+    const args = Array.prototype.slice.call(arguments, 1)
     sharedLogger[funcName].apply(sharedLogger, args);
 }
 
