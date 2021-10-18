@@ -19,7 +19,7 @@ let sharedLogger = null;
 //     - aggregator: an Aggregator instance
 //     - reporter: a Reporter instance
 //
-function init (opts) {
+function init(opts) {
     opts = opts || {};
     if (!opts.flushIntervalSeconds && opts.flushIntervalSeconds !== 0) {
         opts.flushIntervalSeconds = 15;
@@ -29,7 +29,7 @@ function init (opts) {
 
 // This is meant to be curried via bind() so we don't have
 // to write wrappers for each metric individually.
-function callOnSharedLogger (funcName) {
+function callOnSharedLogger(funcName) {
     if (sharedLogger === null) {
         init();
     }
