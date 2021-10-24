@@ -6,8 +6,6 @@ var chai = require('chai');
 chai.use(require('chai-string'));
 
 var should = chai.should();
-var https = require('https');
-var dogapi = require('dogapi');
 var loggers = require('../lib/loggers');
 var reporters = require('../lib/reporters');
 var BufferedMetricsLogger = loggers.BufferedMetricsLogger;
@@ -119,16 +117,5 @@ describe('BufferedMetricsLogger', function() {
             defaultTags: ['one', 'two']
         });
         l.aggregator.defaultTags.should.deep.equal(['one', 'two']);
-    });
-
-    it('should allow setting the agent tags', function() {
-        var agent = new https.Agent({ keepAlive: true, keepAliveMsecs: 10 });
-        var l = new BufferedMetricsLogger({
-            reporter: new reporters.DataDogReporter('yolo', 'yolo', agent),
-        });
-        // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-        dogapi.client.proxy_agent.keepAlive.should.equal(true);
-        dogapi.client.proxy_agent.keepAliveMsecs.should.equal(10);
-        // jscs:enable requireCamelCaseOrUpperCaseIdentifiers
     });
 });
