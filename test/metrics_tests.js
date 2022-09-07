@@ -200,8 +200,7 @@ describe('Histogram', function() {
     it('should use custom percentiles and aggregates', function() {
         const aggregates = ['avg'];
         const percentiles = [0.85];
-        const h = new metrics.Histogram('hist', [], 'myhost',
-            { aggregates, percentiles});
+        const h = new metrics.Histogram('hist', [], 'myhost', { aggregates, percentiles });
         h.addPoint(1);
         var f = h.flush();
 
