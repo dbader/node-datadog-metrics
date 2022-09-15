@@ -30,7 +30,7 @@ describe('datadog-metrics', function() {
             flushIntervalSeconds: 0,
             reporter: {
                 report: function(series, onSuccess, onError) {
-                    series.should.have.length(11); // 3 + 8 for the histogram.
+                    series.should.have.length(12); // 3 + 9 for the histogram.
                     series[0].should.have.deep.property('points[0][1]', 23);
                     series[0].should.have.deep.property('metric', 'test.gauge');
                     series[0].tags.should.have.length(0);

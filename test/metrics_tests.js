@@ -171,14 +171,14 @@ describe('Histogram', function() {
         h.addPoint(1);
         var f = h.flush();
 
-        f.should.have.deep.property('[5].metric', 'hist.75percentile');
-        f.should.have.deep.property('[5].points[0][1]', 1);
-        f.should.have.deep.property('[6].metric', 'hist.85percentile');
+        f.should.have.deep.property('[6].metric', 'hist.75percentile');
         f.should.have.deep.property('[6].points[0][1]', 1);
-        f.should.have.deep.property('[7].metric', 'hist.95percentile');
+        f.should.have.deep.property('[7].metric', 'hist.85percentile');
         f.should.have.deep.property('[7].points[0][1]', 1);
-        f.should.have.deep.property('[8].metric', 'hist.99percentile');
+        f.should.have.deep.property('[8].metric', 'hist.95percentile');
         f.should.have.deep.property('[8].points[0][1]', 1);
+        f.should.have.deep.property('[9].metric', 'hist.99percentile');
+        f.should.have.deep.property('[9].points[0][1]', 1);
 
         // Create 100 samples from [1..100] so we can
         // verify the calculated percentiles.
@@ -187,14 +187,14 @@ describe('Histogram', function() {
         }
         f = h.flush();
 
-        f.should.have.deep.property('[5].metric', 'hist.75percentile');
-        f.should.have.deep.property('[5].points[0][1]', 75);
-        f.should.have.deep.property('[6].metric', 'hist.85percentile');
-        f.should.have.deep.property('[6].points[0][1]', 85);
-        f.should.have.deep.property('[7].metric', 'hist.95percentile');
-        f.should.have.deep.property('[7].points[0][1]', 95);
-        f.should.have.deep.property('[8].metric', 'hist.99percentile');
-        f.should.have.deep.property('[8].points[0][1]', 99);
+        f.should.have.deep.property('[6].metric', 'hist.75percentile');
+        f.should.have.deep.property('[6].points[0][1]', 75);
+        f.should.have.deep.property('[7].metric', 'hist.85percentile');
+        f.should.have.deep.property('[7].points[0][1]', 85);
+        f.should.have.deep.property('[8].metric', 'hist.95percentile');
+        f.should.have.deep.property('[8].points[0][1]', 95);
+        f.should.have.deep.property('[9].metric', 'hist.99percentile');
+        f.should.have.deep.property('[9].points[0][1]', 99);
     });
 
     it('should use custom percentiles and aggregates', function() {
