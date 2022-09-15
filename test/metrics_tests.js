@@ -83,7 +83,7 @@ describe('Counter', function() {
         f[0].should.have.deep.property('points[0][1]', 1);
     });
 
-    it('should flush correctly', function() {
+    it('should flush correctly when given a timestamp', function() {
         var g = new metrics.Counter('the.key', ['mytag'], 'myhost');
         g.addPoint(1, 123000);
         var f = g.flush();
@@ -221,5 +221,68 @@ describe('Histogram', function() {
         f.should.have.deep.property('[1].points[0][1]', 85);
 
     });
+});
 
+describe('Distribution', function() {
+    it('should extend Metric', function() {
+        var g = new metrics.Distribution();
+        g.updateTimestamp.should.be.a('function');
+    });
+
+    it('should flush correctly', function() {
+        var g = new metrics.Distribution('the.key', ['mytag'], 'myhost');
+        g.addPoint(1);
+        var f = g.flush();
+        f.should.have.length(1);
+        f[0].should.have.deep.property('metric', 'the.key');
+        f[0].should.have.deep.property('tags[0]', 'mytag');
+        f[0].should.have.deep.property('host', 'myhost');
+        f[0].should.have.deep.property('type', 'distribution');
+        f[0].should.have.deep.property('points[0][0]', g.timestamp);
+        f[0].should.have.deep.property('points[0][1][0]', 1);
+        f[0].points[0][1].should.have.length(1);
+    });
+
+    it('should flush correctly when given timestamp', function() {
+        var g = new metrics.Distribution('the.key', ['mytag'], 'myhost');
+        g.addPoint(1, 123000);
+        var f = g.flush();
+        f.should.have.length(1);
+        f[0].should.have.deep.property('metric', 'the.key');
+        f[0].should.have.deep.property('tags[0]', 'mytag');
+        f[0].should.have.deep.property('host', 'myhost');
+        f[0].should.have.deep.property('type', 'distribution');
+        f[0].should.have.deep.property('points[0][0]', 123);
+        f[0].should.have.deep.property('points[0][1][0]', 1);
+        f[0].points[0][1].should.have.length(1);
+    });
+
+    it('should format multiple points from different times', function () {
+        var g = new metrics.Distribution('the.key', ['mytag'], 'myhost');
+        g.addPoint(1, 123000);
+        g.addPoint(2, 125000);
+        g.addPoint(3, 121000);
+
+        var f = g.flush();
+        f.should.have.length(1);
+        f[0].points.should.eql([
+            [123, [1]],
+            [125, [2]],
+            [121, [3]]
+        ]);
+    });
+
+    it('should format multiple points from the same time', function () {
+        var g = new metrics.Distribution('the.key', ['mytag'], 'myhost');
+        g.addPoint(1, 123000);
+        g.addPoint(2, 125000);
+        g.addPoint(3, 125000);
+
+        var f = g.flush();
+        f.should.have.length(1);
+        f[0].points.should.eql([
+            [123, [1]],
+            [125, [2, 3]]
+        ]);
+    });
 });
