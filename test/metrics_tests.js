@@ -166,6 +166,28 @@ describe('Histogram', function() {
         f.should.have.deep.property('[4].points[0][1]', 2.5);
     });
 
+    it('should report the median', function() {
+        var h = new metrics.Histogram('hist');
+        var f = h.flush();
+
+        f.should.have.deep.property('[5].metric', 'hist.median');
+        f.should.have.deep.property('[5].points[0][1]', 0);
+
+        h.addPoint(2);
+        h.addPoint(3);
+        h.addPoint(10);
+
+        f = h.flush();
+        f.should.have.deep.property('[5].metric', 'hist.median');
+        f.should.have.deep.property('[5].points[0][1]', 3);
+
+        h.addPoint(4);
+
+        f = h.flush();
+        f.should.have.deep.property('[5].metric', 'hist.median');
+        f.should.have.deep.property('[5].points[0][1]', 3.5);
+    });
+
     it('should report the correct percentiles', function() {
         var h = new metrics.Histogram('hist');
         h.addPoint(1);
