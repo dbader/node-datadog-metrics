@@ -43,6 +43,7 @@ module.exports = {
     gauge: callOnSharedLogger.bind(undefined, 'gauge'),
     increment: callOnSharedLogger.bind(undefined, 'increment'),
     histogram: callOnSharedLogger.bind(undefined, 'histogram'),
+    distribution: callOnSharedLogger.bind(undefined, 'distribution'),
 
     BufferedMetricsLogger: loggers.BufferedMetricsLogger
 };
