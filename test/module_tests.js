@@ -77,4 +77,9 @@ describe('datadog-metrics', function() {
         metrics.histogram('test.histogram', 23);
         delete process.env.DATADOG_API_KEY;
     });
+
+    it('should publicly export built-in reporters', function() {
+        metrics.reporters.should.have.property('DataDogReporter', reporters.DataDogReporter);
+        metrics.reporters.should.have.property('NullReporter', reporters.NullReporter);
+    })
 });

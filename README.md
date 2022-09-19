@@ -122,11 +122,23 @@ Where `options` is an object and can contain the following:
       Datadog-metrics looks for the APP key in `DATADOG_APP_KEY` by default.
 * `defaultTags`: Default tags used for all metric reporting. (optional)
     * Set tags that are common to all metrics.
+* `reporter`: An object that actually sends the buffered metrics. (optional)
+    * There are two built-in reporters you can use:
+        1. `reporters.DataDogReporter` sends metrics to DataDog’s API, and is
+           the default.
+        2. `reporters.NullReporter` throws the metrics away. It’s useful for
+           tests or temporarily disabling your metrics.
 
 Example:
 
 ```js
 metrics.init({ host: 'myhost', prefix: 'myapp.' });
+```
+
+Disabling metrics using `NullReporter`:
+
+```js
+metrics.init({ host: 'myhost', reporter: metrics.NullReporter() });
 ```
 
 
