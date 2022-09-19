@@ -1,0 +1,29 @@
+on:
+  pull_request: {}
+  push: {}
+
+name: Continuous Integration
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node_version: [12, 14, 16, 18]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node_version }}
+          cache: 'npm'
+          cache-dependency-path: '**/package.json'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run loader tests
+        run: |
+          npm test
