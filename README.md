@@ -181,6 +181,31 @@ Example:
 metrics.histogram('test.service_time', 0.248);
 ```
 
+### Distributions
+
+`metrics.distribution(key, value[, tags[, timestamp]])`
+
+Send a distribution value. Distributions are similar to histograms (they create
+several metrics for count, average, percentiles, etc.), but they are calculated
+server-side on DataDog’s systems. This is much higher-overhead than histograms,
+and the individual calculations made from it have to be configured on the
+DataDog website instead of in the options for this package.
+
+You should use this in environments where you have many instances of your
+application running in parallel, or instances constantly starting and stopping
+with different hostnames or identifiers and tagging each one separately is not
+feasible. AWS Lambda or serverless functions are a great example of this. In
+such environments, you also might want to use a distribution instead of
+`increment` or `gauge` (if you have two instances of your app sending those
+metrics at the same second, and they are not tagged differently or have
+different `host` names, one will overwrite the other — distributions will not).
+
+Example:
+
+```js
+metrics.distribution('test.service_time', 0.248);
+```
+
 ### Flushing
 
 `metrics.flush([onSuccess[, onError]])`
