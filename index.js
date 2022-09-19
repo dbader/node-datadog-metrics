@@ -1,5 +1,6 @@
 'use strict';
 const loggers = require('./lib/loggers');
+const reporters = require('./lib/reporters');
 
 let sharedLogger = null;
 
@@ -45,5 +46,7 @@ module.exports = {
     histogram: callOnSharedLogger.bind(undefined, 'histogram'),
     distribution: callOnSharedLogger.bind(undefined, 'distribution'),
 
-    BufferedMetricsLogger: loggers.BufferedMetricsLogger
+    BufferedMetricsLogger: loggers.BufferedMetricsLogger,
+
+    reporters: reporters
 };
