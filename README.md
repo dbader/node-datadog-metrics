@@ -182,7 +182,7 @@ metrics.increment('test.awesomeness_factor', 10);
 
 Sample a histogram value. Histograms will produce metrics that
 describe the distribution of the recorded values, namely the minimum,
-maximum, average, count and the 75th, 85th, 95th and 99th percentiles.
+maximum, average, median, count and the 75th, 85th, 95th and 99th percentiles.
 Optionally, specify a list of *tags* to associate with the metric.
 The optional timestamp is in milliseconds since 1 Jan 1970 00:00:00 UTC,
 e.g. from `Date.now()`.
