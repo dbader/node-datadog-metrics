@@ -178,7 +178,7 @@ metrics.increment('test.awesomeness_factor', 10);
 
 ### Histograms
 
-`metrics.histogram(key, value[, tags[, timestamp]])`
+`metrics.histogram(key, value[, tags[, timestamp[, options]]])`
 
 Sample a histogram value. Histograms will produce metrics that
 describe the distribution of the recorded values, namely the minimum,
@@ -191,6 +191,19 @@ Example:
 
 ```js
 metrics.histogram('test.service_time', 0.248);
+```
+
+You can also specify an options object to adjust which aggregations and
+percentiles should be calculated. For example, to only calculate an average,
+count, and 99th percentile:
+
+```js
+metrics.histogram('test.service_time', 0.248, ['tag:value'], Date.now(), {
+    // Aggregates can include 'max', 'min', 'sum', 'avg', 'median', or 'count'.
+    aggregates: ['avg', 'count'],
+    // Percentiles can include any decimal between 0 and 1.
+    percentiles: [0.99]
+});
 ```
 
 ### Distributions
