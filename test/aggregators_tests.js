@@ -88,8 +88,19 @@ describe('Aggregator', function() {
         agg.addPoint(metrics.Counter, 'test.mykey', 3, ['mytag2'], 'myhost');
         var f = agg.flush();
         f.should.have.length(2);
-        f[0].should.have.deep.property('tags[0]', 'one');
-        f[1].should.have.deep.property('tags[1]', 'two');
+        f[0].tags.should.eql(['one', 'two', 'mytag1']);
+        f[1].tags.should.eql(['one', 'two', 'mytag2']);
+    });
+
+    it('should add default tags for compound metrics', function() {
+        var defaultTags = ['one', 'two'];
+        var agg = new aggregators.Aggregator(defaultTags);
+        agg.addPoint(metrics.Histogram, 'test.mykey', 2, ['mytag1'], 'myhost');
+        var f = agg.flush();
+
+        for (const flushed of f) {
+            flushed.tags.should.eql(['one', 'two', 'mytag1']);
+        }
     });
 });
 
