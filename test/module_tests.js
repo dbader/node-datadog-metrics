@@ -29,7 +29,7 @@ describe('datadog-metrics', function() {
         metrics.init({
             flushIntervalSeconds: 0,
             reporter: {
-                report: function(series, onSuccess, onError) {
+                report (series, onSuccess, onError) {
                     series.should.have.length(12); // 3 + 9 for the histogram.
                     series[0].should.have.deep.property('points[0][1]', 23);
                     series[0].should.have.deep.property('metric', 'test.gauge');
@@ -51,7 +51,7 @@ describe('datadog-metrics', function() {
         metrics.init({
             flushIntervalSeconds: 0,
             reporter: {
-                report: function(series, onSuccess, onError) {
+                report (series, onSuccess, onError) {
                     series.should.have.length(2);
                     series[0].should.have.deep.property('points[0][1]', 1);
                     series[0].should.have.deep.property('metric', 'test.gauge');
