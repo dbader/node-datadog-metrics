@@ -16,7 +16,7 @@ describe('BufferedMetricsLogger', function() {
             reporter: new reporters.NullReporter()
         });
         l.aggregator = {
-            addPoint: function(Type, key, value, tags, host, timestampInMillis) {
+            addPoint (Type, key, value, tags, host, timestampInMillis) {
                 key.should.equal('test.gauge');
                 value.should.equal(23);
                 tags.should.eql(['a:a']);
@@ -32,7 +32,7 @@ describe('BufferedMetricsLogger', function() {
         });
 
         l.aggregator = {
-            addPoint: function(Type, key, value, tags, host) {
+            addPoint (Type, key, value, tags, host) {
                 key.should.equal('test.counter');
                 value.should.equal(1);
             }
@@ -40,7 +40,7 @@ describe('BufferedMetricsLogger', function() {
         l.increment('test.counter');
 
         l.aggregator = {
-            addPoint: function(Type, key, value, tags, host) {
+            addPoint (Type, key, value, tags, host) {
                 key.should.equal('test.counter2');
                 value.should.equal(0);
             }
@@ -48,7 +48,7 @@ describe('BufferedMetricsLogger', function() {
         l.increment('test.counter2', 0);
 
         l.aggregator = {
-            addPoint: function(Type, key, value, tags, host) {
+            addPoint (Type, key, value, tags, host) {
                 key.should.equal('test.counter3');
                 value.should.equal(1);
             }
@@ -56,7 +56,7 @@ describe('BufferedMetricsLogger', function() {
         l.increment('test.counter3', null);
 
         l.aggregator = {
-            addPoint: function(Type, key, value, tags, host, timestampInMillis) {
+            addPoint (Type, key, value, tags, host, timestampInMillis) {
                 key.should.equal('test.counter4');
                 value.should.equal(23);
                 tags.should.eql(['z:z', 'a:a']);
@@ -71,7 +71,7 @@ describe('BufferedMetricsLogger', function() {
             reporter: new reporters.NullReporter()
         });
         l.aggregator = {
-            addPoint: function(Type, key, value, tags, host, timestampInMillis) {
+            addPoint (Type, key, value, tags, host, timestampInMillis) {
                 key.should.equal('test.histogram');
                 value.should.equal(23);
                 tags.should.eql(['a:a']);
@@ -87,7 +87,7 @@ describe('BufferedMetricsLogger', function() {
             host: 'myhost'
         });
         l.aggregator = {
-            addPoint: function(Type, key, value, tags, host) {
+            addPoint (Type, key, value, tags, host) {
                 host.should.equal('myhost');
             }
         };
@@ -102,7 +102,7 @@ describe('BufferedMetricsLogger', function() {
             prefix: 'mynamespace.'
         });
         l.aggregator = {
-            addPoint: function(Type, key, value, tags, host) {
+            addPoint (Type, key, value, tags, host) {
                 key.should.startWith('mynamespace.test.');
             }
         };
