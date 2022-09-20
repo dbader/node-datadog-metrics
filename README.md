@@ -2,7 +2,7 @@
 > Buffered metrics reporting via the Datadog HTTP API.
 
 [![NPM Version][npm-image]][npm-url]
-[![Build Status][travis-image]][travis-url]
+[![Build Status][ci-status-image]][ci-status-url]
 [![Downloads Stats][npm-downloads]][npm-url]
 
 Datadog-metrics lets you collect application metrics through Datadog's HTTP API. Using the HTTP API has the benefit that you **don't need to install the Datadog Agent (StatsD)**. Just get an API key, install the module and you're ready to go.
@@ -309,5 +309,5 @@ Distributed under the MIT license. See ``LICENSE`` for more information.
 [npm-image]: https://img.shields.io/npm/v/datadog-metrics.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/datadog-metrics
 [npm-downloads]: https://img.shields.io/npm/dm/datadog-metrics.svg?style=flat-square
-[travis-image]: https://img.shields.io/travis/dbader/node-datadog-metrics/master.svg?style=flat-square
-[travis-url]: https://travis-ci.org/dbader/node-datadog-metrics
+[ci-status-image]: https://github.com/dbader/node-datadog-metrics/actions/workflows/ci.yml/badge.svg?branch=main
+[ci-status-url]: https://github.com/dbader/node-datadog-metrics/actions/workflows/ci.yml?query=branch%3Amain
