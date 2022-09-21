@@ -118,4 +118,20 @@ describe('BufferedMetricsLogger', function() {
         });
         l.aggregator.defaultTags.should.deep.equal(['one', 'two']);
     });
+
+    it('should allow setting apiHost/site', function() {
+        var l = new BufferedMetricsLogger({
+            apiKey: 'abc123',
+            apiHost: 'datadoghq.eu'
+        });
+        l.reporter.should.have.property('apiHost', 'datadoghq.eu');
+    });
+
+    it('should allow setting apiHost/site with "app.*" URLs', function() {
+        var l = new BufferedMetricsLogger({
+            apiKey: 'abc123',
+            apiHost: 'app.datadoghq.eu'
+        });
+        l.reporter.should.have.property('apiHost', 'datadoghq.eu');
+    });
 });
