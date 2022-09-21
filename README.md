@@ -265,6 +265,43 @@ npm test
 
 ## Release History
 
+* (In development)
+    * Support distribution metrics. You can now send distributions to Datadog by doing:
+
+        ```js
+        const metrics = require('datadog-metrics');
+        metrics.distribution('my.metric.name', 3.8, ['tags:here']);
+        ```
+
+        Distributions are similar to histograms (they create several metrics for count, average, percentiles, etc.), but they are calculated server-side on DataDog’s systems. For more details and guidance on when to use them, see:
+        * The documentation in this project’s README
+        * DataDog’s documentation at https://docs.datadoghq.com/metrics/distributions/
+
+        (Thanks to @Mr0grog.)
+
+    * Don’t use `unref()` on timers in non-Node.js environments. This is a step towards browser compatibility, although we are not testing browser-based usage yet. (Thanks to @Mr0grog.)
+    * Expose built-in reporter classes for public use. If you need to disable the metrics library for some reason, you can now do so with:
+
+        ```js
+        const metrics = require('datadog-metrics');
+        metrics.init({
+            reporter: new metrics.reporters.NullReporter((flushedMetrics) => {
+                // Optional callback to be notified when metrics are flushed.
+            }),
+        });
+        ```
+
+        (Thanks to @Mr0grog.)
+
+    * Add `.median` aggregation for histograms. When you log a histogram metric, it ultimately creates several metrics that track the minimum value, average value, maximum value, etc. There is now one that tracks the median value. StatsD creates the same metric from histograms, so you may find this useful if transitioning from StatsD. (Thanks to @Mr0grog.)
+
+    * This package no longer locks specific versions of its dependencies (instead, your package manager can choose any version that is compatible). This may help when deduplicating packages for faster installs or smaller bundles. (Thanks to @Mr0grog.)
+
+    * INTERNAL: Renamed the default branch in this repo to `main`. (Thanks to @dbader.)
+    * INTERNAL: Use GitHub actions for continuous integration. (Thanks to @Mr0grog.)
+    * INTERNAL: Code style cleanup. (Thanks to @Mr0grog.)
+    * INTERNAL: When flushing, send each metric with its own list of tags. This helps mitigate subtle errors where a change to one metric’s tags may affect others. (Thanks to @Mr0grog.)
+
 * 0.10.1 (2022-09-11)
     * FIX: bug in 0.10.0 where `@datadog/datadog-api-client` was not used correctly. (Thanks to @gquinteros93)
     * [View diff](https://github.com/dbader/node-datadog-metrics/compare/4c29447bbde00565d5258e722b147601f3cc014c...023acfa3a2c5d8dd3f5bbb48c8c02467b2519559)
