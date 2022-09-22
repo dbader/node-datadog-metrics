@@ -30,10 +30,10 @@ describe('datadog-metrics', function() {
             flushIntervalSeconds: 0,
             reporter: {
                 report (series, onSuccess, onError) {
-                    series.should.have.length(12); // 3 + 9 for the histogram.
-                    series[0].should.have.deep.property('points[0][1]', 23);
-                    series[0].should.have.deep.property('metric', 'test.gauge');
-                    series[0].tags.should.have.length(0);
+                    series.should.have.lengthOf(12); // 3 + 9 for the histogram.
+                    series[0].should.have.nested.property('points[0][1]', 23);
+                    series[0].should.have.property('metric', 'test.gauge');
+                    series[0].tags.should.have.lengthOf(0);
                     onSuccess && onSuccess();
                     done();
                 }
@@ -52,13 +52,13 @@ describe('datadog-metrics', function() {
             flushIntervalSeconds: 0,
             reporter: {
                 report (series, onSuccess, onError) {
-                    series.should.have.length(2);
-                    series[0].should.have.deep.property('points[0][1]', 1);
-                    series[0].should.have.deep.property('metric', 'test.gauge');
-                    series[0].should.have.deep.property('tags[0]', 'tag1');
-                    series[1].should.have.deep.property('points[0][1]', 2);
-                    series[1].should.have.deep.property('metric', 'test.gauge');
-                    series[1].should.have.deep.property('tags[0]', 'tag2');
+                    series.should.have.lengthOf(2);
+                    series[0].should.have.nested.property('points[0][1]', 1);
+                    series[0].should.have.property('metric', 'test.gauge');
+                    series[0].should.have.deep.property('tags', ['tag1']);
+                    series[1].should.have.nested.property('points[0][1]', 2);
+                    series[1].should.have.property('metric', 'test.gauge');
+                    series[1].should.have.deep.property('tags', ['tag2']);
                     onSuccess && onSuccess();
                     done();
                 }
