@@ -2,17 +2,17 @@
 
 'use strict';
 
-var chai = require('chai');
+const chai = require('chai');
 chai.use(require('chai-string'));
 
-var should = chai.should();
-var loggers = require('../lib/loggers');
-var reporters = require('../lib/reporters');
-var BufferedMetricsLogger = loggers.BufferedMetricsLogger;
+const should = chai.should();
+const loggers = require('../lib/loggers');
+const reporters = require('../lib/reporters');
+const BufferedMetricsLogger = loggers.BufferedMetricsLogger;
 
 describe('BufferedMetricsLogger', function() {
     it('should have a gauge() metric', function() {
-        var l = new BufferedMetricsLogger({
+        const l = new BufferedMetricsLogger({
             reporter: new reporters.NullReporter()
         });
         l.aggregator = {
@@ -27,7 +27,7 @@ describe('BufferedMetricsLogger', function() {
     });
 
     it('should have an increment() metric', function() {
-        var l = new BufferedMetricsLogger({
+        const l = new BufferedMetricsLogger({
             reporter: new reporters.NullReporter()
         });
 
@@ -67,7 +67,7 @@ describe('BufferedMetricsLogger', function() {
     });
 
     it('should have a histogram() metric', function() {
-        var l = new BufferedMetricsLogger({
+        const l = new BufferedMetricsLogger({
             reporter: new reporters.NullReporter()
         });
         l.aggregator = {
@@ -82,7 +82,7 @@ describe('BufferedMetricsLogger', function() {
     });
 
     it('should allow setting a default host', function() {
-        var l = new BufferedMetricsLogger({
+        const l = new BufferedMetricsLogger({
             reporter: new reporters.NullReporter(),
             host: 'myhost'
         });
@@ -97,7 +97,7 @@ describe('BufferedMetricsLogger', function() {
     });
 
     it('should allow setting a default key prefix', function() {
-        var l = new BufferedMetricsLogger({
+        const l = new BufferedMetricsLogger({
             reporter: new reporters.NullReporter(),
             prefix: 'mynamespace.'
         });
@@ -112,7 +112,7 @@ describe('BufferedMetricsLogger', function() {
     });
 
     it('should allow setting default tags', function() {
-        var l = new BufferedMetricsLogger({
+        const l = new BufferedMetricsLogger({
             reporter: new reporters.NullReporter(),
             defaultTags: ['one', 'two']
         });
@@ -120,7 +120,7 @@ describe('BufferedMetricsLogger', function() {
     });
 
     it('should allow setting apiHost/site', function() {
-        var l = new BufferedMetricsLogger({
+        const l = new BufferedMetricsLogger({
             apiKey: 'abc123',
             apiHost: 'datadoghq.eu'
         });
@@ -128,7 +128,7 @@ describe('BufferedMetricsLogger', function() {
     });
 
     it('should allow setting apiHost/site with "app.*" URLs', function() {
-        var l = new BufferedMetricsLogger({
+        const l = new BufferedMetricsLogger({
             apiKey: 'abc123',
             apiHost: 'app.datadoghq.eu'
         });
