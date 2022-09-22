@@ -24,8 +24,8 @@
   "devDependencies": {
     "chai": "3.5.0",
     "chai-string": "1.1.6",
-    "jscs": "2.9.0",
-    "jshint": "^2.12.0",
+    "jscs": "3.0.7",
+    "jshint": "^2.13.5",
     "jshint-stylish-ex": "0.2.0",
     "mocha": "2.4.5"
   },

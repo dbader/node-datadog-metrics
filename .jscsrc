@@ -14,6 +14,8 @@
   "requireSpaceBeforeBinaryOperators": ["+", "-", "/", "*", "=", "==", "===", "!=", "!==", ">", "<", ">=", "<="],
   "requireSpacesInConditionalExpression": true,
   "requireSpacesInFunctionExpression": { "beforeOpeningCurlyBrace": true },
+  "requireSpacesInsideImportedObjectBraces": true,
+  "requireUseStrict": true,
   "validateIndentation": 4,
   "validateLineBreaks": "LF",
   "validateQuoteMarks": "'"

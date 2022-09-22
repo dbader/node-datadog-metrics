@@ -27,3 +27,22 @@ jobs:
       - name: Run loader tests
         run: |
           npm test
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: '**/package.json'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run linter
+        run: |
+          npm run check-codestyle
