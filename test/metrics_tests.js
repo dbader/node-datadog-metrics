@@ -41,26 +41,24 @@ describe('Gauge', function() {
         const g = new metrics.Gauge('the.key', ['mytag'], 'myhost');
         g.addPoint(1);
         const f = g.flush();
-        f.should.have.length(1);
-        f[0].should.have.deep.property('metric', 'the.key');
-        f[0].should.have.deep.property('tags[0]', 'mytag');
-        f[0].should.have.deep.property('host', 'myhost');
-        f[0].should.have.deep.property('type', 'gauge');
-        f[0].should.have.deep.property('points[0][0]', g.timestamp);
-        f[0].should.have.deep.property('points[0][1]', 1);
+        f.should.have.lengthOf(1);
+        f[0].should.have.property('metric', 'the.key');
+        f[0].should.have.deep.property('tags', ['mytag']);
+        f[0].should.have.property('host', 'myhost');
+        f[0].should.have.property('type', 'gauge');
+        f[0].should.have.deep.property('points', [[ g.timestamp, 1 ]]);
     });
 
     it('should flush correctly when given timestamp', function() {
         const g = new metrics.Gauge('the.key', ['mytag'], 'myhost');
         g.addPoint(1, 123000);
         const f = g.flush();
-        f.should.have.length(1);
-        f[0].should.have.deep.property('metric', 'the.key');
-        f[0].should.have.deep.property('tags[0]', 'mytag');
-        f[0].should.have.deep.property('host', 'myhost');
-        f[0].should.have.deep.property('type', 'gauge');
-        f[0].should.have.deep.property('points[0][0]', 123);
-        f[0].should.have.deep.property('points[0][1]', 1);
+        f.should.have.lengthOf(1);
+        f[0].should.have.property('metric', 'the.key');
+        f[0].should.have.deep.property('tags', ['mytag']);
+        f[0].should.have.property('host', 'myhost');
+        f[0].should.have.property('type', 'gauge');
+        f[0].should.have.deep.property('points', [[ 123, 1 ]]);
     });
 });
 
@@ -74,26 +72,24 @@ describe('Counter', function() {
         const g = new metrics.Counter('the.key', ['mytag'], 'myhost');
         g.addPoint(1);
         const f = g.flush();
-        f.should.have.length(1);
-        f[0].should.have.deep.property('metric', 'the.key');
-        f[0].should.have.deep.property('tags[0]', 'mytag');
-        f[0].should.have.deep.property('host', 'myhost');
-        f[0].should.have.deep.property('type', 'count');
-        f[0].should.have.deep.property('points[0][0]', g.timestamp);
-        f[0].should.have.deep.property('points[0][1]', 1);
+        f.should.have.lengthOf(1);
+        f[0].should.have.property('metric', 'the.key');
+        f[0].should.have.deep.property('tags', ['mytag']);
+        f[0].should.have.property('host', 'myhost');
+        f[0].should.have.property('type', 'count');
+        f[0].should.have.deep.property('points', [[ g.timestamp, 1 ]]);
     });
 
     it('should flush correctly when given a timestamp', function() {
         const g = new metrics.Counter('the.key', ['mytag'], 'myhost');
         g.addPoint(1, 123000);
         const f = g.flush();
-        f.should.have.length(1);
-        f[0].should.have.deep.property('metric', 'the.key');
-        f[0].should.have.deep.property('tags[0]', 'mytag');
-        f[0].should.have.deep.property('host', 'myhost');
-        f[0].should.have.deep.property('type', 'count');
-        f[0].should.have.deep.property('points[0][0]', 123);
-        f[0].should.have.deep.property('points[0][1]', 1);
+        f.should.have.lengthOf(1);
+        f[0].should.have.property('metric', 'the.key');
+        f[0].should.have.deep.property('tags', ['mytag']);
+        f[0].should.have.property('host', 'myhost');
+        f[0].should.have.property('type', 'count');
+        f[0].should.have.deep.property('points', [[ 123, 1 ]]);
     });
 });
 
@@ -107,85 +103,85 @@ describe('Histogram', function() {
         const h = new metrics.Histogram('hist');
         let f = h.flush();
 
-        f.should.have.deep.property('[0].metric', 'hist.min');
-        f.should.have.deep.property('[0].points[0][1]', Infinity);
-        f.should.have.deep.property('[1].metric', 'hist.max');
-        f.should.have.deep.property('[1].points[0][1]', -Infinity);
+        f.should.have.nested.property('[0].metric', 'hist.min');
+        f.should.have.nested.deep.property('[0].points', [[ h.timestamp, Infinity ]]);
+        f.should.have.nested.property('[1].metric', 'hist.max');
+        f.should.have.nested.deep.property('[1].points', [[ h.timestamp, -Infinity ]]);
 
         h.addPoint(23);
 
         f = h.flush();
-        f.should.have.deep.property('[0].metric', 'hist.min');
-        f.should.have.deep.property('[0].points[0][1]', 23);
-        f.should.have.deep.property('[1].metric', 'hist.max');
-        f.should.have.deep.property('[1].points[0][1]', 23);
+        f.should.have.nested.property('[0].metric', 'hist.min');
+        f.should.have.nested.deep.property('[0].points', [[ h.timestamp, 23 ]]);
+        f.should.have.nested.property('[1].metric', 'hist.max');
+        f.should.have.nested.deep.property('[0].points', [[ h.timestamp, 23 ]]);
     });
 
     it('should report a sum of all values', function() {
         const h = new metrics.Histogram('hist');
         let f = h.flush();
 
-        f.should.have.deep.property('[2].metric', 'hist.sum');
-        f.should.have.deep.property('[2].points[0][1]', 0);
+        f.should.have.nested.property('[2].metric', 'hist.sum');
+        f.should.have.nested.deep.property('[2].points', [[ h.timestamp, 0 ]]);
 
         h.addPoint(2);
         h.addPoint(3);
 
         f = h.flush();
-        f.should.have.deep.property('[2].metric', 'hist.sum');
-        f.should.have.deep.property('[2].points[0][1]', 5);
+        f.should.have.nested.property('[2].metric', 'hist.sum');
+        f.should.have.nested.deep.property('[2].points', [[ h.timestamp, 5 ]]);
     });
 
     it('should report the number of samples (count)', function() {
         const h = new metrics.Histogram('hist');
         let f = h.flush();
 
-        f.should.have.deep.property('[3].metric', 'hist.count');
-        f.should.have.deep.property('[3].points[0][1]', 0);
+        f.should.have.nested.property('[3].metric', 'hist.count');
+        f.should.have.nested.deep.property('[3].points', [[ h.timestamp, 0 ]]);
 
         h.addPoint(2);
         h.addPoint(3);
 
         f = h.flush();
-        f.should.have.deep.property('[3].metric', 'hist.count');
-        f.should.have.deep.property('[3].points[0][1]', 2);
+        f.should.have.nested.property('[3].metric', 'hist.count');
+        f.should.have.nested.deep.property('[3].points', [[ h.timestamp, 2 ]]);
     });
 
     it('should report the average', function() {
         const h = new metrics.Histogram('hist');
         let f = h.flush();
 
-        f.should.have.deep.property('[4].metric', 'hist.avg');
-        f.should.have.deep.property('[4].points[0][1]', 0);
+        f.should.have.nested.property('[4].metric', 'hist.avg');
+        f.should.have.nested.deep.property('[4].points', [[ h.timestamp, 0 ]]);
 
         h.addPoint(2);
         h.addPoint(3);
 
         f = h.flush();
-        f.should.have.deep.property('[4].metric', 'hist.avg');
-        f.should.have.deep.property('[4].points[0][1]', 2.5);
+        f.should.have.nested.property('[4].metric', 'hist.avg');
+        f.should.have.nested.deep.property('[4].points', [[ h.timestamp, 2.5 ]]);
     });
 
     it('should report the median', function() {
         const h = new metrics.Histogram('hist');
         let f = h.flush();
 
-        f.should.have.deep.property('[5].metric', 'hist.median');
-        f.should.have.deep.property('[5].points[0][1]', 0);
+        f.should.have.nested.property('[5].metric', 'hist.median');
+        f.should.have.nested.deep.property('[5].points', [[ h.timestamp, 0 ]]);
 
         h.addPoint(2);
         h.addPoint(3);
         h.addPoint(10);
 
         f = h.flush();
-        f.should.have.deep.property('[5].metric', 'hist.median');
-        f.should.have.deep.property('[5].points[0][1]', 3);
+        f.should.have.nested.property('[5].metric', 'hist.median');
+        f.should.have.nested.deep.property('[5].points', [[ h.timestamp, 3 ]]);
 
         h.addPoint(4);
 
         f = h.flush();
-        f.should.have.deep.property('[5].metric', 'hist.median');
-        f.should.have.deep.property('[5].points[0][1]', 3.5);
+        f.should.have.nested.property('[5].metric', 'hist.median');
+        f.should.have.nested.deep.property('[5].points', [[ h.timestamp, 3.5 ]]);
     });
 
     it('should report the correct percentiles', function() {
@@ -193,14 +189,14 @@ describe('Histogram', function() {
         h.addPoint(1);
         let f = h.flush();
 
-        f.should.have.deep.property('[6].metric', 'hist.75percentile');
-        f.should.have.deep.property('[6].points[0][1]', 1);
-        f.should.have.deep.property('[7].metric', 'hist.85percentile');
-        f.should.have.deep.property('[7].points[0][1]', 1);
-        f.should.have.deep.property('[8].metric', 'hist.95percentile');
-        f.should.have.deep.property('[8].points[0][1]', 1);
-        f.should.have.deep.property('[9].metric', 'hist.99percentile');
-        f.should.have.deep.property('[9].points[0][1]', 1);
+        f.should.have.nested.property('[6].metric', 'hist.75percentile');
+        f.should.have.nested.deep.property('[6].points', [[ h.timestamp, 1 ]]);
+        f.should.have.nested.property('[7].metric', 'hist.85percentile');
+        f.should.have.nested.deep.property('[7].points', [[ h.timestamp, 1 ]]);
+        f.should.have.nested.property('[8].metric', 'hist.95percentile');
+        f.should.have.nested.deep.property('[8].points', [[ h.timestamp, 1 ]]);
+        f.should.have.nested.property('[9].metric', 'hist.99percentile');
+        f.should.have.nested.deep.property('[9].points', [[ h.timestamp, 1 ]]);
 
         // Create 100 samples from [1..100] so we can
         // verify the calculated percentiles.
@@ -209,14 +205,14 @@ describe('Histogram', function() {
         }
         f = h.flush();
 
-        f.should.have.deep.property('[6].metric', 'hist.75percentile');
-        f.should.have.deep.property('[6].points[0][1]', 75);
-        f.should.have.deep.property('[7].metric', 'hist.85percentile');
-        f.should.have.deep.property('[7].points[0][1]', 85);
-        f.should.have.deep.property('[8].metric', 'hist.95percentile');
-        f.should.have.deep.property('[8].points[0][1]', 95);
-        f.should.have.deep.property('[9].metric', 'hist.99percentile');
-        f.should.have.deep.property('[9].points[0][1]', 99);
+        f.should.have.nested.property('[6].metric', 'hist.75percentile');
+        f.should.have.nested.deep.property('[6].points', [[ h.timestamp, 75 ]]);
+        f.should.have.nested.property('[7].metric', 'hist.85percentile');
+        f.should.have.nested.deep.property('[7].points', [[ h.timestamp, 85 ]]);
+        f.should.have.nested.property('[8].metric', 'hist.95percentile');
+        f.should.have.nested.deep.property('[8].points', [[ h.timestamp, 95 ]]);
+        f.should.have.nested.property('[9].metric', 'hist.99percentile');
+        f.should.have.nested.deep.property('[9].points', [[ h.timestamp, 99 ]]);
     });
 
     it('should use custom percentiles and aggregates', function() {
@@ -226,11 +222,11 @@ describe('Histogram', function() {
         h.addPoint(1);
         let f = h.flush();
 
-        f.should.have.deep.property('[0].metric', 'hist.avg');
-        f.should.have.deep.property('[0].points[0][1]', 1);
+        f.should.have.nested.property('[0].metric', 'hist.avg');
+        f.should.have.nested.deep.property('[0].points', [[ h.timestamp, 1 ]]);
 
-        f.should.have.deep.property('[1].metric', 'hist.85percentile');
-        f.should.have.deep.property('[1].points[0][1]', 1);
+        f.should.have.nested.property('[1].metric', 'hist.85percentile');
+        f.should.have.nested.deep.property('[1].points', [[ h.timestamp, 1 ]]);
 
         // Create 100 samples from [1..100] so we can
         // verify the calculated percentiles.
@@ -239,9 +235,8 @@ describe('Histogram', function() {
         }
         f = h.flush();
 
-        f.should.have.deep.property('[1].metric', 'hist.85percentile');
-        f.should.have.deep.property('[1].points[0][1]', 85);
-
+        f.should.have.nested.property('[1].metric', 'hist.85percentile');
+        f.should.have.nested.deep.property('[1].points', [[ h.timestamp, 85 ]]);
     });
 });
 
@@ -255,28 +250,24 @@ describe('Distribution', function() {
         const g = new metrics.Distribution('the.key', ['mytag'], 'myhost');
         g.addPoint(1);
         const f = g.flush();
-        f.should.have.length(1);
-        f[0].should.have.deep.property('metric', 'the.key');
-        f[0].should.have.deep.property('tags[0]', 'mytag');
-        f[0].should.have.deep.property('host', 'myhost');
-        f[0].should.have.deep.property('type', 'distribution');
-        f[0].should.have.deep.property('points[0][0]', g.timestamp);
-        f[0].should.have.deep.property('points[0][1][0]', 1);
-        f[0].points[0][1].should.have.length(1);
+        f.should.have.lengthOf(1);
+        f[0].should.have.property('metric', 'the.key');
+        f[0].should.have.deep.property('tags', ['mytag']);
+        f[0].should.have.property('host', 'myhost');
+        f[0].should.have.property('type', 'distribution');
+        f[0].should.have.deep.property('points', [[ g.timestamp, [1] ]]);
     });
 
     it('should flush correctly when given timestamp', function() {
         const g = new metrics.Distribution('the.key', ['mytag'], 'myhost');
         g.addPoint(1, 123000);
         const f = g.flush();
-        f.should.have.length(1);
-        f[0].should.have.deep.property('metric', 'the.key');
-        f[0].should.have.deep.property('tags[0]', 'mytag');
-        f[0].should.have.deep.property('host', 'myhost');
-        f[0].should.have.deep.property('type', 'distribution');
-        f[0].should.have.deep.property('points[0][0]', 123);
-        f[0].should.have.deep.property('points[0][1][0]', 1);
-        f[0].points[0][1].should.have.length(1);
+        f.should.have.lengthOf(1);
+        f[0].should.have.property('metric', 'the.key');
+        f[0].should.have.deep.property('tags', ['mytag']);
+        f[0].should.have.property('host', 'myhost');
+        f[0].should.have.property('type', 'distribution');
+        f[0].should.have.deep.property('points', [[ 123, [1] ]]);
     });
 
     it('should format multiple points from different times', function () {
@@ -286,7 +277,7 @@ describe('Distribution', function() {
         g.addPoint(3, 121000);
 
         const f = g.flush();
-        f.should.have.length(1);
+        f.should.have.lengthOf(1);
         f[0].points.should.eql([
             [123, [1]],
             [125, [2]],
@@ -301,7 +292,7 @@ describe('Distribution', function() {
         g.addPoint(3, 125000);
 
         const f = g.flush();
-        f.should.have.length(1);
+        f.should.have.lengthOf(1);
         f[0].points.should.eql([
             [123, [1]],
             [125, [2, 3]]
