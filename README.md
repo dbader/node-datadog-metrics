@@ -279,7 +279,6 @@ npm test
 
         (Thanks to @Mr0grog.)
 
-    * Don’t use `unref()` on timers in non-Node.js environments. This is a step towards browser compatibility, although we are not testing browser-based usage yet. (Thanks to @Mr0grog.)
     * Expose built-in reporter classes for public use. If you need to disable the metrics library for some reason, you can now do so with:
 
         ```js
@@ -297,10 +296,13 @@ npm test
 
     * This package no longer locks specific versions of its dependencies (instead, your package manager can choose any version that is compatible). This may help when deduplicating packages for faster installs or smaller bundles. (Thanks to @Mr0grog.)
 
+    * FIX: Don’t use `unref()` on timers in non-Node.js environments. This is a step towards browser compatibility, although we are not testing browser-based usage yet. (Thanks to @Mr0grog.)
+    * FIX: The `apiHost` option was broken in v0.10.0 and now works again. (Thanks to @Mr0grog.)
     * INTERNAL: Renamed the default branch in this repo to `main`. (Thanks to @dbader.)
     * INTERNAL: Use GitHub actions for continuous integration. (Thanks to @Mr0grog.)
     * INTERNAL: Code style cleanup. (Thanks to @Mr0grog.)
     * INTERNAL: When flushing, send each metric with its own list of tags. This helps mitigate subtle errors where a change to one metric’s tags may affect others. (Thanks to @Mr0grog.)
+    * [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.10.1...main)
 
 * 0.10.1 (2022-09-11)
     * FIX: bug in 0.10.0 where `@datadog/datadog-api-client` was not used correctly. (Thanks to @gquinteros93)
@@ -321,7 +323,7 @@ npm test
         ```
 
         (Thanks to @gquinteros93.)
-    
+
     * INTERNAL: Clean up continuous integration on TravisCI. (Thanks to @ErikBoesen.)
 
     * [View diff](https://github.com/dbader/node-datadog-metrics/compare/99bdc97cead1d3fabe12bf594e945c64cba5d643...4c29447bbde00565d5258e722b147601f3cc014c)
