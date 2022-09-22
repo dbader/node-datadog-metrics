@@ -5,6 +5,8 @@
     // Environments
     // ------------
     //
+    // ES10 (2019) roughly matches Node.js v12.
+    "esversion": 10,
     "predef": [ ],
     "globals": {
     },
@@ -61,6 +63,8 @@
     "maxcomplexity": false,
 
     "maxlen": 110,
+
+    "varstmt": true,
 
     // Relaxing options
     // ----------------
