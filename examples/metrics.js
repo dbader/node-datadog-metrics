@@ -13,4 +13,3 @@ metrics.flush = promisfy(metrics.flush)
 
     await metrics.flush();
 })();
-

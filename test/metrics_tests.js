@@ -2,30 +2,30 @@
 
 'use strict';
 
-var chai = require('chai');
+const chai = require('chai');
 chai.use(require('chai-string'));
 
-var should = chai.should();
+const should = chai.should();
 
-var metrics = require('../lib/metrics');
+const metrics = require('../lib/metrics');
 
 describe('Metric', function() {
     it('should set its initial state correctly', function() {
-        var m = new metrics.Metric('the.key', ['tag1'], 'myhost');
+        const m = new metrics.Metric('the.key', ['tag1'], 'myhost');
         m.key.should.equal('the.key');
         m.tags.should.deep.equal(['tag1']);
         m.host.should.equal('myhost');
     });
 
     it('should update the timestamp with Date.now when a data point is added', function() {
-        var m = new metrics.Metric();
-        var now = Date.now();
+        const m = new metrics.Metric();
+        const now = Date.now();
         m.updateTimestamp();
-        var diff = (m.timestamp * 1000) - now;
+        const diff = (m.timestamp * 1000) - now;
         Math.abs(diff).should.lessThan(1000); // within one second
     });
     it('should update the timestamp when a data point is added with a timestamp in ms', function() {
-        var m = new metrics.Metric();
+        const m = new metrics.Metric();
         m.updateTimestamp(123000);
         m.timestamp.should.equal(123);
     });
@@ -33,14 +33,14 @@ describe('Metric', function() {
 
 describe('Gauge', function() {
     it('should extend Metric', function() {
-        var g = new metrics.Gauge();
+        const g = new metrics.Gauge();
         g.updateTimestamp.should.be.a('function');
     });
 
     it('should flush correctly', function() {
-        var g = new metrics.Gauge('the.key', ['mytag'], 'myhost');
+        const g = new metrics.Gauge('the.key', ['mytag'], 'myhost');
         g.addPoint(1);
-        var f = g.flush();
+        const f = g.flush();
         f.should.have.length(1);
         f[0].should.have.deep.property('metric', 'the.key');
         f[0].should.have.deep.property('tags[0]', 'mytag');
@@ -51,9 +51,9 @@ describe('Gauge', function() {
     });
 
     it('should flush correctly when given timestamp', function() {
-        var g = new metrics.Gauge('the.key', ['mytag'], 'myhost');
+        const g = new metrics.Gauge('the.key', ['mytag'], 'myhost');
         g.addPoint(1, 123000);
-        var f = g.flush();
+        const f = g.flush();
         f.should.have.length(1);
         f[0].should.have.deep.property('metric', 'the.key');
         f[0].should.have.deep.property('tags[0]', 'mytag');
@@ -66,14 +66,14 @@ describe('Gauge', function() {
 
 describe('Counter', function() {
     it('should extend Metric', function() {
-        var g = new metrics.Counter();
+        const g = new metrics.Counter();
         g.updateTimestamp.should.be.a('function');
     });
 
     it('should flush correctly', function() {
-        var g = new metrics.Counter('the.key', ['mytag'], 'myhost');
+        const g = new metrics.Counter('the.key', ['mytag'], 'myhost');
         g.addPoint(1);
-        var f = g.flush();
+        const f = g.flush();
         f.should.have.length(1);
         f[0].should.have.deep.property('metric', 'the.key');
         f[0].should.have.deep.property('tags[0]', 'mytag');
@@ -84,9 +84,9 @@ describe('Counter', function() {
     });
 
     it('should flush correctly when given a timestamp', function() {
-        var g = new metrics.Counter('the.key', ['mytag'], 'myhost');
+        const g = new metrics.Counter('the.key', ['mytag'], 'myhost');
         g.addPoint(1, 123000);
-        var f = g.flush();
+        const f = g.flush();
         f.should.have.length(1);
         f[0].should.have.deep.property('metric', 'the.key');
         f[0].should.have.deep.property('tags[0]', 'mytag');
@@ -99,13 +99,13 @@ describe('Counter', function() {
 
 describe('Histogram', function() {
     it('should extend Metric', function() {
-        var h = new metrics.Histogram();
+        const h = new metrics.Histogram();
         h.updateTimestamp.should.be.a('function');
     });
 
     it('should report the min and max of all values', function() {
-        var h = new metrics.Histogram('hist');
-        var f = h.flush();
+        const h = new metrics.Histogram('hist');
+        let f = h.flush();
 
         f.should.have.deep.property('[0].metric', 'hist.min');
         f.should.have.deep.property('[0].points[0][1]', Infinity);
@@ -122,8 +122,8 @@ describe('Histogram', function() {
     });
 
     it('should report a sum of all values', function() {
-        var h = new metrics.Histogram('hist');
-        var f = h.flush();
+        const h = new metrics.Histogram('hist');
+        let f = h.flush();
 
         f.should.have.deep.property('[2].metric', 'hist.sum');
         f.should.have.deep.property('[2].points[0][1]', 0);
@@ -137,8 +137,8 @@ describe('Histogram', function() {
     });
 
     it('should report the number of samples (count)', function() {
-        var h = new metrics.Histogram('hist');
-        var f = h.flush();
+        const h = new metrics.Histogram('hist');
+        let f = h.flush();
 
         f.should.have.deep.property('[3].metric', 'hist.count');
         f.should.have.deep.property('[3].points[0][1]', 0);
@@ -152,8 +152,8 @@ describe('Histogram', function() {
     });
 
     it('should report the average', function() {
-        var h = new metrics.Histogram('hist');
-        var f = h.flush();
+        const h = new metrics.Histogram('hist');
+        let f = h.flush();
 
         f.should.have.deep.property('[4].metric', 'hist.avg');
         f.should.have.deep.property('[4].points[0][1]', 0);
@@ -167,8 +167,8 @@ describe('Histogram', function() {
     });
 
     it('should report the median', function() {
-        var h = new metrics.Histogram('hist');
-        var f = h.flush();
+        const h = new metrics.Histogram('hist');
+        let f = h.flush();
 
         f.should.have.deep.property('[5].metric', 'hist.median');
         f.should.have.deep.property('[5].points[0][1]', 0);
@@ -189,9 +189,9 @@ describe('Histogram', function() {
     });
 
     it('should report the correct percentiles', function() {
-        var h = new metrics.Histogram('hist');
+        const h = new metrics.Histogram('hist');
         h.addPoint(1);
-        var f = h.flush();
+        let f = h.flush();
 
         f.should.have.deep.property('[6].metric', 'hist.75percentile');
         f.should.have.deep.property('[6].points[0][1]', 1);
@@ -204,7 +204,7 @@ describe('Histogram', function() {
 
         // Create 100 samples from [1..100] so we can
         // verify the calculated percentiles.
-        for (var i = 2; i <= 100; i++) {
+        for (let i = 2; i <= 100; i++) {
             h.addPoint(i);
         }
         f = h.flush();
@@ -224,7 +224,7 @@ describe('Histogram', function() {
         const percentiles = [0.85];
         const h = new metrics.Histogram('hist', [], 'myhost', { aggregates, percentiles });
         h.addPoint(1);
-        var f = h.flush();
+        let f = h.flush();
 
         f.should.have.deep.property('[0].metric', 'hist.avg');
         f.should.have.deep.property('[0].points[0][1]', 1);
@@ -234,7 +234,7 @@ describe('Histogram', function() {
 
         // Create 100 samples from [1..100] so we can
         // verify the calculated percentiles.
-        for (var i = 2; i <= 100; i++) {
+        for (let i = 2; i <= 100; i++) {
             h.addPoint(i);
         }
         f = h.flush();
@@ -247,14 +247,14 @@ describe('Histogram', function() {
 
 describe('Distribution', function() {
     it('should extend Metric', function() {
-        var g = new metrics.Distribution();
+        const g = new metrics.Distribution();
         g.updateTimestamp.should.be.a('function');
     });
 
     it('should flush correctly', function() {
-        var g = new metrics.Distribution('the.key', ['mytag'], 'myhost');
+        const g = new metrics.Distribution('the.key', ['mytag'], 'myhost');
         g.addPoint(1);
-        var f = g.flush();
+        const f = g.flush();
         f.should.have.length(1);
         f[0].should.have.deep.property('metric', 'the.key');
         f[0].should.have.deep.property('tags[0]', 'mytag');
@@ -266,9 +266,9 @@ describe('Distribution', function() {
     });
 
     it('should flush correctly when given timestamp', function() {
-        var g = new metrics.Distribution('the.key', ['mytag'], 'myhost');
+        const g = new metrics.Distribution('the.key', ['mytag'], 'myhost');
         g.addPoint(1, 123000);
-        var f = g.flush();
+        const f = g.flush();
         f.should.have.length(1);
         f[0].should.have.deep.property('metric', 'the.key');
         f[0].should.have.deep.property('tags[0]', 'mytag');
@@ -280,12 +280,12 @@ describe('Distribution', function() {
     });
 
     it('should format multiple points from different times', function () {
-        var g = new metrics.Distribution('the.key', ['mytag'], 'myhost');
+        const g = new metrics.Distribution('the.key', ['mytag'], 'myhost');
         g.addPoint(1, 123000);
         g.addPoint(2, 125000);
         g.addPoint(3, 121000);
 
-        var f = g.flush();
+        const f = g.flush();
         f.should.have.length(1);
         f[0].points.should.eql([
             [123, [1]],
@@ -295,12 +295,12 @@ describe('Distribution', function() {
     });
 
     it('should format multiple points from the same time', function () {
-        var g = new metrics.Distribution('the.key', ['mytag'], 'myhost');
+        const g = new metrics.Distribution('the.key', ['mytag'], 'myhost');
         g.addPoint(1, 123000);
         g.addPoint(2, 125000);
         g.addPoint(3, 125000);
 
-        var f = g.flush();
+        const f = g.flush();
         f.should.have.length(1);
         f[0].points.should.eql([
             [123, [1]],

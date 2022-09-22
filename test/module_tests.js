@@ -2,11 +2,11 @@
 
 'use strict';
 
-var chai = require('chai');
-var should = chai.should();
+const chai = require('chai');
+const should = chai.should();
 
-var metrics = null;
-var reporters = require('../lib/reporters.js');
+let metrics = null;
+const reporters = require('../lib/reporters.js');
 
 // Force-reload the module before every test so we
 // can realistically test all the scenarios.
@@ -18,7 +18,7 @@ beforeEach(function() {
 describe('datadog-metrics', function() {
     it('should let me create a metrics logger instance', function() {
         metrics.BufferedMetricsLogger.should.be.a('function');
-        var logger = new metrics.BufferedMetricsLogger({
+        const logger = new metrics.BufferedMetricsLogger({
             reporter: new reporters.NullReporter()
         });
         logger.gauge('test.gauge', 23);
@@ -81,5 +81,5 @@ describe('datadog-metrics', function() {
     it('should publicly export built-in reporters', function() {
         metrics.reporters.should.have.property('DataDogReporter', reporters.DataDogReporter);
         metrics.reporters.should.have.property('NullReporter', reporters.NullReporter);
-    })
+    });
 });
