@@ -11,6 +11,8 @@ The downside of using the HTTP API is that it can negatively affect your app's p
 
 ## Installation
 
+Datadog-metrics is compatible with Node.js v12 and later. You can install it with NPM:
+
 ```sh
 npm install datadog-metrics --save
 ```
