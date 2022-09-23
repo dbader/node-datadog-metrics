@@ -28,5 +28,14 @@ build/Release
 node_modules
 package-lock.json
 
+# Node versioning files for NVM, Nodenv, etc. This is a library that supports
+# multiple versions of Node.js so whatever a user has set locally should not be
+# shared with others.
+.node-version
+.nvmrc
+
 # Users Environment Variables
 .lock-wscript
+
+# Scratch working files
+scratch.*
