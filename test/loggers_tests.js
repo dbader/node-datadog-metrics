@@ -5,12 +5,18 @@
 const chai = require('chai');
 chai.use(require('chai-string'));
 
+const nock = require('nock');
+
 const should = chai.should();
 const loggers = require('../lib/loggers');
 const reporters = require('../lib/reporters');
 const BufferedMetricsLogger = loggers.BufferedMetricsLogger;
 
 describe('BufferedMetricsLogger', function() {
+    this.afterEach(() => {
+        nock.cleanAll();
+    });
+
     it('should have a gauge() metric', function() {
         const l = new BufferedMetricsLogger({
             reporter: new reporters.NullReporter()
@@ -133,5 +139,77 @@ describe('BufferedMetricsLogger', function() {
             apiHost: 'app.datadoghq.eu'
         });
         l.reporter.should.have.property('apiHost', 'datadoghq.eu');
+    });
+
+    it('should call the flush success handler after flushing', function(done) {
+        nock('https://api.datadoghq.com')
+            .post('/api/v1/series')
+            .reply(202, { errors: [] });
+
+        const logger = new BufferedMetricsLogger({
+            apiKey: 'abc',
+            apiHost: 'datadoghq.com'
+        });
+        logger.gauge('test.gauge', 23);
+
+        logger.flush(
+            () => done(),
+            (error) => done(error || new Error("Error handler called with no error object."))
+        );
+    });
+
+    it('should call the flush error handler for errors', function(done) {
+        nock('https://api.datadoghq.com')
+            .post('/api/v1/series')
+            .reply(403, { errors: ['Forbidden'] });
+
+        const logger = new BufferedMetricsLogger({ apiKey: 'not-valid' });
+        logger.gauge('test.gauge', 23);
+
+        logger.flush(
+            () => done(new Error("The success handler was called!")),
+            (error) => done()
+        );
+    });
+
+    it('should allow two instances to use different credentials', function(done) {
+        const apiKeys = ['abc', 'xyz'];
+        let receivedKeys = [];
+
+        // Create a logger and a mock endpoint for each API key.
+        const loggers = apiKeys.map(apiKey => {
+            nock('https://api.datadoghq.com')
+                .matchHeader('dd-api-key', (values) => {
+                    receivedKeys.push(values[0]);
+                    return true;
+                })
+                .post('/api/v1/series')
+                .reply(202, { errors: [] });
+
+            const logger = new BufferedMetricsLogger({
+                apiKey,
+                apiHost: 'datadoghq.com'
+            });
+            logger.gauge('test.gauge', 23);
+            return logger;
+        });
+
+        // Flush the loggers and make sure they receive the expected keys.
+        loggers[0].flush(
+            () => {
+                loggers[1].flush(
+                    () => {
+                        try {
+                            receivedKeys.should.deep.equal(apiKeys);
+                        } catch(error) {
+                            return done(error);
+                        }
+                        done();
+                    },
+                    done
+                );
+            },
+            done
+        );
     });
 });
