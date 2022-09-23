@@ -154,7 +154,7 @@ describe('BufferedMetricsLogger', function() {
 
         logger.flush(
             () => done(),
-            (error) => done(error || new Error("Error handler called with no error object."))
+            (error) => done(error || new Error('Error handler called with no error object.'))
         );
     });
 
@@ -167,7 +167,7 @@ describe('BufferedMetricsLogger', function() {
         logger.gauge('test.gauge', 23);
 
         logger.flush(
-            () => done(new Error("The success handler was called!")),
+            () => done(new Error('The success handler was called!')),
             (error) => done()
         );
     });
@@ -201,7 +201,7 @@ describe('BufferedMetricsLogger', function() {
                     () => {
                         try {
                             receivedKeys.should.deep.equal(apiKeys);
-                        } catch(error) {
+                        } catch (error) {
                             return done(error);
                         }
                         done();
