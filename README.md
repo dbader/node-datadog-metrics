@@ -129,7 +129,7 @@ Where `options` is an object and can contain the following:
     * Set tags that are common to all metrics.
 * `reporter`: An object that actually sends the buffered metrics. (optional)
     * There are two built-in reporters you can use:
-        1. `reporters.DataDogReporter` sends metrics to DataDog’s API, and is
+        1. `reporters.DataDogReporter` sends metrics to Datadog’s API, and is
            the default.
         2. `reporters.NullReporter` throws the metrics away. It’s useful for
            tests or temporarily disabling your metrics.
@@ -217,9 +217,9 @@ metrics.histogram('test.service_time', 0.248, ['tag:value'], Date.now(), {
 
 Send a distribution value. Distributions are similar to histograms (they create
 several metrics for count, average, percentiles, etc.), but they are calculated
-server-side on DataDog’s systems. This is much higher-overhead than histograms,
+server-side on Datadog’s systems. This is much higher-overhead than histograms,
 and the individual calculations made from it have to be configured on the
-DataDog website instead of in the options for this package.
+Datadog website instead of in the options for this package.
 
 You should use this in environments where you have many instances of your
 application running in parallel, or instances constantly starting and stopping
@@ -275,9 +275,9 @@ npm test
         metrics.distribution('my.metric.name', 3.8, ['tags:here']);
         ```
 
-        Distributions are similar to histograms (they create several metrics for count, average, percentiles, etc.), but they are calculated server-side on DataDog’s systems. For more details and guidance on when to use them, see:
+        Distributions are similar to histograms (they create several metrics for count, average, percentiles, etc.), but they are calculated server-side on Datadog’s systems. For more details and guidance on when to use them, see:
         * The documentation in this project’s README
-        * DataDog’s documentation at https://docs.datadoghq.com/metrics/distributions/
+        * Datadog’s documentation at https://docs.datadoghq.com/metrics/distributions/
 
         (Thanks to @Mr0grog.)
 
@@ -355,7 +355,7 @@ npm test
 
 * 0.9.0 (2021-02-10)
     * Clean up continuous integration tooling on TravisCI. (Thanks to @rpelliard.)
-    * Correct “DataDog” to “Datadog” throughout the documentation. It turns out there’s not supposed to be a captial D in the middle. (Thanks to @dbenamy.)
+    * Correct “Datadog” throughout the documentation. It turns out there’s not supposed to be a captial D in the middle. (Thanks to @dbenamy.)
     * INTERNAL: Add internal support for submitting metrics to different Datadog sites (e.g. `datadoghq.eu` for Europe). (Thanks to @fermelone.)
     * [View diff](https://github.com/dbader/node-datadog-metrics/compare/ebb4bf701f700841e8b5c5325165f13397249b51...e58b13055b803a9c4f4c7b2426e3784b8fd4e0ae)
 
