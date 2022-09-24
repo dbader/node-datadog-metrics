@@ -12,7 +12,10 @@
   },
   "scripts": {
     "test": "mocha --reporter spec",
-    "check-codestyle": "jshint --reporter node_modules/jshint-stylish-ex/stylish.js *.js ./lib/*.js ./test/*.js && jscs --config .jscsrc *.js ./lib/*.js ./test/*.js"
+    "check-codestyle": "npm run check-codestyle:jshint && npm run check-codestyle:jscs",
+    "check-codestyle:jscs": "jscs --config .jscsrc *.js ./lib/*.js ./test/*.js",
+    "check-codestyle:jshint": "jshint --reporter node_modules/jshint-stylish-ex/stylish.js *.js ./lib/*.js ./test/*.js",
+    "check-text": "test/lint_text.sh"
   },
   "keywords": [
     "datadog",
