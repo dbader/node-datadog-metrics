@@ -43,6 +43,9 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run linter
+      - name: Lint Code
         run: |
           npm run check-codestyle
+
+      - name: Lint Text
+        run: npm run check-text
