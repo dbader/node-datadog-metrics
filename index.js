@@ -7,8 +7,8 @@ let sharedLogger = null;
 //
 // opts may include:
 //
-//     - apiKey: DataDog API key
-//     - appKey: DataDog APP key
+//     - apiKey: Datadog API key
+//     - appKey: Datadog APP key
 //     - host: Default host for all reported metrics
 //     - prefix: Default key prefix for all metrics
 //     - defaultTags: Common tags for all metrics
