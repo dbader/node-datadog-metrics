@@ -9,3 +9,6 @@ max_line_length = 110
 
 [package*.json]
 indent_size = 2
+
+[*.{yaml,yml}]
+indent_size = 2
