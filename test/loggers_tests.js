@@ -167,20 +167,28 @@ describe('BufferedMetricsLogger', function() {
         l.aggregator.defaultTags.should.deep.equal(['one', 'two']);
     });
 
-    it('should allow setting apiHost/site', function() {
+    it('should allow setting site', function() {
+        const l = new BufferedMetricsLogger({
+            apiKey: 'abc123',
+            site: 'datadoghq.eu'
+        });
+        l.reporter.should.have.property('site', 'datadoghq.eu');
+    });
+
+    it('should allow setting site with "app.*" URLs', function() {
+        const l = new BufferedMetricsLogger({
+            apiKey: 'abc123',
+            site: 'app.datadoghq.eu'
+        });
+        l.reporter.should.have.property('site', 'datadoghq.eu');
+    });
+
+    it('should allow deprecated `apiHost` option', function() {
         const l = new BufferedMetricsLogger({
             apiKey: 'abc123',
             apiHost: 'datadoghq.eu'
         });
-        l.reporter.should.have.property('apiHost', 'datadoghq.eu');
-    });
-
-    it('should allow setting apiHost/site with "app.*" URLs', function() {
-        const l = new BufferedMetricsLogger({
-            apiKey: 'abc123',
-            apiHost: 'app.datadoghq.eu'
-        });
-        l.reporter.should.have.property('apiHost', 'datadoghq.eu');
+        l.reporter.should.have.property('site', 'datadoghq.eu');
     });
 
     it('should call the flush success handler after flushing', function(done) {
