@@ -172,6 +172,25 @@ describe('BufferedMetricsLogger', function() {
         );
     });
 
+    it('should support the `onError` option', function(done) {
+        nock('https://api.datadoghq.com')
+            .post('/api/v1/series')
+            .reply(403, { errors: ['Forbidden'] });
+
+        const logger = new BufferedMetricsLogger({
+            apiKey: 'not-valid',
+            onError (error) {
+                if (error) {
+                    done();
+                } else {
+                    done(new Error('Handler was called without error data'));
+                }
+            }
+        });
+        logger.gauge('test.gauge', 23);
+        logger.flush();
+    });
+
     it('should allow two instances to use different credentials', function(done) {
         const apiKeys = ['abc', 'xyz'];
         let receivedKeys = [];
