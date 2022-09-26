@@ -13,8 +13,17 @@ const reporters = require('../lib/reporters');
 const BufferedMetricsLogger = loggers.BufferedMetricsLogger;
 
 describe('BufferedMetricsLogger', function() {
+    let errorLogs = [];
+    const originalError = console.error;
+
+    this.beforeEach(() => {
+        console.error = (...args) => errorLogs.push(args);
+    });
+
     this.afterEach(() => {
         nock.cleanAll();
+        console.error = originalError;
+        errorLogs = [];
     });
 
     it('should have a gauge() metric', function() {
@@ -189,6 +198,26 @@ describe('BufferedMetricsLogger', function() {
         });
         logger.gauge('test.gauge', 23);
         logger.flush();
+    });
+
+    it('should log flush errors if there is no handler', function(done) {
+        nock('https://api.datadoghq.com')
+            .post('/api/v1/series')
+            .reply(403, { errors: ['Forbidden'] });
+
+        const logger = new BufferedMetricsLogger({ apiKey: 'not-valid' });
+        logger.gauge('test.gauge', 23);
+
+        logger.flush();
+        setTimeout(() => {
+            try {
+                errorLogs.should.have.lengthOf(1);
+            }
+            catch (error) {
+                return done(error);
+            }
+            done();
+        }, 50);
     });
 
     it('should allow two instances to use different credentials', function(done) {
