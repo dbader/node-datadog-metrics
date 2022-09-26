@@ -20,8 +20,9 @@
     //
     // Setting to true ENABLES a check
 
-    // Enforce === instead of ==
+    // Enforce === instead of ==, except when comparing to `null`.
     "eqeqeq": true,
+    "eqnull": true,
     // Force hasOwnProperty checks within `for in`
     "forin": true,
     // Prohibits overwriting native types like `Array` or `Date`
