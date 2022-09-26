@@ -93,7 +93,10 @@ var metricsLogger = new metrics.BufferedMetricsLogger({
     host: 'myhost',
     prefix: 'myapp.',
     flushIntervalSeconds: 15,
-    defaultTags: ['env:staging', 'region:us-east-1']
+    defaultTags: ['env:staging', 'region:us-east-1'],
+    onError (error) {
+        console.error('There was an error auto-flushing metrics:', error);
+    }
 });
 metricsLogger.gauge('mygauge', 42);
 ```
@@ -127,6 +130,11 @@ Where `options` is an object and can contain the following:
       Datadog-metrics looks for the APP key in `DATADOG_APP_KEY` by default.
 * `defaultTags`: Default tags used for all metric reporting. (optional)
     * Set tags that are common to all metrics.
+* `onError`: A function to call when there are asynchronous errors seding
+    buffered metrics to Datadog. It takes one argument (the error). (optional)
+    * If the error was not handled (either by setting this option or by
+      specifying a handler when manually calling `flush()`), the error will be
+      logged to stdout.
 * `reporter`: An object that actually sends the buffered metrics. (optional)
     * There are two built-in reporters you can use:
         1. `reporters.DataDogReporter` sends metrics to Datadog’s API, and is
@@ -280,6 +288,17 @@ npm test
         * Datadog’s documentation at https://docs.datadoghq.com/metrics/distributions/
 
         (Thanks to @Mr0grog.)
+
+    * Add an `onError` option for handling asynchronous errors while flushing. You can use this to get details on an error or to send error info to another error tracking service like Sentry.io:
+
+        ```js
+        const metrics = require('datadog-metrics');
+        metrics.init({
+            onError (error) {
+                console.error('There was an error sending to Datadog:', error);
+            }
+        });
+        ```
 
     * Expose built-in reporter classes for public use. If you need to disable the metrics library for some reason, you can now do so with:
 
