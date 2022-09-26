@@ -20,7 +20,7 @@ bad_lines=$(
         .                          \
         | awk '
             # Store the raw line then remove allowed patterns before processing.
-            {raw_line=$0; gsub(/DataDogReporter|github\.com\/DataDog/,"")}
+            {raw_line=$0; gsub(/github\.com\/DataDog/,"")}
             # Print every line that has DataDog in it.
             /[dD]ataDog/ {print raw_line}
         '
@@ -28,7 +28,7 @@ bad_lines=$(
 
 if [ -n "${bad_lines}" ]; then
     echo 'The correct spelling of "Datadog" does not capitalize the second "D".'
-    echo 'Please fix these lines ("DataDogReporter" is allowed):'
+    echo 'Please fix these lines:'
     echo ''
     echo "${bad_lines}"
     echo ''

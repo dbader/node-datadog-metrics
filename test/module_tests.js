@@ -77,7 +77,7 @@ describe('datadog-metrics', function() {
     });
 
     it('should publicly export built-in reporters', function() {
-        metrics.reporters.should.have.property('DataDogReporter', reporters.DataDogReporter);
+        metrics.reporters.should.have.property('DatadogReporter', reporters.DatadogReporter);
         metrics.reporters.should.have.property('NullReporter', reporters.NullReporter);
     });
 });

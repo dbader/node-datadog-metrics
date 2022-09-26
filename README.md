@@ -140,7 +140,7 @@ Where `options` is an object and can contain the following:
     (optional)
 * `reporter`: An object that actually sends the buffered metrics. (optional)
     * There are two built-in reporters you can use:
-        1. `reporters.DataDogReporter` sends metrics to Datadog’s API, and is
+        1. `reporters.DatadogReporter` sends metrics to Datadog’s API, and is
            the default.
         2. `reporters.NullReporter` throws the metrics away. It’s useful for
            tests or temporarily disabling your metrics.
