@@ -11,16 +11,21 @@ const reporters = require('../lib/reporters');
 const BufferedMetricsLogger = loggers.BufferedMetricsLogger;
 
 describe('BufferedMetricsLogger', function() {
+    let warnLogs = [];
     let errorLogs = [];
+    const originalWarn = console.warn;
     const originalError = console.error;
 
     this.beforeEach(() => {
+        console.warn = (...args) => warnLogs.push(args);
         console.error = (...args) => errorLogs.push(args);
     });
 
     this.afterEach(() => {
         nock.cleanAll();
+        console.warn = originalWarn;
         console.error = originalError;
+        warnLogs = [];
         errorLogs = [];
     });
 
@@ -189,6 +194,9 @@ describe('BufferedMetricsLogger', function() {
             apiHost: 'datadoghq.eu'
         });
         l.reporter.should.have.property('site', 'datadoghq.eu');
+
+        const apiHostWarnings = warnLogs.filter(x => x[0].includes('apiHost'));
+        apiHostWarnings.should.have.lengthOf(1);
     });
 
     it('should call the flush success handler after flushing', function(done) {
