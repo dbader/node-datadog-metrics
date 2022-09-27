@@ -135,6 +135,10 @@ Where `options` is an object and can contain the following:
     * If the error was not handled (either by setting this option or by
       specifying a handler when manually calling `flush()`), the error will be
       logged to stdout.
+* `histogram`: An object with default options for all histograms. This has the
+    same properties as the options object on the `histogram()` method. Options
+    specified when calling the method are layered on top of this object.
+    (optional)
 * `reporter`: An object that actually sends the buffered metrics. (optional)
     * There are two built-in reporters you can use:
         1. `reporters.DataDogReporter` sends metrics to Datadog’s API, and is
@@ -308,6 +312,30 @@ npm test
             reporter: new metrics.reporters.NullReporter((flushedMetrics) => {
                 // Optional callback to be notified when metrics are flushed.
             }),
+        });
+        ```
+
+        (Thanks to @Mr0grog.)
+
+    * Add an option for setting histogram defaults. In v0.10.0, the `histogram()` function gained the ability to set what aggregations and percentiles it generates with a final `options` argument. You can now specify a `histogram` option for `init()` or `BufferedMetricsLogger` in order to set default options for all calls to `histogram()`. Any options you set in the actual `histogram()` call will layer on top of the defaults:
+
+        ```js
+        const metrics = require('datadog-metrics');
+        metrics.init({
+            histogram: {
+                aggregations: ['sum', 'avg'],
+                percentiles: [0.99]
+            }
+        });
+
+        // Acts as if the options had been set to:
+        // { aggregations: ['sum', 'avg'], percentiles: [0.99] }
+        metrics.histogram('my.metric.name', 3.8);
+
+        // Acts as if the options had been set to:
+        // { aggregations: ['sum', 'avg'], percentiles: [0.5, 0.95] }
+        metrics.histogram('my.metric.name', 3.8, [], Date.now(), {
+            percentiles: [0.5, 0.95]
         });
         ```
 
