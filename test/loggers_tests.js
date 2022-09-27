@@ -96,6 +96,41 @@ describe('BufferedMetricsLogger', function() {
         l.histogram('test.histogram', 23, ['a:a'], 1234567890);
     });
 
+    it('should support setting options for histograms', function() {
+        const l = new BufferedMetricsLogger({
+            reporter: new reporters.NullReporter()
+        });
+        l.histogram('test.histogram', 23, ['a:a'], 1234567890, {
+            percentiles: [0.5]
+        });
+
+        const f = l.aggregator.flush();
+        const percentiles = f.filter(x => x.metric.endsWith('percentile'));
+        percentiles.should.have.lengthOf(1);
+        percentiles.should.have.nested.property(
+            '[0].metric',
+            'test.histogram.50percentile'
+        );
+    });
+
+    it('should support the `histogram` option', function() {
+        const l = new BufferedMetricsLogger({
+            reporter: new reporters.NullReporter(),
+            histogram: {
+                percentiles: [0.5]
+            }
+        });
+        l.histogram('test.histogram', 23);
+
+        const f = l.aggregator.flush();
+        const percentiles = f.filter(x => x.metric.endsWith('percentile'));
+        percentiles.should.have.lengthOf(1);
+        percentiles.should.have.nested.property(
+            '[0].metric',
+            'test.histogram.50percentile'
+        );
+    });
+
     it('should allow setting a default host', function() {
         const l = new BufferedMetricsLogger({
             reporter: new reporters.NullReporter(),
