@@ -1,9 +1,7 @@
-/* global describe, it, before, beforeEach, after, afterEach */
-
 'use strict';
 
 const chai = require('chai');
-const should = chai.should();
+chai.should();
 
 let metrics = null;
 const reporters = require('../lib/reporters.js');
@@ -29,7 +27,7 @@ describe('datadog-metrics', function() {
         metrics.init({
             flushIntervalSeconds: 0,
             reporter: {
-                report (series, onSuccess, onError) {
+                report (series, onSuccess, _onError) {
                     series.should.have.lengthOf(12); // 3 + 9 for the histogram.
                     series[0].should.have.nested.property('points[0][1]', 23);
                     series[0].should.have.property('metric', 'test.gauge');
@@ -51,7 +49,7 @@ describe('datadog-metrics', function() {
         metrics.init({
             flushIntervalSeconds: 0,
             reporter: {
-                report (series, onSuccess, onError) {
+                report (series, onSuccess, _onError) {
                     series.should.have.lengthOf(2);
                     series[0].should.have.nested.property('points[0][1]', 1);
                     series[0].should.have.property('metric', 'test.gauge');

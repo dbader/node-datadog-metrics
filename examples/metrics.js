@@ -1,3 +1,5 @@
+'use strict';
+
 const promisfy = require('util').promisify;
 const metrics = require('../index');
 
