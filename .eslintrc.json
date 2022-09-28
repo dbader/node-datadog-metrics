@@ -1,0 +1,50 @@
+{
+    "extends": "eslint:recommended",
+    "env": {
+        "es2019": true,
+        "node": true
+    },
+    "parserOptions": {
+        "ecmaVersion": 2019,
+        "sourceType": "script"
+    },
+    "rules": {
+        "semi": ["error", "always"],
+        "quotes": ["error", "single"],
+        "eqeqeq": ["error", "always", { "null": "ignore" }],
+        "guard-for-in": ["error"],
+        "no-extend-native": ["error"],
+        "wrap-iife": ["error"],
+        "indent": ["error", 4],
+        "no-use-before-define": ["error", { "functions": false }],
+        "new-cap": ["error"],
+        "no-caller": ["error"],
+        "strict": ["error"],
+        "no-trailing-spaces": ["error"],
+        "max-params": ["error", 10],
+        "max-depth": ["error", 5],
+        "max-statements": ["error", 25],
+        "max-len": ["error", 110],
+        "no-var": ["error"],
+        // Allow unused vars if prefixed with "_"
+        "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+        "no-multi-str": ["error"],
+        "camelcase": ["error"],
+        "space-unary-ops": ["error"],
+        "comma-spacing": ["error"],
+        "eol-last": ["error"],
+        "space-before-blocks": ["error", "always"],
+        "keyword-spacing": ["error"],
+        "linebreak-style": ["error", "unix"],
+        "no-confusing-arrow": ["error"],
+        "object-curly-spacing": ["error", "always"]
+    },
+    "overrides": [
+        {
+            "files": ["test/**/*.js"],
+            "env": {
+                "mocha": true
+            }
+        }
+      ]
+}
