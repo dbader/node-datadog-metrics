@@ -3,6 +3,7 @@
   "version": "0.10.1",
   "description": "Buffered metrics reporting via the Datadog HTTP API",
   "main": "index.js",
+  "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git@github.com:dbader/node-datadog-metrics.git"
@@ -11,9 +12,12 @@
     "url": "https://github.com/dbader/node-datadog-metrics/issues"
   },
   "scripts": {
+    "prepare": "npm run clean && npm run build-types",
     "test": "mocha --reporter spec",
     "check-codestyle": "npx eslint .",
-    "check-text": "test/lint_text.sh"
+    "check-text": "test/lint_text.sh",
+    "build-types": "tsc --build",
+    "clean": "tsc --build --clean"
   },
   "keywords": [
     "datadog",
@@ -27,7 +31,8 @@
     "chai-string": "1.5.0",
     "eslint": "^8.24.0",
     "mocha": "9.2.2",
-    "nock": "^13.2.9"
+    "nock": "^13.2.9",
+    "typescript": "^4.8.4"
   },
   "dependencies": {
     "@datadog/datadog-api-client": "^1.3.0",
@@ -35,5 +40,12 @@
   },
   "engines": {
     "node": ">=12.0.0"
-  }
+  },
+  "files": [
+    "README.md",
+    "LICENSE",
+    "index.js",
+    "lib/**",
+    "dist/**"
+  ]
 }
