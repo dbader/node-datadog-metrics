@@ -284,7 +284,7 @@ npm test
 
     * Built-in TypeScript definitions. If you use TypeScript, you no longer need to install separate type definitions from `@types/datadog-metrics` — they’re now built-in. Please make sure to remove `@types/datadog-metrics` from your dev dependencies.
 
-        Even if you’re writing regular JavaScript, editors that support TypeScript definitions (e.g. VisualStudio Code, WebStorm) should now be able to give you better autocomplete suggestions and documentation.
+        Even if you’re writing regular JavaScript, you should now see better autocomplete suggestions and documentation in editors that support TypeScript definitions (e.g. VisualStudio Code, WebStorm).
 
     * Support distribution metrics. You can now send distributions to Datadog by doing:
 
