@@ -280,6 +280,12 @@ npm test
 ## Release History
 
 * (In development)
+    * **Breaking change:** datadog-metrics now uses modern `class` syntax internally. In most cases, you shouldn’t need to change anything. However, if you are calling `BufferedMetricsLogger.apply(...)` or `BufferedMetricsLogger.call(...)`, you’ll need to change your code to use `new BufferedMetricsLogger(...)` instead.
+
+    * Built-in TypeScript definitions. If you use TypeScript, you no longer need to install separate type definitions from `@types/datadog-metrics` — they’re now built-in. Please make sure to remove `@types/datadog-metrics` from your dev dependencies.
+
+        Even if you’re writing regular JavaScript, editors that support TypeScript definitions (e.g. VisualStudio Code, WebStorm) should now be able to give you better autocomplete suggestions and documentation.
+
     * Support distribution metrics. You can now send distributions to Datadog by doing:
 
         ```js

@@ -39,8 +39,6 @@ function callOnSharedLogger(func) {
     };
 }
 
-
-
 module.exports = {
     init,
     flush: callOnSharedLogger(loggers.BufferedMetricsLogger.prototype.flush),
