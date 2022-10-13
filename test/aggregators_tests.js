@@ -1,11 +1,9 @@
-/* global describe, it, before, beforeEach, after, afterEach */
-
 'use strict';
 
 const chai = require('chai');
 chai.use(require('chai-string'));
 
-const should = chai.should();
+chai.should();
 
 const aggregators = require('../lib/aggregators');
 const metrics = require('../lib/metrics');

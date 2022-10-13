@@ -1,5 +1,3 @@
-/* global describe, it, before, beforeEach, after, afterEach */
-
 'use strict';
 
 const chai = require('chai');
@@ -7,7 +5,7 @@ chai.use(require('chai-string'));
 
 const nock = require('nock');
 
-const should = chai.should();
+chai.should();
 const loggers = require('../lib/loggers');
 const reporters = require('../lib/reporters');
 const BufferedMetricsLogger = loggers.BufferedMetricsLogger;
@@ -47,7 +45,7 @@ describe('BufferedMetricsLogger', function() {
         });
 
         l.aggregator = {
-            addPoint (Type, key, value, tags, host) {
+            addPoint (_Type, key, value, _tags, _host) {
                 key.should.equal('test.counter');
                 value.should.equal(1);
             }
@@ -55,7 +53,7 @@ describe('BufferedMetricsLogger', function() {
         l.increment('test.counter');
 
         l.aggregator = {
-            addPoint (Type, key, value, tags, host) {
+            addPoint (_Type, key, value, _tags, _host) {
                 key.should.equal('test.counter2');
                 value.should.equal(0);
             }
@@ -63,7 +61,7 @@ describe('BufferedMetricsLogger', function() {
         l.increment('test.counter2', 0);
 
         l.aggregator = {
-            addPoint (Type, key, value, tags, host) {
+            addPoint (_Type, key, value, _tags, _host) {
                 key.should.equal('test.counter3');
                 value.should.equal(1);
             }
@@ -152,7 +150,7 @@ describe('BufferedMetricsLogger', function() {
             prefix: 'mynamespace.'
         });
         l.aggregator = {
-            addPoint (Type, key, value, tags, host) {
+            addPoint (Type, key, _value, _tags, _host) {
                 key.should.startWith('mynamespace.test.');
             }
         };
@@ -212,7 +210,7 @@ describe('BufferedMetricsLogger', function() {
 
         logger.flush(
             () => done(new Error('The success handler was called!')),
-            (error) => done()
+            () => done()
         );
     });
 
