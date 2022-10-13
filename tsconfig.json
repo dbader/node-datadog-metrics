@@ -8,9 +8,7 @@
         "allowSyntheticDefaultImports": true,
         "moduleResolution": "node",
         "allowJs": true,
-        // TODO: Consider turning this type-checking in PRs. Needs class syntax
-        // to work, though
-        // "checkJs": true,
+        "checkJs": true,
         "composite": true,
 
         "outDir": "dist",
