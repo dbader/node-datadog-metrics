@@ -49,3 +49,23 @@ jobs:
 
       - name: Lint Text
         run: npm run check-text
+
+  types:
+    name: Build/Check Types
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: '**/package.json'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Types
+        run: |
+          npm run build-types
