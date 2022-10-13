@@ -20,23 +20,34 @@ function init(opts) {
     sharedLogger = new loggers.BufferedMetricsLogger(opts);
 }
 
-// This is meant to be curried via bind() so we don't have
-// to write wrappers for each metric individually.
-function callOnSharedLogger(funcName) {
-    if (sharedLogger === null) {
-        init();
-    }
-    const args = Array.prototype.slice.call(arguments, 1);
-    sharedLogger[funcName].apply(sharedLogger, args);
+/**
+ * Wrap a function so that it gets called as a method of `sharedLogger`. If
+ * `sharedLogger` does not exist when the function is called, it will be
+ * created with default values.
+ * @template {Function} T
+ * @param {T} func The function to wrap.
+ * @returns {T}
+ */
+function callOnSharedLogger(func) {
+    // @ts-expect-error Can't find a good way to prove to the TypeScript
+    // compiler that this satisfies the types. :(
+    return (...args) => {
+        if (sharedLogger === null) {
+            init();
+        }
+        return func.apply(sharedLogger, args);
+    };
 }
+
+
 
 module.exports = {
     init,
-    flush: callOnSharedLogger.bind(undefined, 'flush'),
-    gauge: callOnSharedLogger.bind(undefined, 'gauge'),
-    increment: callOnSharedLogger.bind(undefined, 'increment'),
-    histogram: callOnSharedLogger.bind(undefined, 'histogram'),
-    distribution: callOnSharedLogger.bind(undefined, 'distribution'),
+    flush: callOnSharedLogger(loggers.BufferedMetricsLogger.prototype.flush),
+    gauge: callOnSharedLogger(loggers.BufferedMetricsLogger.prototype.gauge),
+    increment: callOnSharedLogger(loggers.BufferedMetricsLogger.prototype.increment),
+    histogram: callOnSharedLogger(loggers.BufferedMetricsLogger.prototype.histogram),
+    distribution: callOnSharedLogger(loggers.BufferedMetricsLogger.prototype.distribution),
 
     BufferedMetricsLogger: loggers.BufferedMetricsLogger,
 
