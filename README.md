@@ -163,7 +163,7 @@ metrics.init({ host: 'myhost', reporter: metrics.NullReporter() });
 
 `metrics.gauge(key, value[, tags[, timestamp]])`
 
-Record the current *value* of a metric. They most recent value in
+Record the current *value* of a metric. The most recent value in
 a given flush interval will be recorded. Optionally, specify a set of
 tags to associate with the metric. This should be used for sum values
 such as total hard disk space, process uptime, total number of active

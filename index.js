@@ -4,22 +4,14 @@ const reporters = require('./lib/reporters');
 
 let sharedLogger = null;
 
-//
-// opts may include:
-//
-//     - apiKey: Datadog API key
-//     - appKey: Datadog APP key
-//     - host: Default host for all reported metrics
-//     - prefix: Default key prefix for all metrics
-//     - defaultTags: Common tags for all metrics
-//     - flushIntervalSeconds:
-//
-// You can also use it to override (dependency-inject) the aggregator
-// and reporter instance, which is useful for testing:
-//
-//     - aggregator: an Aggregator instance
-//     - reporter: a Reporter instance
-//
+/**
+ * Configure the datadog-metrics library.
+ *
+ * Any settings used here will apply to the top-level metrics functions (e.g.
+ * `increment()`, `gauge()`). If you need multiple separate configurations, use
+ * the `BufferedMetricsLogger` class.
+ * @param {loggers.BufferedMetricsLoggerOptions} [opts]
+ */
 function init(opts) {
     opts = opts || {};
     if (!opts.flushIntervalSeconds && opts.flushIntervalSeconds !== 0) {
@@ -39,7 +31,7 @@ function callOnSharedLogger(funcName) {
 }
 
 module.exports = {
-    init: init,
+    init,
     flush: callOnSharedLogger.bind(undefined, 'flush'),
     gauge: callOnSharedLogger.bind(undefined, 'gauge'),
     increment: callOnSharedLogger.bind(undefined, 'increment'),
@@ -48,5 +40,5 @@ module.exports = {
 
     BufferedMetricsLogger: loggers.BufferedMetricsLogger,
 
-    reporters: reporters
+    reporters
 };
