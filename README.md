@@ -346,7 +346,7 @@ npm test
     * This package no longer locks specific versions of its dependencies (instead, your package manager can choose any version that is compatible). This may help when deduplicating packages for faster installs or smaller bundles. (Thanks to @Mr0grog.)
 
     * FIX: Don’t use `unref()` on timers in non-Node.js environments. This is a step towards browser compatibility, although we are not testing browser-based usage yet. (Thanks to @Mr0grog.)
-    * FIX: The `apiHost` option was broken in v0.10.0 and now works again. (Thanks to @Mr0grog.)
+    * FIX: The `apiHost` option was broken in v0.10.0 and now works again. (Thanks to @Mr0grog, @npeters.)
     * FIX: Creating a second instance of `BufferedMetricsLogger` will not longer change the credentials used by previously created `BufferedMetricsLogger` instances.
     * INTERNAL: Renamed the default branch in this repo to `main`. (Thanks to @dbader.)
     * INTERNAL: Use GitHub actions for continuous integration. (Thanks to @Mr0grog.)
