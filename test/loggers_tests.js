@@ -183,6 +183,23 @@ describe('BufferedMetricsLogger', function() {
         l.reporter.should.have.property('apiHost', 'datadoghq.eu');
     });
 
+    it('should send the request to the customServerURL', function(done) {
+        nock('https://my.compatible.datadog.ingestor/datadog')
+            .post('/api/v1/series')
+            .reply(202, { errors: [] });
+
+        const logger = new BufferedMetricsLogger({
+            apiKey: 'abc',
+            customServerURL: 'https://my.compatible.datadog.ingestor/datadog'
+        });
+        logger.gauge('test.gauge', 23);
+
+        logger.flush(
+            () => done(),
+            (error) => done(error || new Error('Error handler called with no error object.'))
+        );
+    });
+
     it('should call the flush success handler after flushing', function(done) {
         nock('https://api.datadoghq.com')
             .post('/api/v1/series')
