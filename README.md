@@ -101,6 +101,22 @@ var metricsLogger = new metrics.BufferedMetricsLogger({
 metricsLogger.gauge('mygauge', 42);
 ```
 
+
+#### Use case #4: Send datadog series to... not datadog.
+
+If you want to send datadog metrics to an endpoint that accepts the datadog format but, potentially, is not datadog.
+
+```js
+var metrics = require('datadog-metrics');
+var metricsLogger = new metrics.BufferedMetricsLogger({
+    customServerURL: 'https://datadog.compatible.service.io/datadog/endpoint',
+    apiKey: 'DUMMYKEY',
+    host: 'myhost',
+    prefix: 'myapp.',
+});
+metricsLogger.gauge('mygauge', 42);
+```
+
 ## API
 
 ### Initialization
@@ -122,6 +138,8 @@ Where `options` is an object and can contain the following:
     * Defaults to `datadoghq.com`.
     * See more details on setting your site at:
         https://docs.datadoghq.com/getting_started/site/#access-the-datadog-site
+* `customServerURL`: Sends metrics to a custom server that supports Datadog metrics
+    format but is not datadog. This feature is incompatible with apiHost. (optional)
 * `apiKey`: Sets the Datadog API key. (optional)
     * It's usually best to keep this in an environment variable.
       Datadog-metrics looks for the API key in `DATADOG_API_KEY` by default.
