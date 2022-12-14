@@ -138,8 +138,14 @@ Where `options` is an object and can contain the following:
     * Defaults to `datadoghq.com`.
     * See more details on setting your site at:
         https://docs.datadoghq.com/getting_started/site/#access-the-datadog-site
+    * Do not use in conjunction with `customServerURL`
 * `customServerURL`: Sends metrics to a custom server that supports Datadog metrics
-    format but is not datadog. This feature is incompatible with apiHost. (optional)
+    format but is not datadog. If used, the value of `customServerURL` takes precedence
+    to the value of `apiHost`. (optional)
+    If data is to be sent to Datadog, consider using `apiHost`. If not, this parameter will allow to fully
+    configure a different server to ship metrics to. Giving full control on the protocol, url and path to use.
+    e.g.: `http://non-secure-metrics-insert.local_network` or `https://custom-metrics-insert.com/datadog/metrics`
+    * Value for this parameter can be passed via environment variable with the key `DATADOG_CUSTOM_URL`.
 * `apiKey`: Sets the Datadog API key. (optional)
     * It's usually best to keep this in an environment variable.
       Datadog-metrics looks for the API key in `DATADOG_API_KEY` by default.

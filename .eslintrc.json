@@ -24,7 +24,7 @@
         "max-params": ["error", 10],
         "max-depth": ["error", 5],
         "max-statements": ["error", 25],
-        "max-len": ["error", 110],
+        "max-len": ["error", { "code": 110, "ignoreUrls": true }],
         "no-var": ["error"],
         // Allow unused vars if prefixed with "_"
         "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
