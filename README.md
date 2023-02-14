@@ -284,6 +284,8 @@ npm test
 
     * **Deprecated:** The `apiHost` option has been renamed to `site` so that it matches up with Datadog docs and official packages. The old `apiHost` name still works for now, but will be removed in the future.
 
+    * **Deprecated:** The `reporters.DataDogReporter` class has been renamed to `reporters.DatadogReporter` (lower-case D in "dog") so that it correctly matches Datadog’s actual name. The old name still works, but prints a warning when it is used and will be removed in the future.
+
     * Built-in TypeScript definitions. If you use TypeScript, you no longer need to install separate type definitions from `@types/datadog-metrics` — they’re now built-in. Please make sure to remove `@types/datadog-metrics` from your dev dependencies.
 
         Even if you’re writing regular JavaScript, you should now see better autocomplete suggestions and documentation in editors that support TypeScript definitions (e.g. VisualStudio Code, WebStorm).
