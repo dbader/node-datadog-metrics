@@ -46,6 +46,7 @@
     "LICENSE",
     "index.js",
     "lib/**",
-    "dist/**"
+    "dist/**",
+    "!dist/tsconfig.tsbuildinfo"
   ]
 }
