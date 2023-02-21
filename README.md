@@ -88,7 +88,7 @@ If you need even more control you can create one or more `BufferedMetricsLogger`
 ```js
 var metrics = require('datadog-metrics');
 var metricsLogger = new metrics.BufferedMetricsLogger({
-    apiHost: 'datadoghq.eu',
+    site: 'datadoghq.eu',
     apiKey: 'TESTKEY',
     host: 'myhost',
     prefix: 'myapp.',
@@ -117,8 +117,7 @@ Where `options` is an object and can contain the following:
 * `flushIntervalSeconds`: How often to send metrics to Datadog. (optional)
     * This defaults to 15 seconds. Set it to 0 to disable auto-flushing which
       means you must call `flush()` manually.
-* `apiHost`: Sets the Datadog API host (also called "site" in Datadog docs).
-    (optional)
+* `site`: Sets the Datadog "site", or server where metrics are sent. (optional)
     * Defaults to `datadoghq.com`.
     * See more details on setting your site at:
         https://docs.datadoghq.com/getting_started/site/#access-the-datadog-site
@@ -141,7 +140,7 @@ Where `options` is an object and can contain the following:
     (optional)
 * `reporter`: An object that actually sends the buffered metrics. (optional)
     * There are two built-in reporters you can use:
-        1. `reporters.DataDogReporter` sends metrics to Datadog’s API, and is
+        1. `reporters.DatadogReporter` sends metrics to Datadog’s API, and is
            the default.
         2. `reporters.NullReporter` throws the metrics away. It’s useful for
            tests or temporarily disabling your metrics.
@@ -282,6 +281,10 @@ npm test
 * (In development)
 
     * **Breaking change:** datadog-metrics now uses modern `class` syntax internally. In most cases, you shouldn’t need to change anything. However, if you are calling `BufferedMetricsLogger.apply(...)` or `BufferedMetricsLogger.call(...)`, you’ll need to change your code to use `new BufferedMetricsLogger(...)` instead.
+
+    * **Deprecated:** The `apiHost` option has been renamed to `site` so that it matches up with Datadog docs and official packages. The old `apiHost` name still works for now, but will be removed in the future.
+
+    * **Deprecated:** The `reporters.DataDogReporter` class has been renamed to `reporters.DatadogReporter` (lower-case D in "dog") so that it correctly matches Datadog’s actual name. The old name still works, but prints a warning when it is used and will be removed in the future.
 
     * Built-in TypeScript definitions. If you use TypeScript, you no longer need to install separate type definitions from `@types/datadog-metrics` — they’re now built-in. Please make sure to remove `@types/datadog-metrics` from your dev dependencies.
 

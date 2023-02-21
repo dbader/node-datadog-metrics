@@ -11,16 +11,21 @@ const reporters = require('../lib/reporters');
 const BufferedMetricsLogger = loggers.BufferedMetricsLogger;
 
 describe('BufferedMetricsLogger', function() {
+    let warnLogs = [];
     let errorLogs = [];
+    const originalWarn = console.warn;
     const originalError = console.error;
 
     this.beforeEach(() => {
+        console.warn = (...args) => warnLogs.push(args);
         console.error = (...args) => errorLogs.push(args);
     });
 
     this.afterEach(() => {
         nock.cleanAll();
+        console.warn = originalWarn;
         console.error = originalError;
+        warnLogs = [];
         errorLogs = [];
     });
 
@@ -167,20 +172,31 @@ describe('BufferedMetricsLogger', function() {
         l.aggregator.defaultTags.should.deep.equal(['one', 'two']);
     });
 
-    it('should allow setting apiHost/site', function() {
+    it('should allow setting site', function() {
+        const l = new BufferedMetricsLogger({
+            apiKey: 'abc123',
+            site: 'datadoghq.eu'
+        });
+        l.reporter.should.have.property('site', 'datadoghq.eu');
+    });
+
+    it('should allow setting site with "app.*" URLs', function() {
+        const l = new BufferedMetricsLogger({
+            apiKey: 'abc123',
+            site: 'app.datadoghq.eu'
+        });
+        l.reporter.should.have.property('site', 'datadoghq.eu');
+    });
+
+    it('should allow deprecated `apiHost` option', function() {
         const l = new BufferedMetricsLogger({
             apiKey: 'abc123',
             apiHost: 'datadoghq.eu'
         });
-        l.reporter.should.have.property('apiHost', 'datadoghq.eu');
-    });
+        l.reporter.should.have.property('site', 'datadoghq.eu');
 
-    it('should allow setting apiHost/site with "app.*" URLs', function() {
-        const l = new BufferedMetricsLogger({
-            apiKey: 'abc123',
-            apiHost: 'app.datadoghq.eu'
-        });
-        l.reporter.should.have.property('apiHost', 'datadoghq.eu');
+        const apiHostWarnings = warnLogs.filter(x => x[0].includes('apiHost'));
+        apiHostWarnings.should.have.lengthOf(1);
     });
 
     it('should call the flush success handler after flushing', function(done) {

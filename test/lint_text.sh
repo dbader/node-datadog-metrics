@@ -28,7 +28,7 @@ bad_lines=$(
 
 if [ -n "${bad_lines}" ]; then
     echo 'The correct spelling of "Datadog" does not capitalize the second "D".'
-    echo 'Please fix these lines ("DataDogReporter" is allowed):'
+    echo 'Please fix these lines ("DataDogReporter" is allowed for now):'
     echo ''
     echo "${bad_lines}"
     echo ''
