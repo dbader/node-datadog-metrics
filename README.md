@@ -157,7 +157,7 @@ Disabling metrics using `NullReporter`:
 metrics.init({ host: 'myhost', reporter: metrics.NullReporter() });
 ```
 
-Send metrics to a toally different service instead of Datadog:
+Send metrics to a totally different service instead of Datadog:
 
 ```js
 metrics.init({
