@@ -278,19 +278,25 @@ npm test
 
 ## Release History
 
-* (In development)
+* 0.11.0 (2022-02-21)
 
-    * **Breaking change:** datadog-metrics now uses modern `class` syntax internally. In most cases, you shouldn’t need to change anything. However, if you are calling `BufferedMetricsLogger.apply(...)` or `BufferedMetricsLogger.call(...)`, you’ll need to change your code to use `new BufferedMetricsLogger(...)` instead.
-
-    * **Deprecated:** The `apiHost` option has been renamed to `site` so that it matches up with Datadog docs and official packages. The old `apiHost` name still works for now, but will be removed in the future.
-
-    * **Deprecated:** The `reporters.DataDogReporter` class has been renamed to `reporters.DatadogReporter` (lower-case D in "dog") so that it correctly matches Datadog’s actual name. The old name still works, but prints a warning when it is used and will be removed in the future.
+    **New Features:**
 
     * Built-in TypeScript definitions. If you use TypeScript, you no longer need to install separate type definitions from `@types/datadog-metrics` — they’re now built-in. Please make sure to remove `@types/datadog-metrics` from your dev dependencies.
 
         Even if you’re writing regular JavaScript, you should now see better autocomplete suggestions and documentation in editors that support TypeScript definitions (e.g. VisualStudio Code, WebStorm).
 
-    [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.10.2...main)
+    **Breaking Changes:**
+
+    * datadog-metrics now uses modern `class` syntax internally. In most cases, you shouldn’t need to change anything. However, if you are calling `BufferedMetricsLogger.apply(...)` or `BufferedMetricsLogger.call(...)`, you’ll need to change your code to use `new BufferedMetricsLogger(...)` instead.
+
+    **Deprecated Features:**
+
+    * The `apiHost` option has been renamed to `site` so that it matches up with Datadog docs and official packages. The old `apiHost` name still works for now, but will be removed in the future.
+
+    * The `reporters.DataDogReporter` class has been renamed to `reporters.DatadogReporter` (lower-case D in "dog") so that it correctly matches Datadog’s actual name. The old name still works, but will be removed in the future.
+
+    [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.10.2...v0.11.0)
 
 * 0.10.2 (2022-10-14)
 
