@@ -157,6 +157,26 @@ Disabling metrics using `NullReporter`:
 metrics.init({ host: 'myhost', reporter: metrics.NullReporter() });
 ```
 
+Send metrics to a toally different service instead of Datadog:
+
+```js
+metrics.init({
+  reporter: {
+    report(series, onSuccess, onError) {
+      // `series` is an array of metrics objects, formatted basically how the
+      // Datadog v1 metrics API and v1 distributions API want them.
+      fetch('https://my-datadog-like-api.com/series', {
+          method: 'POST',
+          body: JSON.stringify({ series })
+        })
+          .then(response => response.json())
+          .then(() => onSuccess())
+          .catch(onError);
+    }
+  }
+});
+```
+
 
 ### Gauges
 
