@@ -298,17 +298,13 @@ npm test
 
 ## Release History
 
-* (In Development)
-
-    **New Features:**
-
-    * Nothing yet!
+* 0.11.1 (2023-09-28)
 
     **Fixes & Maintenance:**
 
     * Resolve a deprecation warning from the underlying datadog-api-client library. This also updates the minimum required version of that library. (Thanks to @acatalucci-synth & @fcsonline in #112.)
 
-    [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.10.2...main)
+    [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.11.0...v0.11.1)
 
 * 0.11.0 (2022-02-21)
 
