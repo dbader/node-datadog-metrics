@@ -298,6 +298,12 @@ npm test
 
 ## Release History
 
+* (In Development)
+
+    * Nothing yet!
+
+    [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.11.1...main)
+
 * 0.11.1 (2023-09-28)
 
     **Fixes & Maintenance:**
