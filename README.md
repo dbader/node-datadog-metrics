@@ -300,7 +300,13 @@ npm test
 
 * (In Development)
 
+    **New Features:**
+
     * Nothing yet!
+
+    **Fixes & Maintenance:**
+
+    * Resolve a deprecation warning from the underlying datadog-api-client library. This also updates the minimum required version of that library. (Thanks to @acatalucci-synth & @fcsonline in #112.)
 
     [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.10.2...main)
 
