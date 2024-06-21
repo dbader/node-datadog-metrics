@@ -378,17 +378,17 @@ npm test
         const metrics = require('datadog-metrics');
         metrics.init({
             histogram: {
-                aggregations: ['sum', 'avg'],
+                aggregates: ['sum', 'avg'],
                 percentiles: [0.99]
             }
         });
 
         // Acts as if the options had been set to:
-        // { aggregations: ['sum', 'avg'], percentiles: [0.99] }
+        // { aggregates: ['sum', 'avg'], percentiles: [0.99] }
         metrics.histogram('my.metric.name', 3.8);
 
         // Acts as if the options had been set to:
-        // { aggregations: ['sum', 'avg'], percentiles: [0.5, 0.95] }
+        // { aggregates: ['sum', 'avg'], percentiles: [0.5, 0.95] }
         metrics.histogram('my.metric.name', 3.8, [], Date.now(), {
             percentiles: [0.5, 0.95]
         });
@@ -427,7 +427,7 @@ npm test
         const metrics = require('datadog-metrics');
         metrics.histogram('my.metric.name', 3.8, [], Date.now(), {
             // Aggregates can include 'max', 'min', 'sum', 'avg', or 'count'.
-            aggregations: ['max', 'min', 'sum', 'avg', 'count'],
+            aggregates: ['max', 'min', 'sum', 'avg', 'count'],
             // Percentiles can include any decimal between 0 and 1.
             percentiles: [0.75, 0.85, 0.95, 0.99]
         });
