@@ -120,7 +120,8 @@ describe('BufferedMetricsLogger', function() {
         const l = new BufferedMetricsLogger({
             reporter: new reporters.NullReporter(),
             histogram: {
-                percentiles: [0.5]
+                percentiles: [0.5],
+                aggregates: ['sum']
             }
         });
         l.histogram('test.histogram', 23);
@@ -131,6 +132,12 @@ describe('BufferedMetricsLogger', function() {
         percentiles.should.have.nested.property(
             '[0].metric',
             'test.histogram.50percentile'
+        );
+        const aggregates = f.filter(x => /\.histogram\.[a-z]/.test(x.metric));
+        aggregates.should.have.length(1);
+        aggregates.should.have.nested.property(
+            '[0].metric',
+            'test.histogram.sum'
         );
     });
 
