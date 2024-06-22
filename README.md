@@ -309,6 +309,8 @@ npm test
 
     * Fix types and documentation for the `aggregates` option for histograms and the `histogram.aggregates` option for the library as a whole. It was previously listed as `aggregations`, which was incorrect. (Thanks to @Calyhre in #117.)
 
+    * Improve documentation and add a more detailed error message about API keys vs. application keys.
+
     [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.11.1...main)
 
 * 0.11.1 (2023-09-28)
