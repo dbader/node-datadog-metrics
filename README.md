@@ -305,7 +305,15 @@ npm test
 
 ## Release History
 
+* (In Development)
+
+    * Nothing yet!
+
+    [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.11.2...main)
+
 * 0.11.2 (2024-06-25)
+
+    **Fixes & Maintenance:**
 
     * Fix types and documentation for the `aggregates` option for histograms and the `histogram.aggregates` option for the library as a whole. It was previously listed as `aggregations`, which was incorrect. (Thanks to @Calyhre in #117.)
 
