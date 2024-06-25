@@ -51,7 +51,7 @@ There's also a longer [tutorial](https://dbader.org/blog/monitoring-your-nodejs-
 ### Datadog API key
 
 Make sure the `DATADOG_API_KEY` environment variable is set to your Datadog
-API key. You can find the API key under [Integrations > APIs](https://app.datadoghq.com/account/settings#api). *You only need to provide the API key, not the APP key. However, you can provide an APP key if you want by setting the `DATADOG_APP_KEY` environment variable.*
+API key (you can also set it via the `apiKey` option in code). You can find the API key under [Integrations > APIs](https://app.datadoghq.com/account/settings#api). *Please note the API key is different from an **application key**. For more details, see [Datadog’s “API and Application Keys” docs](https://docs.datadoghq.com/account_management/api-app-keys/).*
 
 ### Module setup
 
@@ -124,9 +124,16 @@ Where `options` is an object and can contain the following:
 * `apiKey`: Sets the Datadog API key. (optional)
     * It's usually best to keep this in an environment variable.
       Datadog-metrics looks for the API key in `DATADOG_API_KEY` by default.
-* `appKey`: Sets the Datadog APP key. (optional)
-    * It's usually best to keep this in an environment variable.
-      Datadog-metrics looks for the APP key in `DATADOG_APP_KEY` by default.
+    * You must either set this option or the environment variable. An API key
+      is required to send metrics.
+    * Make sure not to confuse this with your _application_ key! For more
+      details, see: https://docs.datadoghq.com/account_management/api-app-keys/
+* `appKey`: Sets the Datadog application key. (optional)
+    * It's usually best to keep this in an environment variable. Datadog-metrics
+      looks for the application key in `DATADOG_APP_KEY` by default.
+    * This is different from the API key (see above), which is required. For
+      more about the different between API and application keys, see:
+      https://docs.datadoghq.com/account_management/api-app-keys/
 * `defaultTags`: Default tags used for all metric reporting. (optional)
     * Set tags that are common to all metrics.
 * `onError`: A function to call when there are asynchronous errors seding
@@ -301,6 +308,8 @@ npm test
 * (In Development)
 
     * Fix types and documentation for the `aggregates` option for histograms and the `histogram.aggregates` option for the library as a whole. It was previously listed as `aggregations`, which was incorrect. (Thanks to @Calyhre in #117.)
+
+    * Improve documentation and add a more detailed error message about API keys vs. application keys.
 
     [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.11.1...main)
 

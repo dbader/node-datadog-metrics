@@ -8,6 +8,7 @@ const nock = require('nock');
 chai.should();
 const loggers = require('../lib/loggers');
 const reporters = require('../lib/reporters');
+const { AuthorizationError } = require('../lib/errors');
 const BufferedMetricsLogger = loggers.BufferedMetricsLogger;
 
 describe('BufferedMetricsLogger', function() {
@@ -274,6 +275,26 @@ describe('BufferedMetricsLogger', function() {
             }
             done();
         }, 50);
+    });
+
+    it('should use a special error for bad API keys', function(done) {
+        nock('https://api.datadoghq.com')
+            .post('/api/v1/series')
+            .reply(403, { errors: ['Forbidden'] });
+
+        const logger = new BufferedMetricsLogger({ apiKey: 'not-valid' });
+        logger.gauge('test.gauge', 23);
+
+        logger.flush(
+            () => done(new Error('The success handler was called!')),
+            (error) => {
+                if (error instanceof AuthorizationError) {
+                    done();
+                } else {
+                    done(new Error(`The error was not an AuthorizationError: ${error}`));
+                }
+            }
+        );
     });
 
     it('should allow two instances to use different credentials', function(done) {
