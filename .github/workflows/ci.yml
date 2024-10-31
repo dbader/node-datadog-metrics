@@ -6,12 +6,17 @@ on:
 
 name: Continuous Integration
 
+env:
+  default_node_version: 22
+
 jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node_version: [12, 14, 16, 18]
+        # Test supported release Node.js versions (even numbers) plus current
+        # development version.
+        node_version: [12, 14, 16, 18, 20, 22, 23]
 
     steps:
       - uses: actions/checkout@v3
@@ -38,7 +43,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: ${{ env.default_node_version }}
           cache: 'npm'
           cache-dependency-path: '**/package.json'
 
@@ -61,7 +66,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: ${{ env.default_node_version }}
           cache: 'npm'
           cache-dependency-path: '**/package.json'
 
