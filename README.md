@@ -307,7 +307,9 @@ npm test
 
 * (In Development)
 
-    * Nothing yet!
+    **Bug Fixes:**
+
+    * Typings: Ensure `BufferedMetricsLogger` is seen as an actual class & type when importing in TypeScript. (#120)
 
     [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.11.2...main)
 
