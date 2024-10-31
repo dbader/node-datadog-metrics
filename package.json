@@ -17,6 +17,7 @@
     "check-codestyle": "npx eslint .",
     "check-text": "test/lint_text.sh",
     "build-types": "tsc --build",
+    "check-types": "tsc --noEmit --strict test/types_check.ts",
     "clean": "tsc --build --clean"
   },
   "keywords": [
