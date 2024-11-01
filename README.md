@@ -305,13 +305,15 @@ npm test
 
 ## Release History
 
-* (In Development)
+* 0.11.3a1 (2024-10-31)
+
+    This pre-release is meant for testing a fix for #119.
 
     **Bug Fixes:**
 
     * Typings: Ensure `BufferedMetricsLogger` is seen as an actual class & type when importing in TypeScript. (#120)
 
-    [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.11.2...main)
+    [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.11.2...v0.11.3a1)
 
 * 0.11.2 (2024-06-25)
 
