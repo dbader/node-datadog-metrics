@@ -1,6 +1,8 @@
 'use strict';
-const loggers = require('./lib/loggers');
+const { BufferedMetricsLogger } = require('./lib/loggers');
 const reporters = require('./lib/reporters');
+
+/** @typedef {import("./lib/loggers").BufferedMetricsLoggerOptions} BufferedMetricsLoggerOptions */
 
 let sharedLogger = null;
 
@@ -10,14 +12,14 @@ let sharedLogger = null;
  * Any settings used here will apply to the top-level metrics functions (e.g.
  * `increment()`, `gauge()`). If you need multiple separate configurations, use
  * the `BufferedMetricsLogger` class.
- * @param {loggers.BufferedMetricsLoggerOptions} [opts]
+ * @param {BufferedMetricsLoggerOptions} [opts]
  */
 function init(opts) {
     opts = opts || {};
     if (!opts.flushIntervalSeconds && opts.flushIntervalSeconds !== 0) {
         opts.flushIntervalSeconds = 15;
     }
-    sharedLogger = new loggers.BufferedMetricsLogger(opts);
+    sharedLogger = new BufferedMetricsLogger(opts);
 }
 
 /**
@@ -41,13 +43,13 @@ function callOnSharedLogger(func) {
 
 module.exports = {
     init,
-    flush: callOnSharedLogger(loggers.BufferedMetricsLogger.prototype.flush),
-    gauge: callOnSharedLogger(loggers.BufferedMetricsLogger.prototype.gauge),
-    increment: callOnSharedLogger(loggers.BufferedMetricsLogger.prototype.increment),
-    histogram: callOnSharedLogger(loggers.BufferedMetricsLogger.prototype.histogram),
-    distribution: callOnSharedLogger(loggers.BufferedMetricsLogger.prototype.distribution),
+    flush: callOnSharedLogger(BufferedMetricsLogger.prototype.flush),
+    gauge: callOnSharedLogger(BufferedMetricsLogger.prototype.gauge),
+    increment: callOnSharedLogger(BufferedMetricsLogger.prototype.increment),
+    histogram: callOnSharedLogger(BufferedMetricsLogger.prototype.histogram),
+    distribution: callOnSharedLogger(BufferedMetricsLogger.prototype.distribution),
 
-    BufferedMetricsLogger: loggers.BufferedMetricsLogger,
+    BufferedMetricsLogger,
 
     reporters
 };

@@ -76,3 +76,7 @@ jobs:
       - name: Build Types
         run: |
           npm run build-types
+
+      - name: Check Types
+        run: |
+          npm run check-types
