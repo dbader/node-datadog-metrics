@@ -305,6 +305,10 @@ npm test
 
 ## Release History
 
+* 0.11.3 (2024-10-31)
+
+    No changes in this release since v0.11.2.
+
 * 0.11.2 (2024-06-25)
 
     * Fix types and documentation for the `aggregates` option for histograms and the `histogram.aggregates` option for the library as a whole. It was previously listed as `aggregations`, which was incorrect. (Thanks to @Calyhre in #117.)
