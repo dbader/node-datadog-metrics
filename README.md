@@ -305,6 +305,12 @@ npm test
 
 ## Release History
 
+* In Development:
+
+    TBD
+
+    [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.11.4...main)
+
 * 0.11.4 (2024-11-10)
 
     This release updates the TypeScript types for this project, and doesn’t include any changes to functionality. There are also no changes since v0.11.4-a.1.
@@ -323,7 +329,7 @@ npm test
 
         Previously, you would have had to declare the type for `logger` as `typeof BufferedMetricsLogger.prototype`. (#120)
 
-        [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.11.3...v0.11.4)
+    [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.11.3...v0.11.4)
 
 * 0.11.4-a.1 (2024-10-31)
 
