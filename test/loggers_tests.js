@@ -239,7 +239,13 @@ describe('BufferedMetricsLogger', function() {
                 it('should call the flush error handler with the reporter error', (done) => {
                     logger.flush(
                         () => done(new Error('The success handler was called!')),
-                        (error) => done(error === reporter.expectError ? null : new Error('Error was not the reporter error'))
+                        (error) => {
+                            if (error === reporter.expectError) {
+                                done();
+                            } else {
+                                done(new Error('Error was not the reporter error'));
+                            }
+                        }
                     );
                 });
 
@@ -281,7 +287,7 @@ describe('BufferedMetricsLogger', function() {
                             throw this.expectError;
                         }
                     }
-                }
+                };
             });
 
             standardFlushTests();
@@ -302,7 +308,7 @@ describe('BufferedMetricsLogger', function() {
                             }
                         }, 0);
                     }
-                }
+                };
             });
 
             standardFlushTests();

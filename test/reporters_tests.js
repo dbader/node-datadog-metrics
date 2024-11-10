@@ -7,20 +7,20 @@ chai.should();
 const { DatadogReporter, NullReporter } = require('../lib/reporters');
 const { AuthorizationError } = require('../lib/errors');
 
+const mockMetric = {
+    metric: 'test.gauge',
+    points: [[Math.floor(Date.now() / 1000), 1]],
+    type: 'gauge',
+};
+
 describe('NullReporter', function() {
     it('should always resolve', async function() {
         const reporter = new NullReporter();
-        await reporter.report([{a: 'b'}, {c: 'd'}]);
+        await reporter.report([mockMetric]);
     });
 });
 
 describe('DatadogReporter', function() {
-    const mockMetric = {
-        metric: 'test.gauge',
-        points: [[Math.floor(Date.now() / 1000), 1]],
-        type: 'gauge',
-    };
-
     afterEach(() => {
         nock.cleanAll();
     });
@@ -81,7 +81,7 @@ describe('DatadogReporter', function() {
                 .reply(403, { errors: ['Forbidden'] });
 
             await reporter.report([mockMetric]).should.be.rejectedWith(AuthorizationError);
-        })
+        });
     });
 
     it('should allow two instances to use different credentials', async function() {
