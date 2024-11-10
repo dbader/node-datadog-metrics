@@ -307,7 +307,22 @@ npm test
 
 * In Development:
 
+    **Breaking Changes:**
+
     TBD
+
+    **New Features:**
+
+    TBD
+
+    **Bug Fixes:**
+
+    TBD
+
+    **Maintenance:**
+
+    * Buffer metrics using `Map` instead of a plain object.
+
 
     [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.11.4...main)
 
