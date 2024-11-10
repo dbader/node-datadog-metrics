@@ -2,14 +2,14 @@
 
 const chai = require('chai');
 chai.use(require('chai-string'));
+chai.use(require('chai-as-promised'));
 
 const nock = require('nock');
 
 chai.should();
-const loggers = require('../lib/loggers');
-const reporters = require('../lib/reporters');
+const { BufferedMetricsLogger } = require('../lib/loggers');
+const { NullReporter } = require('../lib/reporters');
 const { AuthorizationError } = require('../lib/errors');
-const BufferedMetricsLogger = loggers.BufferedMetricsLogger;
 
 describe('BufferedMetricsLogger', function() {
     let warnLogs = [];
@@ -32,7 +32,7 @@ describe('BufferedMetricsLogger', function() {
 
     it('should have a gauge() metric', function() {
         const l = new BufferedMetricsLogger({
-            reporter: new reporters.NullReporter()
+            reporter: new NullReporter()
         });
         l.aggregator = {
             addPoint (Type, key, value, tags, host, timestampInMillis) {
@@ -47,7 +47,7 @@ describe('BufferedMetricsLogger', function() {
 
     it('should have an increment() metric', function() {
         const l = new BufferedMetricsLogger({
-            reporter: new reporters.NullReporter()
+            reporter: new NullReporter()
         });
 
         l.aggregator = {
@@ -87,7 +87,7 @@ describe('BufferedMetricsLogger', function() {
 
     it('should have a histogram() metric', function() {
         const l = new BufferedMetricsLogger({
-            reporter: new reporters.NullReporter()
+            reporter: new NullReporter()
         });
         l.aggregator = {
             addPoint (Type, key, value, tags, host, timestampInMillis) {
@@ -102,7 +102,7 @@ describe('BufferedMetricsLogger', function() {
 
     it('should support setting options for histograms', function() {
         const l = new BufferedMetricsLogger({
-            reporter: new reporters.NullReporter()
+            reporter: new NullReporter()
         });
         l.histogram('test.histogram', 23, ['a:a'], 1234567890, {
             percentiles: [0.5]
@@ -119,7 +119,7 @@ describe('BufferedMetricsLogger', function() {
 
     it('should support the `histogram` option', function() {
         const l = new BufferedMetricsLogger({
-            reporter: new reporters.NullReporter(),
+            reporter: new NullReporter(),
             histogram: {
                 percentiles: [0.5],
                 aggregates: ['sum']
@@ -144,7 +144,7 @@ describe('BufferedMetricsLogger', function() {
 
     it('should allow setting a default host', function() {
         const l = new BufferedMetricsLogger({
-            reporter: new reporters.NullReporter(),
+            reporter: new NullReporter(),
             host: 'myhost'
         });
         l.aggregator = {
@@ -159,7 +159,7 @@ describe('BufferedMetricsLogger', function() {
 
     it('should allow setting a default key prefix', function() {
         const l = new BufferedMetricsLogger({
-            reporter: new reporters.NullReporter(),
+            reporter: new NullReporter(),
             prefix: 'mynamespace.'
         });
         l.aggregator = {
@@ -174,7 +174,7 @@ describe('BufferedMetricsLogger', function() {
 
     it('should allow setting default tags', function() {
         const l = new BufferedMetricsLogger({
-            reporter: new reporters.NullReporter(),
+            reporter: new NullReporter(),
             defaultTags: ['one', 'two']
         });
         l.aggregator.defaultTags.should.deep.equal(['one', 'two']);
@@ -207,97 +207,119 @@ describe('BufferedMetricsLogger', function() {
         apiHostWarnings.should.have.lengthOf(1);
     });
 
-    it('should call the flush success handler after flushing', function(done) {
-        nock('https://api.datadoghq.com')
-            .post('/api/v1/series')
-            .reply(202, { errors: [] });
+    describe('flush()', function () {
+        let logger;
 
-        const logger = new BufferedMetricsLogger({
-            apiKey: 'abc',
-            apiHost: 'datadoghq.com'
+        beforeEach(function () {
+            logger = new BufferedMetricsLogger({ apiKey: 'abc' });
+            logger.gauge('test.gauge', 23);
         });
-        logger.gauge('test.gauge', 23);
 
-        logger.flush(
-            () => done(),
-            (error) => done(error || new Error('Error handler called with no error object.'))
-        );
-    });
+        describe('on success', function () {
+            beforeEach(function () {
+                nock('https://api.datadoghq.com')
+                    .post('/api/v1/series')
+                    .reply(202, { errors: [] });
+            });
 
-    it('should call the flush error handler for errors', function(done) {
-        nock('https://api.datadoghq.com')
-            .post('/api/v1/series')
-            .reply(403, { errors: ['Forbidden'] });
+            it('should resolve the promise', async function () {
+                await logger.flush().should.be.fulfilled;
+            });
 
-        const logger = new BufferedMetricsLogger({ apiKey: 'not-valid' });
-        logger.gauge('test.gauge', 23);
-
-        logger.flush(
-            () => done(new Error('The success handler was called!')),
-            () => done()
-        );
-    });
-
-    it('should support the `onError` option', function(done) {
-        nock('https://api.datadoghq.com')
-            .post('/api/v1/series')
-            .reply(403, { errors: ['Forbidden'] });
-
-        const logger = new BufferedMetricsLogger({
-            apiKey: 'not-valid',
-            onError (error) {
-                if (error) {
-                    done();
-                } else {
-                    done(new Error('Handler was called without error data'));
-                }
-            }
+            it('should call the success callback', (done) => {
+                logger.flush(
+                    () => done(),
+                    (error) => done(error || new Error('Error handler called with no error object.'))
+                );
+            });
         });
-        logger.gauge('test.gauge', 23);
-        logger.flush();
-    });
 
-    it('should log flush errors if there is no handler', function(done) {
-        nock('https://api.datadoghq.com')
-            .post('/api/v1/series')
-            .reply(403, { errors: ['Forbidden'] });
+        describe('on error', function () {
+            beforeEach(() => {
+                nock('https://api.datadoghq.com')
+                    .post('/api/v1/series')
+                    .reply(403, { errors: ['Forbidden'] });
+            });
 
-        const logger = new BufferedMetricsLogger({ apiKey: 'not-valid' });
-        logger.gauge('test.gauge', 23);
+            it('should reject the promise', async () => {
+                await logger.flush().should.be.rejected;
+            });
 
-        logger.flush();
-        setTimeout(() => {
-            try {
+            it('should call the flush error handler', (done) => {
+                logger.flush(
+                    () => done(new Error('The success handler was called!')),
+                    () => done()
+                );
+            });
+
+            it('should call the `onError` init option if set', async () => {
+                let onErrorCalled = false;
+                let onErrorValue = null;
+
+                logger = new BufferedMetricsLogger({
+                    apiKey: 'abc',
+                    onError (error) {
+                        onErrorCalled = true;
+                        onErrorValue = error;
+                    }
+                });
+                logger.gauge('test.gauge', 23);
+
+                await logger.flush().should.be.rejected;
+                onErrorCalled.should.equal(true);
+                onErrorValue.should.be.ok;
+            });
+
+            it('should log if `onError` init option is not set', async () => {
+                await logger.flush().catch(() => null);
+
                 errorLogs.should.have.lengthOf(1);
-            }
-            catch (error) {
-                return done(error);
-            }
-            done();
-        }, 50);
+            });
+        });
+
+        // TODO: this should be in a DatadogReporter test suite instead.
+        describe('with bad API keys', function () {
+            beforeEach(() => {
+                nock('https://api.datadoghq.com')
+                    .post('/api/v1/series')
+                    .reply(403, { errors: ['Forbidden'] });
+            });
+
+            it('should reject with AuthorizationError', async () => {
+                await logger.flush().should.eventually.be.rejectedWith(AuthorizationError);
+            });
+        });
     });
 
-    it('should use a special error for bad API keys', function(done) {
-        nock('https://api.datadoghq.com')
-            .post('/api/v1/series')
-            .reply(403, { errors: ['Forbidden'] });
-
-        const logger = new BufferedMetricsLogger({ apiKey: 'not-valid' });
-        logger.gauge('test.gauge', 23);
-
-        logger.flush(
-            () => done(new Error('The success handler was called!')),
-            (error) => {
-                if (error instanceof AuthorizationError) {
-                    done();
-                } else {
-                    done(new Error(`The error was not an AuthorizationError: ${error}`));
+    describe('[deprecated] flush() with a callback-based reporter', function() {
+        it('resolves the promise on success callback', async function () {
+            const logger = new BufferedMetricsLogger({
+                reporter: {
+                    report (_series, onSuccess, _onError) {
+                        setTimeout(() => onSuccess(), 0);
+                    }
                 }
-            }
-        );
+            });
+            logger.gauge('test.gauge', 23);
+
+            await logger.flush().should.be.fulfilled;
+        });
+
+        it('rejects the promise on error callback', async function () {
+            const logger = new BufferedMetricsLogger({
+                reporter: {
+                    report (_series, _onSuccess, onError) {
+                        setTimeout(() => onError(new Error('On No!')), 0);
+                    }
+                }
+            });
+            logger.gauge('test.gauge', 23);
+
+            await logger.flush().should.be.rejected;
+        });
     });
 
-    it('should allow two instances to use different credentials', function(done) {
+    it('should allow two instances to use different credentials', async function() {
         const apiKeys = ['abc', 'xyz'];
         let receivedKeys = [];
 
@@ -313,28 +335,14 @@ describe('BufferedMetricsLogger', function() {
 
             const logger = new BufferedMetricsLogger({
                 apiKey,
-                apiHost: 'datadoghq.com'
+                site: 'datadoghq.com'
             });
             logger.gauge('test.gauge', 23);
             return logger;
         });
 
-        // Flush the loggers and make sure they receive the expected keys.
-        loggers[0].flush(
-            () => {
-                loggers[1].flush(
-                    () => {
-                        try {
-                            receivedKeys.should.deep.equal(apiKeys);
-                        } catch (error) {
-                            return done(error);
-                        }
-                        done();
-                    },
-                    done
-                );
-            },
-            done
-        );
+        await Promise.all(loggers.map(l => l.flush()));
+
+        receivedKeys.should.deep.equal(apiKeys);
     });
 });

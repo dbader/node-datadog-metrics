@@ -139,9 +139,7 @@ Where `options` is an object and can contain the following:
     * Set tags that are common to all metrics.
 * `onError`: A function to call when there are asynchronous errors seding
     buffered metrics to Datadog. It takes one argument (the error). (optional)
-    * If the error was not handled (either by setting this option or by
-      specifying a handler when manually calling `flush()`), the error will be
-      logged to stdout.
+    * If this option is not set, the error will be logged to stderr.
 * `histogram`: An object with default options for all histograms. This has the
     same properties as the options object on the `histogram()` method. Options
     specified when calling the method are layered on top of this object.
@@ -170,16 +168,14 @@ Send metrics to a totally different service instead of Datadog:
 ```js
 metrics.init({
   reporter: {
-    report(series, onSuccess, onError) {
+    async report(series) {
       // `series` is an array of metrics objects, formatted basically how the
       // Datadog v1 metrics API and v1 distributions API want them.
-      fetch('https://my-datadog-like-api.com/series', {
-          method: 'POST',
-          body: JSON.stringify({ series })
-        })
-          .then(response => response.json())
-          .then(() => onSuccess())
-          .catch(onError);
+      const response = await fetch('https://my-datadog-like-api.com/series', {
+        method: 'POST',
+        body: JSON.stringify({ series })
+      });
+      return await response.json();
     }
   }
 });
@@ -277,14 +273,39 @@ metrics.distribution('test.service_time', 0.248);
 
 ### Flushing
 
-`metrics.flush([onSuccess[, onError]])`
+`metrics.flush()`
 
-Calling `flush` sends any buffered metrics to Datadog. Unless you set
-`flushIntervalSeconds` to 0 it won't be necessary to call this function.
+Calling `flush` sends any buffered metrics to Datadog and returns a promise.
+This function will be called automatically unless you set `flushIntervalSeconds`
+to `0`.
 
 It can be useful to trigger a manual flush by calling if you want to
 make sure pending metrics have been sent before you quit the application
 process, for example.
+
+⚠️ This method used to take two callback arguments for handling successes and
+errors. That form is deprecated and will be removed in a future update:
+
+```js
+// Deprecated:
+metrics.flush(
+    () => console.log('Flush suceeded!'),
+    (error) => console.log('Flush error:', error)
+);
+
+// Current, using `await`:
+try {
+    await metrics.flush();
+    console.log('Flush suceeded!');
+} catch (error) {
+    console.log('Flush error:', error);
+}
+
+// Or, using Promise callbacks:
+metrics.flush()
+    .then(() => console.log('Flush succeeded'))
+    .catch((error) => console.log('Flush error:', error)) ;
+```
 
 ## Logging
 
@@ -312,7 +333,10 @@ Contributions are always welcome! For more info on how to contribute or develop 
 
     **New Features:**
 
-    TBD
+    * Asynchronous actions now use promises instead of callbacks. In places where `onSuccess` and `onError` callbacks were used, they are now deprecated. Instead, those methods return promises (callbacks still work, but support will be removed in a future release). This affects:
+
+        * The `flush()` method now returns a promise.
+        * The `report(series)` method on any custom reporters should now return a promise. For now, datadog-metrics will use the old callback-based behavior if the method signature has callbacks listed after `series` argument.
 
     **Bug Fixes:**
 
