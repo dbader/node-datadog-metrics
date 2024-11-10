@@ -305,6 +305,26 @@ npm test
 
 ## Release History
 
+* 0.11.4 (2024-11-10)
+
+    This release updates the TypeScript types for this project, and doesn’t include any changes to functionality. There are also no changes since v0.11.4-a.1.
+
+    **Bug Fixes:**
+
+    * `BufferedMetricsLogger` is now an actual class & type when you import it in TypeScript. That is, you can now do:
+
+        ```typescript
+        import { BufferedMetricsLogger } from 'datadog-metrics';
+
+        function useLogger(logger: BufferedMetricsLogger) {
+          // ...
+        }
+        ```
+
+        Previously, you would have had to declare the type for `logger` as `typeof BufferedMetricsLogger.prototype`. (#120)
+
+        [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.11.3...v0.11.4)
+
 * 0.11.4-a.1 (2024-10-31)
 
     This pre-release is meant for testing a fix for #119.
