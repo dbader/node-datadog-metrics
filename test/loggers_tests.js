@@ -4,12 +4,9 @@ const chai = require('chai');
 chai.use(require('chai-string'));
 chai.use(require('chai-as-promised'));
 
-const nock = require('nock');
-
 chai.should();
 const { BufferedMetricsLogger } = require('../lib/loggers');
 const { NullReporter } = require('../lib/reporters');
-const { AuthorizationError } = require('../lib/errors');
 
 describe('BufferedMetricsLogger', function() {
     let warnLogs = [];
@@ -23,7 +20,6 @@ describe('BufferedMetricsLogger', function() {
     });
 
     this.afterEach(() => {
-        nock.cleanAll();
         console.warn = originalWarn;
         console.error = originalError;
         warnLogs = [];
@@ -208,141 +204,108 @@ describe('BufferedMetricsLogger', function() {
     });
 
     describe('flush()', function () {
-        let logger;
+        let reporter;
 
-        beforeEach(function () {
-            logger = new BufferedMetricsLogger({ apiKey: 'abc' });
-            logger.gauge('test.gauge', 23);
-        });
+        function standardFlushTests() {
+            let logger;
 
-        describe('on success', function () {
             beforeEach(function () {
-                nock('https://api.datadoghq.com')
-                    .post('/api/v1/series')
-                    .reply(202, { errors: [] });
-            });
-
-            it('should resolve the promise', async function () {
-                await logger.flush().should.be.fulfilled;
-            });
-
-            it('should call the success callback', (done) => {
-                logger.flush(
-                    () => done(),
-                    (error) => done(error || new Error('Error handler called with no error object.'))
-                );
-            });
-        });
-
-        describe('on error', function () {
-            beforeEach(() => {
-                nock('https://api.datadoghq.com')
-                    .post('/api/v1/series')
-                    .reply(403, { errors: ['Forbidden'] });
-            });
-
-            it('should reject the promise', async () => {
-                await logger.flush().should.be.rejected;
-            });
-
-            it('should call the flush error handler', (done) => {
-                logger.flush(
-                    () => done(new Error('The success handler was called!')),
-                    () => done()
-                );
-            });
-
-            it('should call the `onError` init option if set', async () => {
-                let onErrorCalled = false;
-                let onErrorValue = null;
-
-                logger = new BufferedMetricsLogger({
-                    apiKey: 'abc',
-                    onError (error) {
-                        onErrorCalled = true;
-                        onErrorValue = error;
-                    }
-                });
+                logger = new BufferedMetricsLogger({ apiKey: 'abc', reporter });
                 logger.gauge('test.gauge', 23);
-
-                await logger.flush().should.be.rejected;
-                onErrorCalled.should.equal(true);
-                onErrorValue.should.be.ok;
             });
 
-            it('should log if `onError` init option is not set', async () => {
-                await logger.flush().catch(() => null);
+            describe('on success', function () {
+                it('should resolve the promise', async function () {
+                    await logger.flush().should.be.fulfilled;
+                });
 
-                errorLogs.should.have.lengthOf(1);
+                it('should call the success callback', (done) => {
+                    logger.flush(
+                        () => done(),
+                        (error) => done(error || new Error('Error handler called with no error object.'))
+                    );
+                });
             });
-        });
 
-        // TODO: this should be in a DatadogReporter test suite instead.
-        describe('with bad API keys', function () {
+            describe('on error', function () {
+                beforeEach(() => {
+                    reporter.expectError = new Error('test error');
+                });
+
+                it('should reject the promise with the reporter error', async () => {
+                    await logger.flush().should.be.rejectedWith(reporter.expectError);
+                });
+
+                it('should call the flush error handler with the reporter error', (done) => {
+                    logger.flush(
+                        () => done(new Error('The success handler was called!')),
+                        (error) => done(error === reporter.expectError ? null : new Error('Error was not the reporter error'))
+                    );
+                });
+
+                it('should call the `onError` init option if set', async () => {
+                    let onErrorCalled = false;
+                    let onErrorValue = null;
+
+                    logger = new BufferedMetricsLogger({
+                        apiKey: 'abc',
+                        onError (error) {
+                            onErrorCalled = true;
+                            onErrorValue = error;
+                        },
+                        reporter
+                    });
+                    logger.gauge('test.gauge', 23);
+
+                    await logger.flush().should.be.rejected;
+                    onErrorCalled.should.equal(true);
+                    onErrorValue.should.equal(reporter.expectError);
+                });
+
+                it('should log if `onError` init option is not set', async () => {
+                    await logger.flush().catch(() => null);
+
+                    errorLogs.should.have.lengthOf(1);
+                });
+            });
+        }
+
+        describe('with a promise-based reporter', function() {
             beforeEach(() => {
-                nock('https://api.datadoghq.com')
-                    .post('/api/v1/series')
-                    .reply(403, { errors: ['Forbidden'] });
-            });
-
-            it('should reject with AuthorizationError', async () => {
-                await logger.flush().should.eventually.be.rejectedWith(AuthorizationError);
-            });
-        });
-    });
-
-    describe('[deprecated] flush() with a callback-based reporter', function() {
-        it('resolves the promise on success callback', async function () {
-            const logger = new BufferedMetricsLogger({
-                reporter: {
-                    report (_series, onSuccess, _onError) {
-                        setTimeout(() => onSuccess(), 0);
+                reporter = {
+                    expectError: null,
+                    async report(metrics) {
+                        if (!metrics || metrics.length === 0) {
+                            throw new Error('No metrics were sent to the reporter!');
+                        } else if (this.expectError) {
+                            throw this.expectError;
+                        }
                     }
                 }
             });
-            logger.gauge('test.gauge', 23);
 
-            await logger.flush().should.be.fulfilled;
+            standardFlushTests();
         });
 
-        it('rejects the promise on error callback', async function () {
-            const logger = new BufferedMetricsLogger({
-                reporter: {
-                    report (_series, _onSuccess, onError) {
-                        setTimeout(() => onError(new Error('On No!')), 0);
+        describe('[deprecated] with a callback-based reporter', function() {
+            beforeEach(() => {
+                reporter = {
+                    expectError: null,
+                    report(metrics, onSuccess, onError) {
+                        setTimeout(() => {
+                            if (!metrics || metrics.length === 0) {
+                                throw new Error('No metrics were sent to the reporter!');
+                            } else if (this.expectError) {
+                                onError(this.expectError);
+                            } else {
+                                onSuccess();
+                            }
+                        }, 0);
                     }
                 }
             });
-            logger.gauge('test.gauge', 23);
 
-            await logger.flush().should.be.rejected;
+            standardFlushTests();
         });
-    });
-
-    it('should allow two instances to use different credentials', async function() {
-        const apiKeys = ['abc', 'xyz'];
-        let receivedKeys = [];
-
-        // Create a logger and a mock endpoint for each API key.
-        const loggers = apiKeys.map(apiKey => {
-            nock('https://api.datadoghq.com')
-                .matchHeader('dd-api-key', (values) => {
-                    receivedKeys.push(values[0]);
-                    return true;
-                })
-                .post('/api/v1/series')
-                .reply(202, { errors: [] });
-
-            const logger = new BufferedMetricsLogger({
-                apiKey,
-                site: 'datadoghq.com'
-            });
-            logger.gauge('test.gauge', 23);
-            return logger;
-        });
-
-        await Promise.all(loggers.map(l => l.flush()));
-
-        receivedKeys.should.deep.equal(apiKeys);
     });
 });
