@@ -1,9 +1,12 @@
+.DS_Store
+
 # Logs
 logs
 *.log
 
 # IDE
 .idea
+.vscode
 
 # Runtime data
 pids
@@ -39,6 +42,7 @@ package-lock.json
 
 # Users Environment Variables
 .lock-wscript
+.env
 
 # Scratch working files
 scratch.*

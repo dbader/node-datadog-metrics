@@ -14,6 +14,7 @@
   "scripts": {
     "prepack": "npm run clean && npm run build-types && npm run check-types",
     "test": "mocha --reporter spec",
+    "check-integration": "node test/integration_check.js",
     "check-codestyle": "npx eslint .",
     "check-text": "test/lint_text.sh",
     "build-types": "tsc --build",
