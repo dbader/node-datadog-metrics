@@ -14,11 +14,11 @@
   "scripts": {
     "prepack": "npm run clean && npm run build-types && npm run check-types",
     "test": "mocha --reporter spec",
-    "check-integration": "node test/integration_check.js",
+    "check-integration": "node test-other/integration_check.js",
     "check-codestyle": "npx eslint .",
-    "check-text": "test/lint_text.sh",
+    "check-text": "test-other/lint_text.sh",
     "build-types": "tsc --build",
-    "check-types": "tsc --noEmit --strict test/types_check.ts",
+    "check-types": "tsc --noEmit --strict test-other/types_check.ts",
     "clean": "tsc --build --clean"
   },
   "keywords": [
