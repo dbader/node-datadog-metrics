@@ -6,13 +6,17 @@
 
 'use strict';
 
-const { setTimeout } = require('node:timers/promises');
 const { client, v1 } = require('@datadog/datadog-api-client');
 const datadogMetrics = require('..');
 
 function floorTo(value, points) {
     const factor = 10 ** points;
     return Math.round(value * factor) / factor;
+}
+
+// Remove when upgrading to Node.js 16; this is built-in (node:times/promises).
+function sleep(milliseconds) {
+    return new Promise(r => setTimeout(r, milliseconds));
 }
 
 // Make timestamps round seconds for ease of comparison.
@@ -33,7 +37,7 @@ const metricPoints = [
 
 async function main() {
     await sendMetrics();
-    await setTimeout(5000);
+    await sleep(5000);
     const result = await waitForSentMetrics();
 
     if (!result) {
@@ -44,13 +48,13 @@ async function main() {
 async function sendMetrics() {
     console.log(`Sending random points for "${metricName}"`);
 
-    datadogMetrics.init({
-        flushIntervalSeconds: 0
-    });
+    datadogMetrics.init({ flushIntervalSeconds: 0 });
 
     for (const [timestamp, value] of metricPoints) {
         datadogMetrics.gauge(metricName, value, metricTags, timestamp);
-        await datadogMetrics.flush();
+        await new Promise((resolve, reject) => {
+            datadogMetrics.flush(resolve, reject);
+        });
     }
 }
 
@@ -104,11 +108,13 @@ async function waitForSentMetrics() {
         }
 
         console.log(`  Nothing found, waiting ${CHECK_INTERVAL_SECONDS}s before trying again.`);
-        await setTimeout(CHECK_INTERVAL_SECONDS * 1000);
+        await sleep(CHECK_INTERVAL_SECONDS * 1000);
     }
 
     console.log('Nothing found.');
     return false;
 }
 
-main().catch(error => console.error(error));
+if (require.main === module) {
+    main().catch(error => console.error(error));
+}
