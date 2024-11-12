@@ -298,11 +298,9 @@ Example:
 DEBUG=metrics node app.js
 ```
 
-## Tests
+## Contributing
 
-```sh
-npm test
-```
+Contributions are always welcome! For more info on how to contribute or develop locally, please see [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 
 ## Release History
 
@@ -585,6 +583,8 @@ This module is heavily inspired by the Python [dogapi module](https://github.com
 Daniel Bader – [@dbader_org](https://twitter.com/dbader_org) – mail@dbader.org
 
 Distributed under the MIT license. See ``LICENSE`` for more information.
+
+Your contributions are always welcome! See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for more.
 
 [https://github.com/dbader/node-datadog-metrics](https://github.com/dbader/node-datadog-metrics)
 
