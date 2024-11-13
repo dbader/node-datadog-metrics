@@ -28,37 +28,54 @@ const MAX_WAIT_TIME = 2.5 * MINUTE;
 // How long to wait between checks.
 const CHECK_INTERVAL_SECONDS = 15;
 
-const metricName = 'node.datadog.metrics.test.gauge';
-const metricTags = ['test-tag-1'];
-const metricPoints = [
+const testPoints = [
     [NOW - 60 * 1000, floorTo(10 * Math.random(), 1)],
     [NOW - 30 * 1000, floorTo(10 * Math.random(), 1)],
 ];
 
-async function main() {
-    await sendMetrics();
-    await sleep(5000);
-    const result = await waitForSentMetrics();
+const testMetrics = [
+    {
+        type: 'gauge',
+        name: 'node.datadog.metrics.test.gauge',
+        tags: ['test-tag-1'],
+    },
+    {
+        type: 'distribution',
+        name: 'node.datadog.metrics.test.dist',
+        tags: ['test-tag-2'],
+    },
+];
 
-    if (!result) {
-        process.exitCode = 1;
+async function main() {
+    datadogMetrics.init({ flushIntervalSeconds: 0 });
+
+    for (const metric of testMetrics) {
+        await sendMetric(metric);
+    }
+
+    await sleep(5000);
+
+    for (const metric of testMetrics) {
+        const result = await waitForSentMetric(metric);
+
+        if (!result) {
+            process.exitCode = 1;
+        }
     }
 }
 
-async function sendMetrics() {
-    console.log(`Sending random points for "${metricName}"`);
+async function sendMetric(metric) {
+    console.log(`Sending random points for ${metric.type} "${metric.name}"`);
 
-    datadogMetrics.init({ flushIntervalSeconds: 0 });
-
-    for (const [timestamp, value] of metricPoints) {
-        datadogMetrics.gauge(metricName, value, metricTags, timestamp);
+    for (const [timestamp, value] of testPoints) {
+        datadogMetrics[metric.type](metric.name, value, metric.tags, timestamp);
         await new Promise((resolve, reject) => {
             datadogMetrics.flush(resolve, reject);
         });
     }
 }
 
-async function queryMetrics() {
+async function queryMetric(metric) {
     const configuration = client.createConfiguration({
         authMethods: {
             apiKeyAuth: process.env.DATADOG_API_KEY,
@@ -72,20 +89,20 @@ async function queryMetrics() {
     const data = await metricsApi.queryMetrics({
         from: Math.floor((NOW - 5 * MINUTE) / 1000),
         to: Math.ceil(Date.now() / 1000),
-        query: `${metricName}{${metricTags[0]}}`,
+        query: `${metric.name}{${metric.tags[0]}}`,
     });
 
     return data.series && data.series[0];
 }
 
-async function waitForSentMetrics() {
+async function waitForSentMetric(metric) {
     const endTime = Date.now() + MAX_WAIT_TIME;
     while (Date.now() < endTime) {
-        console.log('Querying Datadog for sent metrics...');
-        const series = await queryMetrics();
+        console.log(`Querying Datadog for sent points in ${metric.type} "${metric.name}"...`);
+        const series = await queryMetric(metric);
 
         if (series) {
-            const found = metricPoints.every(([timestamp, value]) => {
+            const found = testPoints.every(([timestamp, value]) => {
                 return series.pointlist.some(([remoteTimestamp, remoteValue]) => {
                     // Datadog may round values differently or place them into
                     // time intervals based on the metric's configuration. Look
@@ -98,11 +115,11 @@ async function waitForSentMetrics() {
             });
 
             if (found) {
-                console.log('  Found sent metrics!');
+                console.log('✔︎ Found sent points! Test passed.');
                 return true;
             } else {
                 console.log('  Found series, but with no matching points.');
-                console.log(`  Looking for: ${JSON.stringify(metricPoints)}`);
+                console.log(`  Looking for: ${JSON.stringify(testPoints)}`);
                 console.log('  Found:', JSON.stringify(series, null, 2));
             }
         }
@@ -111,7 +128,7 @@ async function waitForSentMetrics() {
         await sleep(CHECK_INTERVAL_SECONDS * 1000);
     }
 
-    console.log('Nothing found.');
+    console.log('✘ Nothing found and gave up waiting. Test failed!');
     return false;
 }
 
