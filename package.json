@@ -12,7 +12,7 @@
     "url": "https://github.com/dbader/node-datadog-metrics/issues"
   },
   "scripts": {
-    "prepack": "npm run clean && npm run build-types",
+    "prepack": "npm run clean && npm run build-types && npm run check-types",
     "test": "mocha --reporter spec",
     "check-codestyle": "npx eslint .",
     "check-text": "test/lint_text.sh",
