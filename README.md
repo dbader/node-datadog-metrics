@@ -347,7 +347,7 @@ Contributions are always welcome! For more info on how to contribute or develop 
 
     * Buffer metrics using `Map` instead of a plain object.
 
-    * Deprecated the `appKey` option. Application keys (as opposed to API keys) are not actually needed for sending metrics or distributions to the Datadog API. Including it in your configuration adds not benefits, but risks exposing a sensitive credential.
+    * Deprecated the `appKey` option. Application keys (as opposed to API keys) are not actually needed for sending metrics or distributions to the Datadog API. Including it in your configuration adds no benefits, but risks exposing a sensitive credential.
 
     [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.11.4...main)
 
