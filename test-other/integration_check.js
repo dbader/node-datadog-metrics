@@ -82,7 +82,7 @@ async function queryMetric(metric) {
             appKeyAuth: process.env.DATADOG_APP_KEY,
         },
     });
-    configuration.setServerVariables({ site: process.env.DATADOG_API_HOST });
+    configuration.setServerVariables({ site: process.env.DATADOG_SITE });
     const metricsApi = new v1.MetricsApi(configuration);
 
     // NOTE: Query timestamps are seconds, but result points are milliseconds.
