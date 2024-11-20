@@ -58,14 +58,16 @@ For changes to this repo, follow the [local development](#local-development) ste
     - Run tests: `npm test`
     - Check code style: `npm run check-codestyle && npm run check-text`
     - Build and check TypeScript types: `npm run build-types && npm run check-types`
-    - (Not required) If you have a Datadog account you can push test metrics to, run a complete, live integration check:
+    - **(Not required!)** If you have a Datadog account you can push test metrics to, run a complete, live integration check:
 
         ```sh
         export DATADOG_API_KEY='<api key for your test account>'
         export DATADOG_APP_KEY='<app key for your test account>'
-        export DATADOG_API_HOST='<site for your test account>'
+        export DATADOG_SITE='<site for your test account>'
         npm run check-integration
         ```
+
+    Most of these checks will also run automatically when you create a PR, but it can be good to run some of the quick checks yourself before pushing your code to get quicker feedback.
 
 8. Commit and push your changes.
 
@@ -79,7 +81,7 @@ For changes to this repo, follow the [local development](#local-development) ste
 1. Pull and check out the latest `main` branch (or whatever branch is relevant if publishing a patch for a previous release).
 
 2. Prepare for the release.
-    - Most checks will have run in CI, but if you can, make sure to run the `check-integration` script. (See [local development](#local-development) notes above.)
+    - Most checks will have run in CI, but you may want to run them again locally if you’ve changed anything notable. (See [local development](#local-development) notes above.)
 
     - Update the version number in `package.json`.
 
