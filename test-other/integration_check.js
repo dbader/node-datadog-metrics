@@ -133,5 +133,8 @@ async function waitForSentMetric(metric) {
 }
 
 if (require.main === module) {
-    main().catch(error => console.error(error));
+    main().catch(error => {
+        process.exitCode = 1;
+        console.error(error);
+    });
 }
