@@ -35,6 +35,29 @@ jobs:
         run: |
           npm test
 
+  test-integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.default_node_version }}
+          cache: 'npm'
+          cache-dependency-path: '**/package.json'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Check Integration
+        env:
+          DATADOG_API_KEY: ${{ secrets.DATADOG_API_KEY }}
+          DATADOG_APP_KEY: ${{ secrets.DATADOG_APP_KEY }}
+          DATADOG_SITE: ${{ secrets.DATADOG_API_HOST }}
+        run: |
+          npm run check-integration
+
   lint:
     runs-on: ubuntu-latest
     steps:
