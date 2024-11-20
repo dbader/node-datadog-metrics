@@ -121,6 +121,7 @@ Where `options` is an object and can contain the following:
     * Defaults to `datadoghq.com`.
     * See more details on setting your site at:
         https://docs.datadoghq.com/getting_started/site/#access-the-datadog-site
+    * You can also set this via the `DATADOG_SITE` environment variable.
 * `apiKey`: Sets the Datadog API key. (optional)
     * It's usually best to keep this in an environment variable.
       Datadog-metrics looks for the API key in `DATADOG_API_KEY` by default.
@@ -317,7 +318,7 @@ npm test
 
     **Bug Fixes:**
 
-    TBD
+    * Support setting the `site` option via the `DATADOG_SITE` environment variable. The `apiHost` option was renamed to `site` in v0.11.0, but the `DATADOG_API_HOST` environment variable was accidentally left as-is. The old environment variable name is now deprecated, and will be removed at the same time as the `apiHost` option is removed.
 
     **Maintenance:**
 
