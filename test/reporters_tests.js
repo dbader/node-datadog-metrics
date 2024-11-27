@@ -52,7 +52,7 @@ describe('DatadogReporter', function() {
         });
     });
 
-    describe('flush', function() {
+    describe('report', function() {
         let reporter;
 
         beforeEach(() => {
