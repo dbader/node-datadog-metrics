@@ -2,14 +2,11 @@
 
 const chai = require('chai');
 chai.use(require('chai-string'));
-
-const nock = require('nock');
+chai.use(require('chai-as-promised'));
 
 chai.should();
-const loggers = require('../lib/loggers');
-const reporters = require('../lib/reporters');
-const { AuthorizationError } = require('../lib/errors');
-const BufferedMetricsLogger = loggers.BufferedMetricsLogger;
+const { BufferedMetricsLogger } = require('../lib/loggers');
+const { NullReporter } = require('../lib/reporters');
 
 describe('BufferedMetricsLogger', function() {
     let warnLogs = [];
@@ -23,7 +20,6 @@ describe('BufferedMetricsLogger', function() {
     });
 
     this.afterEach(() => {
-        nock.cleanAll();
         console.warn = originalWarn;
         console.error = originalError;
         warnLogs = [];
@@ -32,7 +28,7 @@ describe('BufferedMetricsLogger', function() {
 
     it('should have a gauge() metric', function() {
         const l = new BufferedMetricsLogger({
-            reporter: new reporters.NullReporter()
+            reporter: new NullReporter()
         });
         l.aggregator = {
             addPoint (Type, key, value, tags, host, timestampInMillis) {
@@ -47,7 +43,7 @@ describe('BufferedMetricsLogger', function() {
 
     it('should have an increment() metric', function() {
         const l = new BufferedMetricsLogger({
-            reporter: new reporters.NullReporter()
+            reporter: new NullReporter()
         });
 
         l.aggregator = {
@@ -87,7 +83,7 @@ describe('BufferedMetricsLogger', function() {
 
     it('should have a histogram() metric', function() {
         const l = new BufferedMetricsLogger({
-            reporter: new reporters.NullReporter()
+            reporter: new NullReporter()
         });
         l.aggregator = {
             addPoint (Type, key, value, tags, host, timestampInMillis) {
@@ -102,7 +98,7 @@ describe('BufferedMetricsLogger', function() {
 
     it('should support setting options for histograms', function() {
         const l = new BufferedMetricsLogger({
-            reporter: new reporters.NullReporter()
+            reporter: new NullReporter()
         });
         l.histogram('test.histogram', 23, ['a:a'], 1234567890, {
             percentiles: [0.5]
@@ -119,7 +115,7 @@ describe('BufferedMetricsLogger', function() {
 
     it('should support the `histogram` option', function() {
         const l = new BufferedMetricsLogger({
-            reporter: new reporters.NullReporter(),
+            reporter: new NullReporter(),
             histogram: {
                 percentiles: [0.5],
                 aggregates: ['sum']
@@ -144,7 +140,7 @@ describe('BufferedMetricsLogger', function() {
 
     it('should allow setting a default host', function() {
         const l = new BufferedMetricsLogger({
-            reporter: new reporters.NullReporter(),
+            reporter: new NullReporter(),
             host: 'myhost'
         });
         l.aggregator = {
@@ -159,7 +155,7 @@ describe('BufferedMetricsLogger', function() {
 
     it('should allow setting a default key prefix', function() {
         const l = new BufferedMetricsLogger({
-            reporter: new reporters.NullReporter(),
+            reporter: new NullReporter(),
             prefix: 'mynamespace.'
         });
         l.aggregator = {
@@ -174,7 +170,7 @@ describe('BufferedMetricsLogger', function() {
 
     it('should allow setting default tags', function() {
         const l = new BufferedMetricsLogger({
-            reporter: new reporters.NullReporter(),
+            reporter: new NullReporter(),
             defaultTags: ['one', 'two']
         });
         l.aggregator.defaultTags.should.deep.equal(['one', 'two']);
@@ -207,134 +203,115 @@ describe('BufferedMetricsLogger', function() {
         apiHostWarnings.should.have.lengthOf(1);
     });
 
-    it('should call the flush success handler after flushing', function(done) {
-        nock('https://api.datadoghq.com')
-            .post('/api/v1/series')
-            .reply(202, { errors: [] });
+    describe('flush()', function () {
+        let reporter;
 
-        const logger = new BufferedMetricsLogger({
-            apiKey: 'abc',
-            apiHost: 'datadoghq.com'
-        });
-        logger.gauge('test.gauge', 23);
+        function standardFlushTests() {
+            let logger;
 
-        logger.flush(
-            () => done(),
-            (error) => done(error || new Error('Error handler called with no error object.'))
-        );
-    });
-
-    it('should call the flush error handler for errors', function(done) {
-        nock('https://api.datadoghq.com')
-            .post('/api/v1/series')
-            .reply(403, { errors: ['Forbidden'] });
-
-        const logger = new BufferedMetricsLogger({ apiKey: 'not-valid' });
-        logger.gauge('test.gauge', 23);
-
-        logger.flush(
-            () => done(new Error('The success handler was called!')),
-            () => done()
-        );
-    });
-
-    it('should support the `onError` option', function(done) {
-        nock('https://api.datadoghq.com')
-            .post('/api/v1/series')
-            .reply(403, { errors: ['Forbidden'] });
-
-        const logger = new BufferedMetricsLogger({
-            apiKey: 'not-valid',
-            onError (error) {
-                if (error) {
-                    done();
-                } else {
-                    done(new Error('Handler was called without error data'));
-                }
-            }
-        });
-        logger.gauge('test.gauge', 23);
-        logger.flush();
-    });
-
-    it('should log flush errors if there is no handler', function(done) {
-        nock('https://api.datadoghq.com')
-            .post('/api/v1/series')
-            .reply(403, { errors: ['Forbidden'] });
-
-        const logger = new BufferedMetricsLogger({ apiKey: 'not-valid' });
-        logger.gauge('test.gauge', 23);
-
-        logger.flush();
-        setTimeout(() => {
-            try {
-                errorLogs.should.have.lengthOf(1);
-            }
-            catch (error) {
-                return done(error);
-            }
-            done();
-        }, 50);
-    });
-
-    it('should use a special error for bad API keys', function(done) {
-        nock('https://api.datadoghq.com')
-            .post('/api/v1/series')
-            .reply(403, { errors: ['Forbidden'] });
-
-        const logger = new BufferedMetricsLogger({ apiKey: 'not-valid' });
-        logger.gauge('test.gauge', 23);
-
-        logger.flush(
-            () => done(new Error('The success handler was called!')),
-            (error) => {
-                if (error instanceof AuthorizationError) {
-                    done();
-                } else {
-                    done(new Error(`The error was not an AuthorizationError: ${error}`));
-                }
-            }
-        );
-    });
-
-    it('should allow two instances to use different credentials', function(done) {
-        const apiKeys = ['abc', 'xyz'];
-        let receivedKeys = [];
-
-        // Create a logger and a mock endpoint for each API key.
-        const loggers = apiKeys.map(apiKey => {
-            nock('https://api.datadoghq.com')
-                .matchHeader('dd-api-key', (values) => {
-                    receivedKeys.push(values[0]);
-                    return true;
-                })
-                .post('/api/v1/series')
-                .reply(202, { errors: [] });
-
-            const logger = new BufferedMetricsLogger({
-                apiKey,
-                apiHost: 'datadoghq.com'
+            beforeEach(function () {
+                logger = new BufferedMetricsLogger({ apiKey: 'abc', reporter });
+                logger.gauge('test.gauge', 23);
             });
-            logger.gauge('test.gauge', 23);
-            return logger;
+
+            describe('on success', function () {
+                it('should resolve the promise', async function () {
+                    await logger.flush().should.be.fulfilled;
+                });
+
+                it('should call the success callback', (done) => {
+                    logger.flush(
+                        () => done(),
+                        (error) => done(error || new Error('Error handler called with no error object.'))
+                    );
+                });
+            });
+
+            describe('on error', function () {
+                beforeEach(() => {
+                    reporter.expectError = new Error('test error');
+                });
+
+                it('should reject the promise with the reporter error', async () => {
+                    await logger.flush().should.be.rejectedWith(reporter.expectError);
+                });
+
+                it('should call the flush error handler with the reporter error', (done) => {
+                    logger.flush(
+                        () => done(new Error('The success handler was called!')),
+                        (error) => {
+                            if (error === reporter.expectError) {
+                                done();
+                            } else {
+                                done(new Error('Error was not the reporter error'));
+                            }
+                        }
+                    );
+                });
+
+                it('should call the `onError` init option if set', async () => {
+                    let onErrorCalled = false;
+                    let onErrorValue = null;
+
+                    logger = new BufferedMetricsLogger({
+                        apiKey: 'abc',
+                        onError (error) {
+                            onErrorCalled = true;
+                            onErrorValue = error;
+                        },
+                        reporter
+                    });
+                    logger.gauge('test.gauge', 23);
+
+                    await logger.flush().should.be.rejected;
+                    onErrorCalled.should.equal(true);
+                    onErrorValue.should.equal(reporter.expectError);
+                });
+
+                it('should log if `onError` init option is not set', async () => {
+                    await logger.flush().catch(() => null);
+
+                    errorLogs.should.have.lengthOf(1);
+                });
+            });
+        }
+
+        describe('with a promise-based reporter', function() {
+            beforeEach(() => {
+                reporter = {
+                    expectError: null,
+                    async report(metrics) {
+                        if (!metrics || metrics.length === 0) {
+                            throw new Error('No metrics were sent to the reporter!');
+                        } else if (this.expectError) {
+                            throw this.expectError;
+                        }
+                    }
+                };
+            });
+
+            standardFlushTests();
         });
 
-        // Flush the loggers and make sure they receive the expected keys.
-        loggers[0].flush(
-            () => {
-                loggers[1].flush(
-                    () => {
-                        try {
-                            receivedKeys.should.deep.equal(apiKeys);
-                        } catch (error) {
-                            return done(error);
-                        }
-                        done();
-                    },
-                    done
-                );
-            },
-            done
-        );
+        describe('[deprecated] with a callback-based reporter', function() {
+            beforeEach(() => {
+                reporter = {
+                    expectError: null,
+                    report(metrics, onSuccess, onError) {
+                        setTimeout(() => {
+                            if (!metrics || metrics.length === 0) {
+                                throw new Error('No metrics were sent to the reporter!');
+                            } else if (this.expectError) {
+                                onError(this.expectError);
+                            } else {
+                                onSuccess();
+                            }
+                        }, 0);
+                    }
+                };
+            });
+
+            standardFlushTests();
+        });
     });
 });

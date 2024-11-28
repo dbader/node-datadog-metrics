@@ -44,6 +44,9 @@
             "files": ["test/**/*.js"],
             "env": {
                 "mocha": true
+            },
+            "rules": {
+                "max-statements": ["off"]
             }
         }
       ]
