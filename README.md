@@ -129,12 +129,13 @@ Where `options` is an object and can contain the following:
       is required to send metrics.
     * Make sure not to confuse this with your _application_ key! For more
       details, see: https://docs.datadoghq.com/account_management/api-app-keys/
-* `appKey`: Sets the Datadog application key. (optional)
-    * It's usually best to keep this in an environment variable. Datadog-metrics
-      looks for the application key in `DATADOG_APP_KEY` by default.
-    * This is different from the API key (see above), which is required. For
-      more about the different between API and application keys, see:
-      https://docs.datadoghq.com/account_management/api-app-keys/
+* `appKey`: ⚠️ Deprecated. This does nothing and will be removed in an upcoming
+    release.
+
+    Sets the Datadog _application_ key. This is not actually needed for sending
+    metrics or distributions, and you probably shouldn’t set it. Do not confuse
+    this with your _API_ key! For more, see:
+    https://docs.datadoghq.com/account_management/api-app-keys/
 * `defaultTags`: Default tags used for all metric reporting. (optional)
     * Set tags that are common to all metrics.
 * `onError`: A function to call when there are asynchronous errors seding
@@ -346,6 +347,7 @@ Contributions are always welcome! For more info on how to contribute or develop 
 
     * Buffer metrics using `Map` instead of a plain object.
 
+    * Deprecated the `appKey` option. Application keys (as opposed to API keys) are not actually needed for sending metrics or distributions to the Datadog API. Including it in your configuration adds no benefits, but risks exposing a sensitive credential.
 
     [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.11.4...main)
 
