@@ -29,9 +29,7 @@ describe('DatadogReporter', function() {
         let originalEnv = Object.entries(process.env);
 
         afterEach(() => {
-            for (const [key, value] of originalEnv) {
-                process.env[key] = value;
-            }
+            process.env = Object.fromEntries(originalEnv);
         });
 
         it('creates a DatadogReporter', () => {
@@ -39,15 +37,19 @@ describe('DatadogReporter', function() {
             instance.should.be.an.instanceof(DatadogReporter);
         });
 
-        it('reads the API key from environment if not specified', () => {
+        it('reads the API key from DATADOG_API_KEY environment if not specified', () => {
             process.env.DATADOG_API_KEY = 'abc';
             const instance = new DatadogReporter();
             instance.should.be.an.instanceof(DatadogReporter);
         });
 
-        it('throws if no API key is set', () => {
-            delete process.env.DATADOG_API_KEY;
+        it('reads the API key from DD_API_KEY environment if not specified', () => {
+            process.env.DD_API_KEY = 'abc';
+            const instance = new DatadogReporter();
+            instance.should.be.an.instanceof(DatadogReporter);
+        });
 
+        it('throws if no API key is set', () => {
             (() => new DatadogReporter()).should.throw(/DATADOG_API_KEY/);
         });
     });
