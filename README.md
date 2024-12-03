@@ -334,10 +334,12 @@ Contributions are always welcome! For more info on how to contribute or develop 
 
     **New Features:**
 
-    * Asynchronous actions now use promises instead of callbacks. In places where `onSuccess` and `onError` callbacks were used, they are now deprecated. Instead, those methods return promises (callbacks still work, but support will be removed in a future release). This affects:
+    * Promises: asynchronous actions now use promises instead of callbacks. In places where `onSuccess` and `onError` callbacks were used, they are now deprecated. Instead, those methods return promises (callbacks still work, but support will be removed in a future release). This affects:
 
         * The `flush()` method now returns a promise.
         * The `report(series)` method on any custom reporters should now return a promise. For now, datadog-metrics will use the old callback-based behavior if the method signature has callbacks listed after `series` argument.
+
+    * Retries: flushes to Datadog’s API are now retried automatically. This can help you work around intermittent network issues or rate limits.
 
     * Environment variables can now be prefixed with *either* `DATADOG_` or `DD_` (previously, only `DATADOG_` worked) in order to match configuration with the Datadog agent. For example, you can set your API key via `DATADOG_API_KEY` or `DD_API_KEY`.
 

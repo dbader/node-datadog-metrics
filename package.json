@@ -39,7 +39,7 @@
     "typescript": "^4.8.4"
   },
   "dependencies": {
-    "@datadog/datadog-api-client": "^1.16.0",
+    "@datadog/datadog-api-client": "^1.17.0",
     "debug": "^4.1.0"
   },
   "engines": {
