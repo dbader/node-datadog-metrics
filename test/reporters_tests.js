@@ -75,7 +75,7 @@ describe('DatadogReporter', function() {
             await reporter.report([mockMetric]).should.be.fulfilled;
         });
 
-        it('should reject on error', async function () {
+        it('should reject on http error', async function () {
             nock('https://api.datadoghq.com')
                 .post('/api/v1/series')
                 .times(3)
@@ -84,7 +84,7 @@ describe('DatadogReporter', function() {
             await reporter.report([mockMetric]).should.be.rejected;
         });
 
-        it('should retry on error', async function () {
+        it('should retry on http error', async function () {
             nock('https://api.datadoghq.com')
                 .post('/api/v1/series')
                 .times(1)
@@ -94,6 +94,42 @@ describe('DatadogReporter', function() {
                 .reply(202, { errors: [] });
 
             await reporter.report([mockMetric]).should.be.fulfilled;
+        });
+
+        it('should reject on network error', async function () {
+            nock('https://api.datadoghq.com')
+                .post('/api/v1/series')
+                .times(3)
+                .replyWithError({
+                    message: 'connect ECONNREFUSED',
+                    code: 'ECONNREFUSED'
+                });
+
+            await reporter.report([mockMetric]).should.be.rejected;
+        });
+
+        it('should retry on network error', async function () {
+            nock('https://api.datadoghq.com')
+                .post('/api/v1/series')
+                .times(1)
+                .replyWithError({
+                    message: 'connect ECONNREFUSED',
+                    code: 'ECONNREFUSED'
+                })
+                .post('/api/v1/series')
+                .times(1)
+                .reply(202, { errors: [] });
+
+            await reporter.report([mockMetric]).should.be.fulfilled;
+        });
+
+        it('should not retry on unknown errors', async function () {
+            nock('https://api.datadoghq.com')
+                .post('/api/v1/series')
+                .times(1)
+                .replyWithError({ message: 'Oh no!' });
+
+            await reporter.report([mockMetric]).should.be.rejectedWith('Oh no!');
         });
 
         it('rejects with AuthorizationError when the API key is invalid', async function() {
