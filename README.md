@@ -50,8 +50,7 @@ There's also a longer [tutorial](https://dbader.org/blog/monitoring-your-nodejs-
 
 ### Datadog API key
 
-Make sure the `DATADOG_API_KEY` environment variable is set to your Datadog
-API key (you can also set it via the `apiKey` option in code). You can find the API key under [Integrations > APIs](https://app.datadoghq.com/account/settings#api). *Please note the API key is different from an **application key**. For more details, see [Datadog’s “API and Application Keys” docs](https://docs.datadoghq.com/account_management/api-app-keys/).*
+Make sure the `DATADOG_API_KEY` or `DD_API_KEY` environment variable is set to your Datadog API key (you can also set it via the `apiKey` option in code). You can find the API key under [Integrations > APIs](https://app.datadoghq.com/account/settings#api). *Please note the API key is different from an **application key**. For more details, see [Datadog’s “API and Application Keys” docs](https://docs.datadoghq.com/account_management/api-app-keys/).*
 
 ### Module setup
 
@@ -121,10 +120,11 @@ Where `options` is an object and can contain the following:
     * Defaults to `datadoghq.com`.
     * See more details on setting your site at:
         https://docs.datadoghq.com/getting_started/site/#access-the-datadog-site
-    * You can also set this via the `DATADOG_SITE` environment variable.
+    * You can also set this via the `DATADOG_SITE` or `DD_SITE` environment variable.
 * `apiKey`: Sets the Datadog API key. (optional)
     * It's usually best to keep this in an environment variable.
-      Datadog-metrics looks for the API key in `DATADOG_API_KEY` by default.
+      Datadog-metrics looks for the API key in the `DATADOG_API_KEY` or
+      `DD_API_KEY` environment variable by default.
     * You must either set this option or the environment variable. An API key
       is required to send metrics.
     * Make sure not to confuse this with your _application_ key! For more
@@ -338,6 +338,8 @@ Contributions are always welcome! For more info on how to contribute or develop 
 
         * The `flush()` method now returns a promise.
         * The `report(series)` method on any custom reporters should now return a promise. For now, datadog-metrics will use the old callback-based behavior if the method signature has callbacks listed after `series` argument.
+
+    * Environment variables can now be prefixed with *either* `DATADOG_` or `DD_` (previously, only `DATADOG_` worked) in order to match configuration with the Datadog agent. For example, you can set your API key via `DATADOG_API_KEY` or `DD_API_KEY`.
 
     **Bug Fixes:**
 
