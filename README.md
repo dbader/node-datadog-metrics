@@ -121,6 +121,7 @@ Where `options` is an object and can contain the following:
     * See more details on setting your site at:
         https://docs.datadoghq.com/getting_started/site/#access-the-datadog-site
     * You can also set this via the `DATADOG_SITE` or `DD_SITE` environment variable.
+    * Ignored if you set the `reporter` option.
 * `apiKey`: Sets the Datadog API key. (optional)
     * It's usually best to keep this in an environment variable.
       Datadog-metrics looks for the API key in the `DATADOG_API_KEY` or
@@ -129,6 +130,7 @@ Where `options` is an object and can contain the following:
       is required to send metrics.
     * Make sure not to confuse this with your _application_ key! For more
       details, see: https://docs.datadoghq.com/account_management/api-app-keys/
+    * Ignored if you set the `reporter` option.
 * `appKey`: ⚠️ Deprecated. This does nothing and will be removed in an upcoming
     release.
 
@@ -145,12 +147,6 @@ Where `options` is an object and can contain the following:
     same properties as the options object on the `histogram()` method. Options
     specified when calling the method are layered on top of this object.
     (optional)
-* `reporter`: An object that actually sends the buffered metrics. (optional)
-    * There are two built-in reporters you can use:
-        1. `reporters.DatadogReporter` sends metrics to Datadog’s API, and is
-           the default.
-        2. `reporters.NullReporter` throws the metrics away. It’s useful for
-           tests or temporarily disabling your metrics.
 * `retries`: How many times to retry failed metric submissions to Datadog’s API.
     * Defaults to `2`.
     * Ignored if you set the `reporter` option.
@@ -159,6 +155,12 @@ Where `options` is an object and can contain the following:
     this is set to `1`, retries will happen after 1, then 2, then 4 seconds.
     * Defaults to `1`.
     * Ignored if you set the `reporter` option.
+* `reporter`: An object that actually sends the buffered metrics. (optional)
+    * There are two built-in reporters you can use:
+        1. `reporters.DatadogReporter` sends metrics to Datadog’s API, and is
+           the default.
+        2. `reporters.NullReporter` throws the metrics away. It’s useful for
+           tests or temporarily disabling your metrics.
 
 Example:
 
