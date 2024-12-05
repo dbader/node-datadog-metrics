@@ -151,6 +151,14 @@ Where `options` is an object and can contain the following:
            the default.
         2. `reporters.NullReporter` throws the metrics away. It’s useful for
            tests or temporarily disabling your metrics.
+* `retries`: How many times to retry failed metric submissions to Datadog’s API.
+    * Defaults to `2`.
+    * Ignored if you set the `reporter` option.
+* `retryBackoff`: How long to wait before retrying a failed Datadog API call.
+    Subsequent retries multiply this delay by 2^(retry count). For example, if
+    this is set to `1`, retries will happen after 1, then 2, then 4 seconds.
+    * Defaults to `1`.
+    * Ignored if you set the `reporter` option.
 
 Example:
 
@@ -339,9 +347,13 @@ Contributions are always welcome! For more info on how to contribute or develop 
         * The `flush()` method now returns a promise.
         * The `report(series)` method on any custom reporters should now return a promise. For now, datadog-metrics will use the old callback-based behavior if the method signature has callbacks listed after `series` argument.
 
-    * Retries: flushes to Datadog’s API are now retried automatically. This can help you work around intermittent network issues or rate limits.
+    * Retries: flushes to Datadog’s API are now retried automatically. This can help you work around intermittent network issues or rate limits. To adjust retries, use the `retries` and `retryBackoff` options.
 
     * Environment variables can now be prefixed with *either* `DATADOG_` or `DD_` (previously, only `DATADOG_` worked) in order to match configuration with the Datadog agent. For example, you can set your API key via `DATADOG_API_KEY` or `DD_API_KEY`.
+
+    **Deprecations:**
+
+    * The `DatadogReporter` constructor now takes an options object instead of positional arguments. Support for positional arguments will be removed in v0.13.0.
 
     **Bug Fixes:**
 
