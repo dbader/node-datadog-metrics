@@ -33,7 +33,10 @@ describe('DatadogReporter', function() {
         });
 
         it('creates a DatadogReporter', () => {
-            const instance = new DatadogReporter('abc', '123', 'datadoghq.eu');
+            const instance = new DatadogReporter({
+                apiKey: 'abc',
+                site: 'datadoghq.eu'
+            });
             instance.should.be.an.instanceof(DatadogReporter);
         });
 
@@ -58,7 +61,10 @@ describe('DatadogReporter', function() {
         let reporter;
 
         beforeEach(() => {
-            reporter = new DatadogReporter('abc');
+            reporter = new DatadogReporter({
+                apiKey: 'abc',
+                retryBackoff: 0.01
+            });
         });
 
         it('should resolve on success', async function () {
@@ -69,12 +75,107 @@ describe('DatadogReporter', function() {
             await reporter.report([mockMetric]).should.be.fulfilled;
         });
 
-        it('should reject on error', async function () {
+        it('should reject on http error', async function () {
             nock('https://api.datadoghq.com')
                 .post('/api/v1/series')
+                .times(3)
                 .reply(500, { errors: ['Unknown!'] });
 
             await reporter.report([mockMetric]).should.be.rejected;
+        });
+
+        it('should retry on http error', async function () {
+            nock('https://api.datadoghq.com')
+                .post('/api/v1/series')
+                .times(1)
+                .reply(500, { errors: ['Unknown!'] })
+                .post('/api/v1/series')
+                .times(1)
+                .reply(202, { errors: [] });
+
+            await reporter.report([mockMetric]).should.be.fulfilled;
+        });
+
+        it('should respect the `Retry-After` header', async function () {
+            const callTimes = [];
+
+            nock('https://api.datadoghq.com')
+                .post('/api/v1/series')
+                .times(1)
+                .reply(() => {
+                    callTimes.push(Date.now());
+                    return [429, { errors: ['Uhoh'] }, { 'Retry-After': '1' }];
+                })
+                .post('/api/v1/series')
+                .times(1)
+                .reply(() => {
+                    callTimes.push(Date.now());
+                    return [202, { errors: [] }];
+                });
+
+            await reporter.report([mockMetric]).should.be.fulfilled;
+
+            const timeDelta = callTimes[1] - callTimes[0];
+            timeDelta.should.be.within(980, 1020);
+        });
+
+        it('should respect the `X-RateLimit-Reset` header', async function () {
+            const callTimes = [];
+
+            nock('https://api.datadoghq.com')
+                .post('/api/v1/series')
+                .times(1)
+                .reply(() => {
+                    callTimes.push(Date.now());
+                    return [429, { errors: ['Uhoh'] }, { 'X-RateLimit-Reset': '1' }];
+                })
+                .post('/api/v1/series')
+                .times(1)
+                .reply(() => {
+                    callTimes.push(Date.now());
+                    return [202, { errors: [] }];
+                });
+
+            await reporter.report([mockMetric]).should.be.fulfilled;
+
+            const timeDelta = callTimes[1] - callTimes[0];
+            timeDelta.should.be.within(980, 1020);
+        });
+
+        it('should reject on network error', async function () {
+            nock('https://api.datadoghq.com')
+                .post('/api/v1/series')
+                .times(3)
+                .replyWithError({
+                    message: 'connect ECONNREFUSED',
+                    code: 'ECONNREFUSED'
+                });
+
+            await reporter.report([mockMetric]).should.be.rejected;
+        });
+
+        it('should retry on network error', async function () {
+            nock('https://api.datadoghq.com')
+                .post('/api/v1/series')
+                .times(1)
+                .replyWithError({
+                    message: 'connect ECONNREFUSED',
+                    code: 'ECONNREFUSED'
+                })
+                .post('/api/v1/series')
+                .times(1)
+                .reply(202, { errors: [] });
+
+            await reporter.report([mockMetric]).should.be.fulfilled;
+        });
+
+        it('should not retry on unknown errors', async function () {
+            nock('https://api.datadoghq.com')
+                .post('/api/v1/series')
+                .times(1)
+                .replyWithError({ message: 'Oh no!' });
+
+            await reporter.report([mockMetric]).should.be.rejectedWith('Oh no!');
         });
 
         it('rejects with AuthorizationError when the API key is invalid', async function() {
@@ -99,7 +200,7 @@ describe('DatadogReporter', function() {
             .times(apiKeys.length)
             .reply(202, { errors: [] });
 
-        const reporters = apiKeys.map(key => new DatadogReporter(key));
+        const reporters = apiKeys.map(apiKey => new DatadogReporter({ apiKey }));
         await Promise.all(reporters.map(r => r.report([mockMetric])));
 
         receivedKeys.should.deep.equal(apiKeys);

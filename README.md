@@ -121,6 +121,7 @@ Where `options` is an object and can contain the following:
     * See more details on setting your site at:
         https://docs.datadoghq.com/getting_started/site/#access-the-datadog-site
     * You can also set this via the `DATADOG_SITE` or `DD_SITE` environment variable.
+    * Ignored if you set the `reporter` option.
 * `apiKey`: Sets the Datadog API key. (optional)
     * It's usually best to keep this in an environment variable.
       Datadog-metrics looks for the API key in the `DATADOG_API_KEY` or
@@ -129,6 +130,7 @@ Where `options` is an object and can contain the following:
       is required to send metrics.
     * Make sure not to confuse this with your _application_ key! For more
       details, see: https://docs.datadoghq.com/account_management/api-app-keys/
+    * Ignored if you set the `reporter` option.
 * `appKey`: ⚠️ Deprecated. This does nothing and will be removed in an upcoming
     release.
 
@@ -145,6 +147,14 @@ Where `options` is an object and can contain the following:
     same properties as the options object on the `histogram()` method. Options
     specified when calling the method are layered on top of this object.
     (optional)
+* `retries`: How many times to retry failed metric submissions to Datadog’s API.
+    * Defaults to `2`.
+    * Ignored if you set the `reporter` option.
+* `retryBackoff`: How long to wait before retrying a failed Datadog API call.
+    Subsequent retries multiply this delay by 2^(retry count). For example, if
+    this is set to `1`, retries will happen after 1, then 2, then 4 seconds.
+    * Defaults to `1`.
+    * Ignored if you set the `reporter` option.
 * `reporter`: An object that actually sends the buffered metrics. (optional)
     * There are two built-in reporters you can use:
         1. `reporters.DatadogReporter` sends metrics to Datadog’s API, and is
@@ -330,16 +340,22 @@ Contributions are always welcome! For more info on how to contribute or develop 
 
     **Breaking Changes:**
 
-    TBD
+    * The `DatadogReporter` constructor now takes an options object instead of positional arguments. Using this constructor directly is pretty rare, so this likely doesn’t affect you!
 
     **New Features:**
 
-    * Asynchronous actions now use promises instead of callbacks. In places where `onSuccess` and `onError` callbacks were used, they are now deprecated. Instead, those methods return promises (callbacks still work, but support will be removed in a future release). This affects:
+    * Promises: asynchronous actions now use promises instead of callbacks. In places where `onSuccess` and `onError` callbacks were used, they are now deprecated. Instead, those methods return promises (callbacks still work, but support will be removed in a future release). This affects:
 
         * The `flush()` method now returns a promise.
         * The `report(series)` method on any custom reporters should now return a promise. For now, datadog-metrics will use the old callback-based behavior if the method signature has callbacks listed after `series` argument.
 
+    * Retries: flushes to Datadog’s API are now retried automatically. This can help you work around intermittent network issues or rate limits. To adjust retries, use the `retries` and `retryBackoff` options.
+
     * Environment variables can now be prefixed with *either* `DATADOG_` or `DD_` (previously, only `DATADOG_` worked) in order to match configuration with the Datadog agent. For example, you can set your API key via `DATADOG_API_KEY` or `DD_API_KEY`.
+
+    **Deprecations:**
+
+    * The `appKey` option is no longer supported. Application keys (as opposed to API keys) are not actually needed for sending metrics or distributions to the Datadog API. Including it in your configuration adds no benefits, but risks exposing a sensitive credential.
 
     **Bug Fixes:**
 
@@ -348,8 +364,6 @@ Contributions are always welcome! For more info on how to contribute or develop 
     **Maintenance:**
 
     * Buffer metrics using `Map` instead of a plain object.
-
-    * Deprecated the `appKey` option. Application keys (as opposed to API keys) are not actually needed for sending metrics or distributions to the Datadog API. Including it in your configuration adds no benefits, but risks exposing a sensitive credential.
 
     [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.11.4...main)
 
