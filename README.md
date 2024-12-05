@@ -340,7 +340,7 @@ Contributions are always welcome! For more info on how to contribute or develop 
 
     **Breaking Changes:**
 
-    TBD
+    * The `DatadogReporter` constructor now takes an options object instead of positional arguments. Using this constructor directly is pretty rare, so this likely doesn’t affect you!
 
     **New Features:**
 
@@ -355,7 +355,7 @@ Contributions are always welcome! For more info on how to contribute or develop 
 
     **Deprecations:**
 
-    * The `DatadogReporter` constructor now takes an options object instead of positional arguments. Support for positional arguments will be removed in v0.13.0.
+    * The `appKey` option is no longer supported. Application keys (as opposed to API keys) are not actually needed for sending metrics or distributions to the Datadog API. Including it in your configuration adds no benefits, but risks exposing a sensitive credential.
 
     **Bug Fixes:**
 
@@ -364,8 +364,6 @@ Contributions are always welcome! For more info on how to contribute or develop 
     **Maintenance:**
 
     * Buffer metrics using `Map` instead of a plain object.
-
-    * Deprecated the `appKey` option. Application keys (as opposed to API keys) are not actually needed for sending metrics or distributions to the Datadog API. Including it in your configuration adds no benefits, but risks exposing a sensitive credential.
 
     [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.11.4...main)
 
