@@ -336,36 +336,46 @@ Contributions are always welcome! For more info on how to contribute or develop 
 
 ## Release History
 
-* In Development:
+* 0.12.0 (2024-12-5)
+
+    Datadog-metrics now automatically retries failed metric submissions and uses promises for asynchronous actions! There are a handful of other deprecations and small improvements.
 
     **Breaking Changes:**
 
-    * The `DatadogReporter` constructor now takes an options object instead of positional arguments. Using this constructor directly is pretty rare, so this likely doesn’t affect you!
+    * The `DatadogReporter` constructor now takes an options object instead of positional arguments. Using this constructor directly is pretty rare, so this likely doesn’t affect you! (#138)
 
     **New Features:**
 
-    * Promises: asynchronous actions now use promises instead of callbacks. In places where `onSuccess` and `onError` callbacks were used, they are now deprecated. Instead, those methods return promises (callbacks still work, but support will be removed in a future release). This affects:
+    * Promises: asynchronous actions now use promises instead of callbacks. Callbacks are deprecated, but still work — they’ll be fully removed in v0.13.0. This affects:
 
         * The `flush()` method now returns a promise.
         * The `report(series)` method on any custom reporters should now return a promise. For now, datadog-metrics will use the old callback-based behavior if the method signature has callbacks listed after `series` argument.
 
+        (See #125)
+
     * Retries: flushes to Datadog’s API are now retried automatically. This can help you work around intermittent network issues or rate limits. To adjust retries, use the `retries` and `retryBackoff` options.
 
-    * Environment variables can now be prefixed with *either* `DATADOG_` or `DD_` (previously, only `DATADOG_` worked) in order to match configuration with the Datadog agent. For example, you can set your API key via `DATADOG_API_KEY` or `DD_API_KEY`.
+        ```js
+        metrics.init({
+            // How many times to retry. To disable retries, set this to 0.
+            retries: 2,
+            // How long (in seconds) to wait between retries. Subsequent retries
+            // wait exponentially longer.
+            retryBackoff: 1
+        });
+        ```
+
+        (See #138)
+
+    * Environment variables: you can now use *either* `DATADOG_` or `DD_` prefixes for environment variables (previously, only `DATADOG_` worked). For example, you can set your API key via `DATADOG_API_KEY` or `DD_API_KEY`. (#137)
 
     **Deprecations:**
 
-    * The `appKey` option is no longer supported. Application keys (as opposed to API keys) are not actually needed for sending metrics or distributions to the Datadog API. Including it in your configuration adds no benefits, but risks exposing a sensitive credential.
+    * The `appKey` option is no longer supported. Application keys (as opposed to API keys) are not actually needed for sending metrics or distributions to the Datadog API. Including it in your configuration adds no benefits, but risks exposing a sensitive credential. (#127)
 
-    **Bug Fixes:**
+    * The `DATADOG_API_HOST` environment variable is now deprecated. Please use `DATADOG_SITE` or `DD_SITE` instead (the `apiHost` option was renamed to `site` in v0.11.0, but the `DATADOG_API_HOST` environment variable was accidentally left as-is). (#134)
 
-    * Support setting the `site` option via the `DATADOG_SITE` environment variable. The `apiHost` option was renamed to `site` in v0.11.0, but the `DATADOG_API_HOST` environment variable was accidentally left as-is. The old environment variable name is now deprecated, and will be removed at the same time as the `apiHost` option is removed.
-
-    **Maintenance:**
-
-    * Buffer metrics using `Map` instead of a plain object.
-
-    [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.11.4...main)
+    [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.11.4...v0.12.0)
 
 * 0.11.4 (2024-11-10)
 
