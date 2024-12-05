@@ -96,6 +96,52 @@ describe('DatadogReporter', function() {
             await reporter.report([mockMetric]).should.be.fulfilled;
         });
 
+        it('should respect the `Retry-After` header', async function () {
+            const callTimes = [];
+
+            nock('https://api.datadoghq.com')
+                .post('/api/v1/series')
+                .times(1)
+                .reply(() => {
+                    callTimes.push(Date.now());
+                    return [429, { errors: ['Uhoh'] }, { 'Retry-After': '1' }];
+                })
+                .post('/api/v1/series')
+                .times(1)
+                .reply(() => {
+                    callTimes.push(Date.now());
+                    return [202, { errors: [] }];
+                });
+
+            await reporter.report([mockMetric]).should.be.fulfilled;
+
+            const timeDelta = callTimes[1] - callTimes[0];
+            timeDelta.should.be.within(980, 1020);
+        });
+
+        it('should respect the `X-RateLimit-Reset` header', async function () {
+            const callTimes = [];
+
+            nock('https://api.datadoghq.com')
+                .post('/api/v1/series')
+                .times(1)
+                .reply(() => {
+                    callTimes.push(Date.now());
+                    return [429, { errors: ['Uhoh'] }, { 'X-RateLimit-Reset': '1' }];
+                })
+                .post('/api/v1/series')
+                .times(1)
+                .reply(() => {
+                    callTimes.push(Date.now());
+                    return [202, { errors: [] }];
+                });
+
+            await reporter.report([mockMetric]).should.be.fulfilled;
+
+            const timeDelta = callTimes[1] - callTimes[0];
+            timeDelta.should.be.within(980, 1020);
+        });
+
         it('should reject on network error', async function () {
             nock('https://api.datadoghq.com')
                 .post('/api/v1/series')
