@@ -128,7 +128,7 @@ For changes to this repo, follow the [local development](#local-development) ste
 
     ```sh
     npm run clean
-    npm pubish --dry-run --tag <TAG>
+    npm publish --dry-run --tag <TAG>
     ```
 
     If the results look good, go ahead and publish!
@@ -154,6 +154,10 @@ For changes to this repo, follow the [local development](#local-development) ste
             TBD
 
             **New Features:**
+
+            TBD
+
+            **Deprecations:**
 
             TBD
 

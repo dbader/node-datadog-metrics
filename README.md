@@ -336,6 +336,30 @@ Contributions are always welcome! For more info on how to contribute or develop 
 
 ## Release History
 
+* In Development:
+
+    **Breaking Changes:**
+
+    TBD
+
+    **New Features:**
+
+    TBD
+
+    **Deprecations:**
+
+    TBD
+
+    **Bug Fixes:**
+
+    TBD
+
+    **Maintenance:**
+
+    TBD
+
+    [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.12.0...main)
+
 * 0.12.0 (2024-12-5)
 
     Datadog-metrics now automatically retries failed metric submissions and uses promises for asynchronous actions! There are a handful of other deprecations and small improvements.
