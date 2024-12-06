@@ -336,321 +336,388 @@ Contributions are always welcome! For more info on how to contribute or develop 
 
 ## Release History
 
-* In Development:
+### In Development:
 
-    **Breaking Changes:**
+**Breaking Changes:**
 
-    TBD
+TBD
 
-    **New Features:**
+**New Features:**
 
-    TBD
+TBD
 
-    **Deprecations:**
+**Deprecations:**
 
-    TBD
+TBD
 
-    **Bug Fixes:**
+**Bug Fixes:**
 
-    TBD
+TBD
 
-    **Maintenance:**
+**Maintenance:**
 
-    TBD
+TBD
 
-    [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.12.0...main)
+[View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.12.0...main)
 
-* 0.12.0 (2024-12-5)
 
-    Datadog-metrics now automatically retries failed metric submissions and uses promises for asynchronous actions! There are a handful of other deprecations and small improvements.
+### 0.12.0 (2024-12-5)
 
-    **Breaking Changes:**
+Datadog-metrics now automatically retries failed metric submissions and uses promises for asynchronous actions! There are a handful of other deprecations and small improvements.
 
-    * The `DatadogReporter` constructor now takes an options object instead of positional arguments. Using this constructor directly is pretty rare, so this likely doesn’t affect you! (#138)
+**Breaking Changes:**
 
-    **New Features:**
+* The `DatadogReporter` constructor now takes an options object instead of positional arguments. Using this constructor directly is pretty rare, so this won’t affect most users. (#138)
 
-    * Promises: asynchronous actions now use promises instead of callbacks. Callbacks are deprecated, but still work — they’ll be fully removed in v0.13.0. This affects:
+**New Features:**
 
-        * The `flush()` method now returns a promise.
-        * The `report(series)` method on any custom reporters should now return a promise. For now, datadog-metrics will use the old callback-based behavior if the method signature has callbacks listed after `series` argument.
+* Promises: asynchronous actions now use promises instead of callbacks. Callbacks are deprecated, but still work — they’ll be fully removed in v0.13.0. This affects:
 
-        (See #125)
+    * The `flush()` method now returns a promise.
+    * The `report(series)` method on any custom reporters should now return a promise. For now, datadog-metrics will use the old callback-based behavior if the method signature has callbacks listed after `series` argument.
 
-    * Retries: flushes to Datadog’s API are now retried automatically. This can help you work around intermittent network issues or rate limits. To adjust retries, use the `retries` and `retryBackoff` options.
+    (See #125)
 
-        ```js
-        metrics.init({
-            // How many times to retry. To disable retries, set this to 0.
-            retries: 2,
-            // How long (in seconds) to wait between retries. Subsequent retries
-            // wait exponentially longer.
-            retryBackoff: 1
-        });
-        ```
+* Retries: flushes to Datadog’s API are now retried automatically. This can help you work around intermittent network issues or rate limits. To adjust retries, use the `retries` and `retryBackoff` options.
 
-        (See #138)
+    ```js
+    metrics.init({
+        // How many times to retry. To disable retries, set this to 0.
+        retries: 2,
+        // How long (in seconds) to wait between retries. Subsequent retries
+        // wait exponentially longer.
+        retryBackoff: 1
+    });
+    ```
 
-    * Environment variables: you can now use *either* `DATADOG_` or `DD_` prefixes for environment variables (previously, only `DATADOG_` worked). For example, you can set your API key via `DATADOG_API_KEY` or `DD_API_KEY`. (#137)
+    (See #138)
 
-    **Deprecations:**
+* Environment variables: you can now use *either* `DATADOG_` or `DD_` prefixes for environment variables (previously, only `DATADOG_` worked). For example, you can set your API key via `DATADOG_API_KEY` or `DD_API_KEY`. (#137)
 
-    * The `appKey` option is no longer supported. Application keys (as opposed to API keys) are not actually needed for sending metrics or distributions to the Datadog API. Including it in your configuration adds no benefits, but risks exposing a sensitive credential. (#127)
+**Deprecations:**
 
-    * The `DATADOG_API_HOST` environment variable is now deprecated. Please use `DATADOG_SITE` or `DD_SITE` instead (the `apiHost` option was renamed to `site` in v0.11.0, but the `DATADOG_API_HOST` environment variable was accidentally left as-is). (#134)
+* The `appKey` option is no longer supported. Application keys (as opposed to API keys) are not actually needed for sending metrics or distributions to the Datadog API. Including it in your configuration adds no benefits, but risks exposing a sensitive credential. (#127)
 
-    [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.11.4...v0.12.0)
+* The `DATADOG_API_HOST` environment variable is now deprecated. Please use `DATADOG_SITE` or `DD_SITE` instead (the `apiHost` option was renamed to `site` in v0.11.0, but the `DATADOG_API_HOST` environment variable was accidentally left as-is). (#134)
 
-* 0.11.4 (2024-11-10)
+[View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.11.4...v0.12.0)
 
-    This release updates the TypeScript types for this project, and doesn’t include any changes to functionality. There are also no changes since v0.11.4-a.1.
 
-    **Bug Fixes:**
+### 0.11.4 (2024-11-10)
 
-    * `BufferedMetricsLogger` is now an actual class & type when you import it in TypeScript. That is, you can now do:
+This release updates the TypeScript types for this project, and doesn’t include any changes to functionality. There are also no changes since v0.11.4-a.1.
 
-        ```typescript
-        import { BufferedMetricsLogger } from 'datadog-metrics';
+**Bug Fixes:**
 
-        function useLogger(logger: BufferedMetricsLogger) {
-          // ...
+* `BufferedMetricsLogger` is now an actual class & type when you import it in TypeScript. That is, you can now do:
+
+    ```typescript
+    import { BufferedMetricsLogger } from 'datadog-metrics';
+
+    function useLogger(logger: BufferedMetricsLogger) {
+        // ...
+    }
+    ```
+
+    Previously, you would have had to declare the type for `logger` as `typeof BufferedMetricsLogger.prototype`. (#120)
+
+[View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.11.3...v0.11.4)
+
+
+### 0.11.4-a.1 (2024-10-31)
+
+This pre-release is meant for testing a fix for #119.
+
+**Bug Fixes:**
+
+* Typings: Ensure `BufferedMetricsLogger` is seen as an actual class & type when importing in TypeScript. (#120)
+
+[View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.11.3...v0.11.4-a.1)
+
+
+### 0.11.3 (2024-10-31)
+
+⚠️ No changes in this release since v0.11.2. This fixes a publishing error with v0.11.3a1.
+
+
+### 0.11.3a1 (2024-10-31)
+
+⛔️ **Do not use this release.**
+
+
+### 0.11.2 (2024-06-25)
+
+**Fixes & Maintenance:**
+
+* Fix types and documentation for the `aggregates` option for histograms and the `histogram.aggregates` option for the library as a whole. It was previously listed as `aggregations`, which was incorrect. (Thanks to @Calyhre in #117.)
+
+* Improve documentation and add a more detailed error message about API keys vs. application keys. (#118)
+
+[View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.11.1...v0.11.2)
+
+
+### 0.11.1 (2023-09-28)
+
+**Fixes & Maintenance:**
+
+* Resolve a deprecation warning from the underlying datadog-api-client library. This also updates the minimum required version of that library. (Thanks to @acatalucci-synth & @fcsonline in #112.)
+
+[View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.11.0...v0.11.1)
+
+
+### 0.11.0 (2022-02-21)
+
+**New Features:**
+
+* Built-in TypeScript definitions. If you use TypeScript, you no longer need to install separate type definitions from `@types/datadog-metrics` — they’re now built-in. Please make sure to remove `@types/datadog-metrics` from your dev dependencies.
+
+    Even if you’re writing regular JavaScript, you should now see better autocomplete suggestions and documentation in editors that support TypeScript definitions (e.g. VisualStudio Code, WebStorm).
+
+**Breaking Changes:**
+
+* datadog-metrics now uses modern `class` syntax internally. In most cases, you shouldn’t need to change anything. However, if you are calling `BufferedMetricsLogger.apply(...)` or `BufferedMetricsLogger.call(...)`, you’ll need to change your code to use `new BufferedMetricsLogger(...)` instead.
+
+**Deprecated Features:**
+
+* The `apiHost` option has been renamed to `site` so that it matches up with Datadog docs and official packages. The old `apiHost` name still works for now, but will be removed in the future.
+
+* The `reporters.DataDogReporter` class has been renamed to `reporters.DatadogReporter` (lower-case D in "dog") so that it correctly matches Datadog’s actual name. The old name still works, but will be removed in the future.
+
+[View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.10.2...v0.11.0)
+
+
+### 0.10.2 (2022-10-14)
+
+This release includes several new features and bugfixes!
+
+**New Features:**
+* Support for distribution metrics. You can now send distributions to Datadog by doing:
+
+    ```js
+    const metrics = require('datadog-metrics');
+    metrics.distribution('my.metric.name', 3.8, ['tags:here']);
+    ```
+
+    Distributions are similar to histograms (they create several metrics for count, average, percentiles, etc.), but they are calculated server-side on Datadog’s systems. For more details and guidance on when to use them, see:
+    * The documentation in this project’s README
+    * Datadog’s documentation at https://docs.datadoghq.com/metrics/distributions/
+
+    (Thanks to @Mr0grog.)
+
+* Add an `onError` option for handling asynchronous errors while flushing buffered metrics. You can use this to get details on an error or to send error info to a tracking service like Sentry.io:
+
+    ```js
+    const metrics = require('datadog-metrics');
+    metrics.init({
+        onError (error) {
+            console.error('There was an error sending to Datadog:', error);
         }
-        ```
+    });
+    ```
 
-        Previously, you would have had to declare the type for `logger` as `typeof BufferedMetricsLogger.prototype`. (#120)
+* The built-in reporter classes are now available for you to use. If you need to disable the metrics library for some reason, you can now do so with:
 
-    [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.11.3...v0.11.4)
+    ```js
+    const metrics = require('datadog-metrics');
+    metrics.init({
+        reporter: new metrics.reporters.NullReporter(),
+    });
+    ```
 
-* 0.11.4-a.1 (2024-10-31)
+    (Thanks to @Mr0grog.)
 
-    This pre-release is meant for testing a fix for #119.
+* Add an option for setting histogram defaults. In v0.10.0, the `histogram()` function gained the ability to set what aggregations and percentiles it generates with a final `options` argument. You can now specify a `histogram` option for `init()` or `BufferedMetricsLogger` in order to set default options for all calls to `histogram()`. Any options you set in the actual `histogram()` call will layer on top of the defaults:
 
-    **Bug Fixes:**
+    ```js
+    const metrics = require('datadog-metrics');
+    metrics.init({
+        histogram: {
+            aggregates: ['sum', 'avg'],
+            percentiles: [0.99]
+        }
+    });
 
-    * Typings: Ensure `BufferedMetricsLogger` is seen as an actual class & type when importing in TypeScript. (#120)
+    // Acts as if the options had been set to:
+    // { aggregates: ['sum', 'avg'], percentiles: [0.99] }
+    metrics.histogram('my.metric.name', 3.8);
 
-    [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.11.3...v0.11.4-a.1)
+    // Acts as if the options had been set to:
+    // { aggregates: ['sum', 'avg'], percentiles: [0.5, 0.95] }
+    metrics.histogram('my.metric.name', 3.8, [], Date.now(), {
+        percentiles: [0.5, 0.95]
+    });
+    ```
 
-* 0.11.3 (2024-10-31)
+    (Thanks to @Mr0grog.)
 
-    No changes in this release since v0.11.2. This fixes a publishing error with v0.11.3a1.
+* Add a `.median` aggregation for histograms. When you log a histogram metric, it ultimately creates several metrics that track the minimum value, average value, maximum value, etc. There is now one that tracks the median value. StatsD creates the same metric from histograms, so you may find this useful if transitioning from StatsD. (Thanks to @Mr0grog.)
 
-* 0.11.3a1 (2024-10-31)
+* This package no longer locks specific versions of its dependencies (instead, your package manager can choose any version that is compatible). This may help when deduplicating packages for faster installs or smaller bundles. (Thanks to @Mr0grog.)
 
-    **Do not use this release.**
+**Bug Fixes:**
 
-* 0.11.2 (2024-06-25)
+* Don’t use `unref()` on timers in non-Node.js environments. This is a step towards browser compatibility, although we are not testing browser-based usage yet. (Thanks to @Mr0grog.)
+* The `apiHost` option was broken in v0.10.0 and now works again. (Thanks to @Mr0grog and @npeters.)
+* Creating a second instance of `BufferedMetricsLogger` will not longer change the credentials used by previously created `BufferedMetricsLogger` instances. (Thanks to @Mr0grog.)
 
-    **Fixes & Maintenance:**
+**Internal Updates:**
 
-    * Fix types and documentation for the `aggregates` option for histograms and the `histogram.aggregates` option for the library as a whole. It was previously listed as `aggregations`, which was incorrect. (Thanks to @Calyhre in #117.)
+* Renamed the default branch in this repo to `main`. (Thanks to @dbader.)
+* Use GitHub actions for continuous integration. (Thanks to @Mr0grog.)
+* Code style cleanup. (Thanks to @Mr0grog.)
+* When flushing, send each metric with its own list of tags. This helps mitigate subtle errors where a change to one metric’s tags may affect others. (Thanks to @Mr0grog.)
 
-    * Improve documentation and add a more detailed error message about API keys vs. application keys. (#118)
+[View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.10.1...v0.10.2)
 
-    [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.11.1...v0.11.2)
 
-* 0.11.1 (2023-09-28)
+### 0.10.1 (2022-09-11)
 
-    **Fixes & Maintenance:**
+* FIX: bug in 0.10.0 where `@datadog/datadog-api-client` was not used correctly. (Thanks to @gquinteros93)
 
-    * Resolve a deprecation warning from the underlying datadog-api-client library. This also updates the minimum required version of that library. (Thanks to @acatalucci-synth & @fcsonline in #112.)
+[View diff](https://github.com/dbader/node-datadog-metrics/compare/4c29447bbde00565d5258e722b147601f3cc014c...023acfa3a2c5d8dd3f5bbb48c8c02467b2519559)
 
-    [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.11.0...v0.11.1)
 
-* 0.11.0 (2022-02-21)
+### 0.10.0 (2022-09-08)
 
-    **New Features:**
+* **Breaking change:** we now use Datadog’s official `@datadog/datadog-api-client` package to send metrics to Datadog. This makes `datadog-metrics` usable with Webpack, but removes the `agent` option. If you were using this option and the new library does not provide a way to meet your needs, please let us know by filing an issue! (Thanks to @thatguychrisw)
+* You can now customize what metrics are generated by a histogram. When logging a histogram metric, the 5th argument is an optional object with information about which aggregations and percentiles to create metrics for:
 
-    * Built-in TypeScript definitions. If you use TypeScript, you no longer need to install separate type definitions from `@types/datadog-metrics` — they’re now built-in. Please make sure to remove `@types/datadog-metrics` from your dev dependencies.
+    ```js
+    const metrics = require('datadog-metrics');
+    metrics.histogram('my.metric.name', 3.8, [], Date.now(), {
+        // Aggregates can include 'max', 'min', 'sum', 'avg', or 'count'.
+        aggregates: ['max', 'min', 'sum', 'avg', 'count'],
+        // Percentiles can include any decimal between 0 and 1.
+        percentiles: [0.75, 0.85, 0.95, 0.99]
+    });
+    ```
 
-        Even if you’re writing regular JavaScript, you should now see better autocomplete suggestions and documentation in editors that support TypeScript definitions (e.g. VisualStudio Code, WebStorm).
+    (Thanks to @gquinteros93.)
 
-    **Breaking Changes:**
+* INTERNAL: Clean up continuous integration on TravisCI. (Thanks to @ErikBoesen.)
 
-    * datadog-metrics now uses modern `class` syntax internally. In most cases, you shouldn’t need to change anything. However, if you are calling `BufferedMetricsLogger.apply(...)` or `BufferedMetricsLogger.call(...)`, you’ll need to change your code to use `new BufferedMetricsLogger(...)` instead.
+[View diff](https://github.com/dbader/node-datadog-metrics/compare/99bdc97cead1d3fabe12bf594e945c64cba5d643...4c29447bbde00565d5258e722b147601f3cc014c)
 
-    **Deprecated Features:**
 
-    * The `apiHost` option has been renamed to `site` so that it matches up with Datadog docs and official packages. The old `apiHost` name still works for now, but will be removed in the future.
+### 0.9.3 (2021-03-22)
 
-    * The `reporters.DataDogReporter` class has been renamed to `reporters.DatadogReporter` (lower-case D in "dog") so that it correctly matches Datadog’s actual name. The old name still works, but will be removed in the future.
+* INTERNAL: Update `dogapi` and `jshint` to their latest versions. (Thanks to @ErikBoesen.)
 
-    [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.10.2...v0.11.0)
+[View diff](https://github.com/dbader/node-datadog-metrics/compare/6f27d31c7931d3d68cd888a0237c87e3ed4feea1...99bdc97cead1d3fabe12bf594e945c64cba5d643)
 
-* 0.10.2 (2022-10-14)
 
-    This release includes several new features and bugfixes!
+### 0.9.2 (2021-03-14)
 
-    **New Features:**
-    * Support for distribution metrics. You can now send distributions to Datadog by doing:
+* Expose new `apiHost` option on `init()` and `BufferedMetricsLogger` constructor. This makes it possible to actually configure the Datadog site to submit metrics to. For example, you can now submit metrics to Datadog’s Europe servers with:
 
-        ```js
-        const metrics = require('datadog-metrics');
-        metrics.distribution('my.metric.name', 3.8, ['tags:here']);
-        ```
+    ```js
+    const metrics = require('datadog-metrics');
+    metrics.init({
+        apiHost: 'datadoghq.eu'
+    });
+    ```
 
-        Distributions are similar to histograms (they create several metrics for count, average, percentiles, etc.), but they are calculated server-side on Datadog’s systems. For more details and guidance on when to use them, see:
-        * The documentation in this project’s README
-        * Datadog’s documentation at https://docs.datadoghq.com/metrics/distributions/
+    (Thanks to @ErikBoesen.)
 
-        (Thanks to @Mr0grog.)
+[View diff](https://github.com/dbader/node-datadog-metrics/compare/8adaeb9f7bff15f620337a0fb882921925d63116...6f27d31c7931d3d68cd888a0237c87e3ed4feea1)
 
-    * Add an `onError` option for handling asynchronous errors while flushing buffered metrics. You can use this to get details on an error or to send error info to a tracking service like Sentry.io:
 
-        ```js
-        const metrics = require('datadog-metrics');
-        metrics.init({
-            onError (error) {
-                console.error('There was an error sending to Datadog:', error);
-            }
-        });
-        ```
+### 0.9.1 (2021-02-19)
 
-    * The built-in reporter classes are now available for you to use. If you need to disable the metrics library for some reason, you can now do so with:
+* FIX: Add default Datadog site. (Thanks to @ErikBoesen.)
 
-        ```js
-        const metrics = require('datadog-metrics');
-        metrics.init({
-            reporter: new metrics.reporters.NullReporter(),
-        });
-        ```
+[View diff](https://github.com/dbader/node-datadog-metrics/compare/e58b13055b803a9c4f4c7b2426e3784b8fd4e0ae...8adaeb9f7bff15f620337a0fb882921925d63116)
 
-        (Thanks to @Mr0grog.)
 
-    * Add an option for setting histogram defaults. In v0.10.0, the `histogram()` function gained the ability to set what aggregations and percentiles it generates with a final `options` argument. You can now specify a `histogram` option for `init()` or `BufferedMetricsLogger` in order to set default options for all calls to `histogram()`. Any options you set in the actual `histogram()` call will layer on top of the defaults:
+### 0.9.0 (2021-02-10)
 
-        ```js
-        const metrics = require('datadog-metrics');
-        metrics.init({
-            histogram: {
-                aggregates: ['sum', 'avg'],
-                percentiles: [0.99]
-            }
-        });
-
-        // Acts as if the options had been set to:
-        // { aggregates: ['sum', 'avg'], percentiles: [0.99] }
-        metrics.histogram('my.metric.name', 3.8);
-
-        // Acts as if the options had been set to:
-        // { aggregates: ['sum', 'avg'], percentiles: [0.5, 0.95] }
-        metrics.histogram('my.metric.name', 3.8, [], Date.now(), {
-            percentiles: [0.5, 0.95]
-        });
-        ```
-
-        (Thanks to @Mr0grog.)
-
-    * Add a `.median` aggregation for histograms. When you log a histogram metric, it ultimately creates several metrics that track the minimum value, average value, maximum value, etc. There is now one that tracks the median value. StatsD creates the same metric from histograms, so you may find this useful if transitioning from StatsD. (Thanks to @Mr0grog.)
-
-    * This package no longer locks specific versions of its dependencies (instead, your package manager can choose any version that is compatible). This may help when deduplicating packages for faster installs or smaller bundles. (Thanks to @Mr0grog.)
-
-    **Bug Fixes:**
-
-    * Don’t use `unref()` on timers in non-Node.js environments. This is a step towards browser compatibility, although we are not testing browser-based usage yet. (Thanks to @Mr0grog.)
-    * The `apiHost` option was broken in v0.10.0 and now works again. (Thanks to @Mr0grog and @npeters.)
-    * Creating a second instance of `BufferedMetricsLogger` will not longer change the credentials used by previously created `BufferedMetricsLogger` instances. (Thanks to @Mr0grog.)
-
-    **Internal Updates:**
-
-    * Renamed the default branch in this repo to `main`. (Thanks to @dbader.)
-    * Use GitHub actions for continuous integration. (Thanks to @Mr0grog.)
-    * Code style cleanup. (Thanks to @Mr0grog.)
-    * When flushing, send each metric with its own list of tags. This helps mitigate subtle errors where a change to one metric’s tags may affect others. (Thanks to @Mr0grog.)
-
-    [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.10.1...v0.10.2)
-
-* 0.10.1 (2022-09-11)
-    * FIX: bug in 0.10.0 where `@datadog/datadog-api-client` was not used correctly. (Thanks to @gquinteros93)
-    * [View diff](https://github.com/dbader/node-datadog-metrics/compare/4c29447bbde00565d5258e722b147601f3cc014c...023acfa3a2c5d8dd3f5bbb48c8c02467b2519559)
-
-* 0.10.0 (2022-09-08)
-    * **Breaking change:** we now use Datadog’s official `@datadog/datadog-api-client` package to send metrics to Datadog. This makes `datadog-metrics` usable with Webpack, but removes the `agent` option. If you were using this option and the new library does not provide a way to meet your needs, please let us know by filing an issue! (Thanks to @thatguychrisw)
-    * You can now customize what metrics are generated by a histogram. When logging a histogram metric, the 5th argument is an optional object with information about which aggregations and percentiles to create metrics for:
-
-        ```js
-        const metrics = require('datadog-metrics');
-        metrics.histogram('my.metric.name', 3.8, [], Date.now(), {
-            // Aggregates can include 'max', 'min', 'sum', 'avg', or 'count'.
-            aggregates: ['max', 'min', 'sum', 'avg', 'count'],
-            // Percentiles can include any decimal between 0 and 1.
-            percentiles: [0.75, 0.85, 0.95, 0.99]
-        });
-        ```
-
-        (Thanks to @gquinteros93.)
-
-    * INTERNAL: Clean up continuous integration on TravisCI. (Thanks to @ErikBoesen.)
-
-    * [View diff](https://github.com/dbader/node-datadog-metrics/compare/99bdc97cead1d3fabe12bf594e945c64cba5d643...4c29447bbde00565d5258e722b147601f3cc014c)
-
-* 0.9.3 (2021-03-22)
-    * INTERNAL: Update `dogapi` and `jshint` to their latest versions. (Thanks to @ErikBoesen.)
-    * [View diff](https://github.com/dbader/node-datadog-metrics/compare/6f27d31c7931d3d68cd888a0237c87e3ed4feea1...99bdc97cead1d3fabe12bf594e945c64cba5d643)
-
-* 0.9.2 (2021-03-14)
-    * Expose new `apiHost` option on `init()` and `BufferedMetricsLogger` constructor. This makes it possible to actually configure the Datadog site to submit metrics to. For example, you can now submit metrics to Datadog’s Europe servers with:
-
-        ```js
-        const metrics = require('datadog-metrics');
-        metrics.init({
-            apiHost: 'datadoghq.eu'
-        });
-        ```
-
-        (Thanks to @ErikBoesen.)
-
-    * [View diff](https://github.com/dbader/node-datadog-metrics/compare/8adaeb9f7bff15f620337a0fb882921925d63116...6f27d31c7931d3d68cd888a0237c87e3ed4feea1)
-
-* 0.9.1 (2021-02-19)
-    * FIX: Add default Datadog site. (Thanks to @ErikBoesen.)
-    * [View diff](https://github.com/dbader/node-datadog-metrics/compare/e58b13055b803a9c4f4c7b2426e3784b8fd4e0ae...8adaeb9f7bff15f620337a0fb882921925d63116)
-
-* 0.9.0 (2021-02-10)
-    * Clean up continuous integration tooling on TravisCI. (Thanks to @rpelliard.)
-    * Correct “Datadog” throughout the documentation. It turns out there’s not supposed to be a captial D in the middle. (Thanks to @dbenamy.)
-    * INTERNAL: Add internal support for submitting metrics to different Datadog sites (e.g. `datadoghq.eu` for Europe). (Thanks to @fermelone.)
-    * [View diff](https://github.com/dbader/node-datadog-metrics/compare/ebb4bf701f700841e8b5c5325165f13397249b51...e58b13055b803a9c4f4c7b2426e3784b8fd4e0ae)
-
-* 0.8.2 (2020-11-16)
-    * Added @ErikBoesen as a maintainer!
-    * INTERNAL: Update `dogapi` version.
-    * INTERNAL: Validate the `onSuccess` callback in `NullReporter`. (Thanks to @dkMorlok.)
-    * [View diff](https://github.com/dbader/node-datadog-metrics/compare/294e36e411e805c664a2bf614c083ed862860ce1...ebb4bf701f700841e8b5c5325165f13397249b51)
-
-* 0.8.1
-    * FIX: don't increment count when value is 0 (Thanks to @haspriyank)
-* 0.8.0
-    * allow passing in custom https agent (Thanks to @flovilmart)
-* 0.7.0
-    * update metric type `counter` to `count` as `counter` is deprecated by Datadog (Thanks to @dustingibbs)
-* 0.6.1
-    * FIX: bump debug to 3.1.0 to fix [NSP Advisory #534](https://nodesecurity.io/advisories/534) (Thanks to @kirkstrobeck)
-* 0.6.0
-    * FIX: call onSuccess on flush even if buffer is empty (Thanks to @mousavian)
-* 0.5.0
-    * ADD: ability to set custom timestamps (Thanks to @ronny)
-    * FIX: 0 as valid option for flushIntervalSeconds (thanks to @dkMorlok)
-* 0.4.0
-    * ADD: Initialize with a default set of tags (thanks to @spence)
-* 0.3.0
-    * FIX: Don't overwrite metrics with the same key but different tags when aggregating them (Thanks @akrylysov and @RavivIsraeli!)
-    * ADD: Add success/error callbacks to `metrics.flush()` (Thanks @akrylysov!)
-    * ADD: Allow Datadog APP key to be configured (Thanks @gert-fresh!)
-    * Bump dependencies to latest
-    * Update docs
-* 0.2.1
-    * Update docs (module code remains unchanged)
-* 0.2.0
-    * API redesign
-    * Remove `setDefaultXYZ()` and added `init()`
-* 0.1.1
-    * Allow `increment` to be called with a default value of 1
-* 0.1.0
-    * The first proper release
-    * Rename `counter` to `increment`
-* 0.0.0
-    * Work in progress
+* Clean up continuous integration tooling on TravisCI. (Thanks to @rpelliard.)
+* Correct “Datadog” throughout the documentation. It turns out there’s not supposed to be a captial D in the middle. (Thanks to @dbenamy.)
+* INTERNAL: Add internal support for submitting metrics to different Datadog sites (e.g. `datadoghq.eu` for Europe). (Thanks to @fermelone.)
+
+[View diff](https://github.com/dbader/node-datadog-metrics/compare/ebb4bf701f700841e8b5c5325165f13397249b51...e58b13055b803a9c4f4c7b2426e3784b8fd4e0ae)
+
+
+### 0.8.2 (2020-11-16)
+
+* Added @ErikBoesen as a maintainer!
+* INTERNAL: Update `dogapi` version.
+* INTERNAL: Validate the `onSuccess` callback in `NullReporter`. (Thanks to @dkMorlok.)
+
+[View diff](https://github.com/dbader/node-datadog-metrics/compare/294e36e411e805c664a2bf614c083ed862860ce1...ebb4bf701f700841e8b5c5325165f13397249b51)
+
+
+### 0.8.1
+
+* FIX: don't increment count when value is 0 (Thanks to @haspriyank)
+
+
+### 0.8.0
+
+* allow passing in custom https agent (Thanks to @flovilmart)
+
+
+### 0.7.0
+
+* update metric type `counter` to `count` as `counter` is deprecated by Datadog (Thanks to @dustingibbs)
+
+
+### 0.6.1
+
+* FIX: bump debug to 3.1.0 to fix [NSP Advisory #534](https://nodesecurity.io/advisories/534) (Thanks to @kirkstrobeck)
+
+
+### 0.6.0
+
+* FIX: call onSuccess on flush even if buffer is empty (Thanks to @mousavian)
+
+
+### 0.5.0
+
+* ADD: ability to set custom timestamps (Thanks to @ronny)
+* FIX: 0 as valid option for flushIntervalSeconds (thanks to @dkMorlok)
+
+
+### 0.4.0
+
+* ADD: Initialize with a default set of tags (thanks to @spence)
+
+
+### 0.3.0
+
+* FIX: Don't overwrite metrics with the same key but different tags when aggregating them (Thanks @akrylysov and @RavivIsraeli!)
+* ADD: Add success/error callbacks to `metrics.flush()` (Thanks @akrylysov!)
+* ADD: Allow Datadog APP key to be configured (Thanks @gert-fresh!)
+* Bump dependencies to latest
+* Update docs
+
+
+### 0.2.1
+
+* Update docs (module code remains unchanged)
+
+
+### 0.2.0
+
+* API redesign
+* Remove `setDefaultXYZ()` and added `init()`
+
+
+### 0.1.1
+
+* Allow `increment` to be called with a default value of 1
+
+
+### 0.1.0
+
+* The first proper release
+* Rename `counter` to `increment`
+
+
+### 0.0.0
+
+* Work in progress
+
 
 ## Meta
 
