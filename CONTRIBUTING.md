@@ -147,27 +147,27 @@ For changes to this repo, follow the [local development](#local-development) ste
     - Add a new “in development” section to the top of the release history in `README.md`:
 
         ```markdown
-        * In Development:
+        ### In Development:
 
-            **Breaking Changes:**
+        **Breaking Changes:**
 
-            TBD
+        TBD
 
-            **New Features:**
+        **New Features:**
 
-            TBD
+        TBD
 
-            **Deprecations:**
+        **Deprecations:**
 
-            TBD
+        TBD
 
-            **Bug Fixes:**
+        **Bug Fixes:**
 
-            TBD
+        TBD
 
-            **Maintenance:**
+        **Maintenance:**
 
-            TBD
+        TBD
 
         [View diff](https://github.com/dbader/node-datadog-metrics/compare/v<VERSION_NUMBER>...main)
         ```
