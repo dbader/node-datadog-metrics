@@ -35,6 +35,12 @@ function callOnSharedLogger(func) {
     // compiler that this satisfies the types. :(
     return (...args) => {
         if (sharedLogger === null) {
+            // Special case: don't make a new logger just to close it.
+            // @ts-expect-error TypeScript compiler can't figure this one out.
+            if (func === BufferedMetricsLogger.prototype.close) {
+                return Promise.resolve(undefined);
+            }
+
             init();
         }
         return func.apply(sharedLogger, args);
@@ -44,6 +50,7 @@ function callOnSharedLogger(func) {
 module.exports = {
     init,
     flush: callOnSharedLogger(BufferedMetricsLogger.prototype.flush),
+    close: callOnSharedLogger(BufferedMetricsLogger.prototype.close),
     gauge: callOnSharedLogger(BufferedMetricsLogger.prototype.gauge),
     increment: callOnSharedLogger(BufferedMetricsLogger.prototype.increment),
     histogram: callOnSharedLogger(BufferedMetricsLogger.prototype.histogram),

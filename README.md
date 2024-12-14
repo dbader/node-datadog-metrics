@@ -114,8 +114,8 @@ Where `options` is an object and can contain the following:
 * `prefix`: Sets a default prefix for all metrics. (optional)
     * Use this to namespace your metrics.
 * `flushIntervalSeconds`: How often to send metrics to Datadog. (optional)
-    * This defaults to 15 seconds. Set it to 0 to disable auto-flushing which
-      means you must call `flush()` manually.
+    * This defaults to 15 seconds. Set it to `0` to disable auto-flushing (which
+      means you must call `flush()` manually).
 * `site`: Sets the Datadog "site", or server where metrics are sent. (optional)
     * Defaults to `datadoghq.com`.
     * See more details on setting your site at:
@@ -197,12 +197,12 @@ metrics.init({
 
 `metrics.gauge(key, value[, tags[, timestamp]])`
 
-Record the current *value* of a metric. The most recent value in
-a given flush interval will be recorded. Optionally, specify a set of
-tags to associate with the metric. This should be used for sum values
-such as total hard disk space, process uptime, total number of active
-users, or number of rows in a database table. The optional timestamp
-is in milliseconds since 1 Jan 1970 00:00:00 UTC, e.g. from `Date.now()`.
+Record the current *value* of a metric. The most recent value since the last
+flush will be recorded. Optionally, specify a set of tags to associate with the
+metric. This should be used for sum values such as total hard disk space,
+process uptime, total number of active users, or number of rows in a database
+table. The optional timestamp is in milliseconds since 1 Jan 1970 00:00:00 UTC,
+e.g. from `Date.now()`.
 
 Example:
 
@@ -284,15 +284,33 @@ metrics.distribution('test.service_time', 0.248);
 
 ### Flushing
 
-`metrics.flush()`
+By default, datadog-metrics will automatically flush, or send accumulated
+metrics to Datadog, at regular intervals, and, in environments that support it,
+before your program exits. (However, if you call `process.exit()` to cause a
+hard exit, datadog-metrics doesn’t get a chance to flush. In this case, you may
+want to call `await metrics.flush()`.)
 
-Calling `flush` sends any buffered metrics to Datadog and returns a promise.
-This function will be called automatically unless you set `flushIntervalSeconds`
-to `0`.
+You can adjust the interval by using the `flushIntervalSeconds` option. Setting
+it to `0` will disable auto-flushing entirely:
 
-It can be useful to trigger a manual flush by calling if you want to
-make sure pending metrics have been sent before you quit the application
-process, for example.
+```js
+// Set auto-flush interval to 10 seconds.
+metrics.init({ flushIntervalSeconds: 10 });
+```
+
+You can also send accumulated metrics manually by calling `metrics.flush()`.
+
+Please note that, when calling the `BufferedMetricsLogger` constructor directly,
+`flushIntervalSeconds` defaults to `0` instead. When constructing your own
+logger this way, you must expicitly opt-in to auto-flushing by setting a
+positive value.
+
+
+#### `metrics.flush()`
+
+Sends any buffered metrics to Datadog and returns a promise. By default,
+`flush()` will be called for you automatically unless you set
+`flushIntervalSeconds` to `0` (see above for more details).
 
 ⚠️ This method used to take two callback arguments for handling successes and
 errors. That form is deprecated and will be removed in a future update:
@@ -344,7 +362,9 @@ TBD
 
 **New Features:**
 
-TBD
+* When auto-flushing is enabled, metrics are now also flushed before the process exits. In previous versions, you needed to do this manually by calling `metrics.flush()` at the every end of your program.
+
+    You will still need to flush manually if you set `flushIntervalSeconds` to `0` or you are quitting your program by calling `process.exit()` [(which interrupts a variety of operations)](https://nodejs.org/docs/latest/api/process.html#processexitcode).
 
 **Deprecations:**
 

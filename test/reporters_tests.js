@@ -3,9 +3,11 @@
 const chai = require('chai');
 const nock = require('nock');
 
-chai.should();
 const { DatadogReporter, NullReporter } = require('../lib/reporters');
 const { AuthorizationError } = require('../lib/errors');
+
+chai.use(require('chai-as-promised'));
+chai.should();
 
 const mockMetric = {
     metric: 'test.gauge',

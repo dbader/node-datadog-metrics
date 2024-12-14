@@ -1,16 +1,22 @@
 'use strict';
 
 const chai = require('chai');
+const reporters = require('../lib/reporters.js');
+
 chai.should();
 
+/** @type {import("..") DotadogMetrics} */
 let metrics = null;
-const reporters = require('../lib/reporters.js');
 
 // Force-reload the module before every test so we
 // can realistically test all the scenarios.
 beforeEach(function() {
     delete require.cache[require.resolve('../index.js')];
     metrics = require('../index.js');
+});
+
+afterEach(async function() {
+    await metrics.close({ flush: false });
 });
 
 describe('datadog-metrics', function() {

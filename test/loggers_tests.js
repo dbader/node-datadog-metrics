@@ -314,4 +314,113 @@ describe('BufferedMetricsLogger', function() {
             standardFlushTests();
         });
     });
+
+    describe('close()', function () {
+        beforeEach(function () {
+            // FIXME: Should make a standard MockReporter to be used in all
+            // tests that need to spy on what gets reported. See flush tests
+            // above and flushIntervalSeconds tests below, too.
+            this.reporter = {
+                calls: [],
+
+                async report(metrics) {
+                    this.calls.push(metrics);
+                }
+            };
+
+            this.logger = new BufferedMetricsLogger({
+                flushIntervalSeconds: 0.1,
+                reporter: this.reporter
+            });
+            this.logger.gauge('test.gauge', 23);
+        });
+
+        it('flushes by default', async function () {
+            this.reporter.calls.should.have.lengthOf(0);
+            await this.logger.close();
+            this.reporter.calls.should.have.lengthOf(1);
+        });
+
+        it('does not flush if `flush: false`', async function () {
+            this.reporter.calls.should.have.lengthOf(0);
+            await this.logger.close({ flush: false });
+            this.reporter.calls.should.have.lengthOf(0);
+        });
+
+        it('stops auto-flushing', async function () {
+            await this.logger.close({ flush: false });
+            this.reporter.calls.should.have.lengthOf(0);
+
+            await new Promise(r => setTimeout(r, 125));
+            this.reporter.calls.should.have.lengthOf(0);
+        });
+
+        it('stops auto-flushing on exit', async function () {
+            await this.logger.close({ flush: false });
+            this.reporter.calls.should.have.lengthOf(0);
+
+            process.emit('beforeExit', 0);
+            this.reporter.calls.should.have.lengthOf(0);
+        });
+    });
+
+    describe('option: flushIntervalSeconds', function () {
+        beforeEach(function () {
+            this.reporter = {
+                calls: [],
+
+                async report(metrics) {
+                    this.calls.push(metrics);
+                }
+            };
+        });
+
+        it('flushes after the specified number of seconds', async function () {
+            this.logger = new BufferedMetricsLogger({
+                flushIntervalSeconds: 0.1,
+                reporter: this.reporter
+            });
+            this.logger.gauge('test.gauge', 23);
+
+            this.reporter.calls.should.have.lengthOf(0);
+            await new Promise(r => setTimeout(r, 125));
+            this.reporter.calls.should.have.lengthOf(1);
+        });
+
+        it('flushes before exiting if auto-flushing', async function () {
+            this.logger = new BufferedMetricsLogger({
+                flushIntervalSeconds: 0.1,
+                reporter: this.reporter
+            });
+            this.logger.gauge('test.gauge', 23);
+
+            this.reporter.calls.should.have.lengthOf(0);
+            process.emit('beforeExit', 0);
+            this.reporter.calls.should.have.lengthOf(1);
+        });
+
+        it('does not auto-flush if set to 0', async function () {
+            this.logger = new BufferedMetricsLogger({
+                flushIntervalSeconds: 0,
+                reporter: this.reporter
+            });
+            this.logger.gauge('test.gauge', 23);
+            this.reporter.calls.should.have.lengthOf(0);
+
+            await new Promise(r => setTimeout(r, 125));
+            this.reporter.calls.should.have.lengthOf(0);
+
+            process.emit('beforeExit', 0);
+            this.reporter.calls.should.have.lengthOf(0);
+        });
+
+        it('throws if set to a negative value', async function () {
+            (() => {
+                this.logger = new BufferedMetricsLogger({
+                    flushIntervalSeconds: -1,
+                    reporter: this.reporter
+                });
+            }).should.throw(/flushIntervalSeconds/);
+        });
+    });
 });
