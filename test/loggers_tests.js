@@ -8,6 +8,22 @@ chai.should();
 const { BufferedMetricsLogger } = require('../lib/loggers');
 const { NullReporter } = require('../lib/reporters');
 
+class MockReporter {
+    constructor() {
+        this.calls = [];
+        this.error = null;
+    }
+
+    async report(metrics) {
+        this.calls.push(metrics);
+        if (!metrics || metrics.length === 0) {
+            throw new Error('No metrics were sent to the reporter!');
+        } else if (this.error) {
+            throw this.error;
+        }
+    }
+}
+
 describe('BufferedMetricsLogger', function() {
     let warnLogs = [];
     let errorLogs = [];
@@ -229,18 +245,18 @@ describe('BufferedMetricsLogger', function() {
 
             describe('on error', function () {
                 beforeEach(() => {
-                    reporter.expectError = new Error('test error');
+                    reporter.error = new Error('test error');
                 });
 
                 it('should reject the promise with the reporter error', async () => {
-                    await logger.flush().should.be.rejectedWith(reporter.expectError);
+                    await logger.flush().should.be.rejectedWith(reporter.error);
                 });
 
                 it('should call the flush error handler with the reporter error', (done) => {
                     logger.flush(
                         () => done(new Error('The success handler was called!')),
                         (error) => {
-                            if (error === reporter.expectError) {
+                            if (error === reporter.error) {
                                 done();
                             } else {
                                 done(new Error('Error was not the reporter error'));
@@ -265,7 +281,7 @@ describe('BufferedMetricsLogger', function() {
 
                     await logger.flush().should.be.rejected;
                     onErrorCalled.should.equal(true);
-                    onErrorValue.should.equal(reporter.expectError);
+                    onErrorValue.should.equal(reporter.error);
                 });
 
                 it('should log if `onError` init option is not set', async () => {
@@ -278,16 +294,7 @@ describe('BufferedMetricsLogger', function() {
 
         describe('with a promise-based reporter', function() {
             beforeEach(() => {
-                reporter = {
-                    expectError: null,
-                    async report(metrics) {
-                        if (!metrics || metrics.length === 0) {
-                            throw new Error('No metrics were sent to the reporter!');
-                        } else if (this.expectError) {
-                            throw this.expectError;
-                        }
-                    }
-                };
+                reporter = new MockReporter();
             });
 
             standardFlushTests();
@@ -295,19 +302,10 @@ describe('BufferedMetricsLogger', function() {
 
         describe('[deprecated] with a callback-based reporter', function() {
             beforeEach(() => {
-                reporter = {
-                    expectError: null,
-                    report(metrics, onSuccess, onError) {
-                        setTimeout(() => {
-                            if (!metrics || metrics.length === 0) {
-                                throw new Error('No metrics were sent to the reporter!');
-                            } else if (this.expectError) {
-                                onError(this.expectError);
-                            } else {
-                                onSuccess();
-                            }
-                        }, 0);
-                    }
+                reporter = new MockReporter();
+                reporter.report = function(metrics, onSuccess, onError) {
+                    return this.__proto__.report.call(this, metrics)
+                        .then(onSuccess, onError);
                 };
             });
 
@@ -317,17 +315,7 @@ describe('BufferedMetricsLogger', function() {
 
     describe('stop()', function () {
         beforeEach(function () {
-            // FIXME: Should make a standard MockReporter to be used in all
-            // tests that need to spy on what gets reported. See flush tests
-            // above and flushIntervalSeconds tests below, too.
-            this.reporter = {
-                calls: [],
-
-                async report(metrics) {
-                    this.calls.push(metrics);
-                }
-            };
-
+            this.reporter = new MockReporter();
             this.logger = new BufferedMetricsLogger({
                 flushIntervalSeconds: 0.1,
                 reporter: this.reporter
@@ -366,13 +354,7 @@ describe('BufferedMetricsLogger', function() {
 
     describe('option: flushIntervalSeconds', function () {
         beforeEach(function () {
-            this.reporter = {
-                calls: [],
-
-                async report(metrics) {
-                    this.calls.push(metrics);
-                }
-            };
+            this.reporter = new MockReporter();
         });
 
         it('flushes after the specified number of seconds', async function () {
