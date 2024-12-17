@@ -4,7 +4,7 @@ import {
     reporters,
     init,
     flush,
-    close,
+    stop,
     gauge,
     increment,
     histogram,
@@ -18,8 +18,8 @@ function useLogger(logger: BufferedMetricsLogger) {
     logger.histogram('histogram.key', 11);
     logger.distribution('distribution.key', 11);
     logger.flush();
-    logger.close();
-    logger.close({ flush: false });
+    logger.stop();
+    logger.stop({ flush: false });
 }
 
 useLogger(new BufferedMetricsLogger());
@@ -54,5 +54,5 @@ increment('increment.key');
 histogram('histogram.key', 11);
 distribution('distribution.key', 11);
 flush();
-close();
-close({ flush: false });
+stop();
+stop({ flush: false });

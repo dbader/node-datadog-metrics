@@ -315,7 +315,7 @@ describe('BufferedMetricsLogger', function() {
         });
     });
 
-    describe('close()', function () {
+    describe('stop()', function () {
         beforeEach(function () {
             // FIXME: Should make a standard MockReporter to be used in all
             // tests that need to spy on what gets reported. See flush tests
@@ -337,18 +337,18 @@ describe('BufferedMetricsLogger', function() {
 
         it('flushes by default', async function () {
             this.reporter.calls.should.have.lengthOf(0);
-            await this.logger.close();
+            await this.logger.stop();
             this.reporter.calls.should.have.lengthOf(1);
         });
 
         it('does not flush if `flush: false`', async function () {
             this.reporter.calls.should.have.lengthOf(0);
-            await this.logger.close({ flush: false });
+            await this.logger.stop({ flush: false });
             this.reporter.calls.should.have.lengthOf(0);
         });
 
         it('stops auto-flushing', async function () {
-            await this.logger.close({ flush: false });
+            await this.logger.stop({ flush: false });
             this.reporter.calls.should.have.lengthOf(0);
 
             await new Promise(r => setTimeout(r, 125));
@@ -356,7 +356,7 @@ describe('BufferedMetricsLogger', function() {
         });
 
         it('stops auto-flushing on exit', async function () {
-            await this.logger.close({ flush: false });
+            await this.logger.stop({ flush: false });
             this.reporter.calls.should.have.lengthOf(0);
 
             process.emit('beforeExit', 0);

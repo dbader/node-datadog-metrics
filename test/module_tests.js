@@ -16,7 +16,7 @@ beforeEach(function() {
 });
 
 afterEach(async function() {
-    await metrics.close({ flush: false });
+    await metrics.stop({ flush: false });
 });
 
 describe('datadog-metrics', function() {
