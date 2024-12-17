@@ -288,7 +288,7 @@ By default, datadog-metrics will automatically flush, or send accumulated
 metrics to Datadog, at regular intervals, and, in environments that support it,
 before your program exits. (However, if you call `process.exit()` to cause a
 hard exit, datadog-metrics doesn’t get a chance to flush. In this case, you may
-want to call `await metrics.flush()`.)
+want to call `await metrics.stop()` first.)
 
 You can adjust the interval by using the `flushIntervalSeconds` option. Setting
 it to `0` will disable auto-flushing entirely:
@@ -298,7 +298,8 @@ it to `0` will disable auto-flushing entirely:
 metrics.init({ flushIntervalSeconds: 10 });
 ```
 
-You can also send accumulated metrics manually by calling `metrics.flush()`.
+You can also send accumulated metrics manually at any time by calling
+`metrics.flush()`.
 
 Please note that, when calling the `BufferedMetricsLogger` constructor directly,
 `flushIntervalSeconds` defaults to `0` instead. When constructing your own
@@ -335,6 +336,18 @@ metrics.flush()
     .then(() => console.log('Flush succeeded'))
     .catch((error) => console.log('Flush error:', error)) ;
 ```
+
+#### `metrics.stop(options)`
+
+Stops auto-flushing (if enabled) and flushes any currently buffered metrics.
+This is mainly useful if you want to manually clean up and send remaining
+metrics before hard-quitting your program (usually by calling `process.exit()`).
+Returns a promise for the result of the flush.
+
+Takes an optional object with properties:
+* `flush` (boolean) Whether to flush any remaining metrics after stopping.
+    Defaults to `true`.
+
 
 ## Logging
 
