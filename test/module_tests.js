@@ -22,18 +22,16 @@ describe('datadog-metrics', function() {
         logger.gauge('test.gauge', 23);
     });
 
-    it('should let me configure a shared metrics logger instance', function(done) {
+    it('should let me configure a shared metrics logger instance', async function() {
         metrics.init.should.be.a('function');
         metrics.init({
             flushIntervalSeconds: 0,
             reporter: {
-                report (series, onSuccess, _onError) {
+                async report (series) {
                     series.should.have.lengthOf(12); // 3 + 9 for the histogram.
                     series[0].should.have.nested.property('points[0][1]', 23);
                     series[0].should.have.property('metric', 'test.gauge');
                     series[0].tags.should.have.lengthOf(0);
-                    onSuccess && onSuccess();
-                    done();
                 }
             }
         });
@@ -41,15 +39,15 @@ describe('datadog-metrics', function() {
         metrics.increment('test.counter');
         metrics.increment('test.counter', 23);
         metrics.histogram('test.histogram', 23);
-        metrics.flush();
+        await metrics.flush();
     });
 
-    it('should report gauges with the same name but different tags separately', function(done) {
+    it('should report gauges with the same name but different tags separately', async function() {
         metrics.init.should.be.a('function');
         metrics.init({
             flushIntervalSeconds: 0,
             reporter: {
-                report (series, onSuccess, _onError) {
+                async report (series) {
                     series.should.have.lengthOf(2);
                     series[0].should.have.nested.property('points[0][1]', 1);
                     series[0].should.have.property('metric', 'test.gauge');
@@ -57,14 +55,12 @@ describe('datadog-metrics', function() {
                     series[1].should.have.nested.property('points[0][1]', 2);
                     series[1].should.have.property('metric', 'test.gauge');
                     series[1].should.have.deep.property('tags', ['tag2']);
-                    onSuccess && onSuccess();
-                    done();
                 }
             }
         });
         metrics.gauge('test.gauge', 1, ['tag1']);
         metrics.gauge('test.gauge', 2, ['tag2']);
-        metrics.flush();
+        await metrics.flush();
     });
 
     it('should lazily provide a shared metrics logger instance', function() {
