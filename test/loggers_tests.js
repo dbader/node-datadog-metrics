@@ -8,6 +8,22 @@ chai.should();
 const { BufferedMetricsLogger } = require('../lib/loggers');
 const { NullReporter } = require('../lib/reporters');
 
+class MockReporter {
+    constructor() {
+        this.calls = [];
+        this.error = null;
+    }
+
+    async report(metrics) {
+        this.calls.push(metrics);
+        if (!metrics || metrics.length === 0) {
+            throw new Error('No metrics were sent to the reporter!');
+        } else if (this.error) {
+            throw this.error;
+        }
+    }
+}
+
 describe('BufferedMetricsLogger', function() {
     let warnLogs = [];
     let errorLogs = [];
@@ -229,18 +245,18 @@ describe('BufferedMetricsLogger', function() {
 
             describe('on error', function () {
                 beforeEach(() => {
-                    reporter.expectError = new Error('test error');
+                    reporter.error = new Error('test error');
                 });
 
                 it('should reject the promise with the reporter error', async () => {
-                    await logger.flush().should.be.rejectedWith(reporter.expectError);
+                    await logger.flush().should.be.rejectedWith(reporter.error);
                 });
 
                 it('should call the flush error handler with the reporter error', (done) => {
                     logger.flush(
                         () => done(new Error('The success handler was called!')),
                         (error) => {
-                            if (error === reporter.expectError) {
+                            if (error === reporter.error) {
                                 done();
                             } else {
                                 done(new Error('Error was not the reporter error'));
@@ -265,7 +281,7 @@ describe('BufferedMetricsLogger', function() {
 
                     await logger.flush().should.be.rejected;
                     onErrorCalled.should.equal(true);
-                    onErrorValue.should.equal(reporter.expectError);
+                    onErrorValue.should.equal(reporter.error);
                 });
 
                 it('should log if `onError` init option is not set', async () => {
@@ -278,16 +294,7 @@ describe('BufferedMetricsLogger', function() {
 
         describe('with a promise-based reporter', function() {
             beforeEach(() => {
-                reporter = {
-                    expectError: null,
-                    async report(metrics) {
-                        if (!metrics || metrics.length === 0) {
-                            throw new Error('No metrics were sent to the reporter!');
-                        } else if (this.expectError) {
-                            throw this.expectError;
-                        }
-                    }
-                };
+                reporter = new MockReporter();
             });
 
             standardFlushTests();
@@ -295,23 +302,107 @@ describe('BufferedMetricsLogger', function() {
 
         describe('[deprecated] with a callback-based reporter', function() {
             beforeEach(() => {
-                reporter = {
-                    expectError: null,
-                    report(metrics, onSuccess, onError) {
-                        setTimeout(() => {
-                            if (!metrics || metrics.length === 0) {
-                                throw new Error('No metrics were sent to the reporter!');
-                            } else if (this.expectError) {
-                                onError(this.expectError);
-                            } else {
-                                onSuccess();
-                            }
-                        }, 0);
-                    }
+                reporter = new MockReporter();
+                reporter.report = function(metrics, onSuccess, onError) {
+                    return this.__proto__.report.call(this, metrics)
+                        .then(onSuccess, onError);
                 };
             });
 
             standardFlushTests();
+        });
+    });
+
+    describe('stop()', function () {
+        beforeEach(function () {
+            this.reporter = new MockReporter();
+            this.logger = new BufferedMetricsLogger({
+                flushIntervalSeconds: 0.1,
+                reporter: this.reporter
+            });
+            this.logger.gauge('test.gauge', 23);
+        });
+
+        it('flushes by default', async function () {
+            this.reporter.calls.should.have.lengthOf(0);
+            await this.logger.stop();
+            this.reporter.calls.should.have.lengthOf(1);
+        });
+
+        it('does not flush if `flush: false`', async function () {
+            this.reporter.calls.should.have.lengthOf(0);
+            await this.logger.stop({ flush: false });
+            this.reporter.calls.should.have.lengthOf(0);
+        });
+
+        it('stops auto-flushing', async function () {
+            await this.logger.stop({ flush: false });
+            this.reporter.calls.should.have.lengthOf(0);
+
+            await new Promise(r => setTimeout(r, 125));
+            this.reporter.calls.should.have.lengthOf(0);
+        });
+
+        it('stops auto-flushing on exit', async function () {
+            await this.logger.stop({ flush: false });
+            this.reporter.calls.should.have.lengthOf(0);
+
+            process.emit('beforeExit', 0);
+            this.reporter.calls.should.have.lengthOf(0);
+        });
+    });
+
+    describe('option: flushIntervalSeconds', function () {
+        beforeEach(function () {
+            this.reporter = new MockReporter();
+        });
+
+        it('flushes after the specified number of seconds', async function () {
+            this.logger = new BufferedMetricsLogger({
+                flushIntervalSeconds: 0.1,
+                reporter: this.reporter
+            });
+            this.logger.gauge('test.gauge', 23);
+
+            this.reporter.calls.should.have.lengthOf(0);
+            await new Promise(r => setTimeout(r, 125));
+            this.reporter.calls.should.have.lengthOf(1);
+        });
+
+        it('flushes before exiting if auto-flushing', async function () {
+            this.logger = new BufferedMetricsLogger({
+                flushIntervalSeconds: 0.1,
+                reporter: this.reporter
+            });
+            this.logger.gauge('test.gauge', 23);
+
+            this.reporter.calls.should.have.lengthOf(0);
+            process.emit('beforeExit', 0);
+            this.reporter.calls.should.have.lengthOf(1);
+        });
+
+        it('does not auto-flush if set to 0', async function () {
+            this.logger = new BufferedMetricsLogger({
+                flushIntervalSeconds: 0,
+                reporter: this.reporter
+            });
+            this.logger.gauge('test.gauge', 23);
+            this.reporter.calls.should.have.lengthOf(0);
+
+            await new Promise(r => setTimeout(r, 125));
+            this.reporter.calls.should.have.lengthOf(0);
+
+            process.emit('beforeExit', 0);
+            this.reporter.calls.should.have.lengthOf(0);
+        });
+
+        it('throws if set to a negative value', async function () {
+            (() => {
+                this.logger = new BufferedMetricsLogger({
+                    flushIntervalSeconds: -1,
+                    reporter: this.reporter
+                });
+            }).should.throw(/flushIntervalSeconds/);
         });
     });
 });
