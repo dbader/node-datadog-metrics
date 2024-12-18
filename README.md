@@ -367,34 +367,20 @@ Contributions are always welcome! For more info on how to contribute or develop 
 
 ## Release History
 
-### In Development:
-
-**Breaking Changes:**
-
-TBD
+### 0.12.1 (2024-12-18)
 
 **New Features:**
 
-* When auto-flushing is enabled, metrics are now also flushed before the process exits. In previous versions, you needed to do this manually by calling `metrics.flush()` at the every end of your program.
+* When auto-flushing is enabled, metrics are now also flushed before the process exits. In previous versions, you needed to do this manually by calling `metrics.flush()` at the every end of your program. (#141)
 
-    You will still need to flush manually if you set `flushIntervalSeconds` to `0` or you are quitting your program by calling `process.exit()` [(which interrupts a variety of operations)](https://nodejs.org/docs/latest/api/process.html#processexitcode).
+    You will still need to flush manually if you set `flushIntervalSeconds` to `0` or `stop()` (see below) if you are quitting your program by calling `process.exit()` [(which interrupts a variety of operations)](https://nodejs.org/docs/latest/api/process.html#processexitcode).
 
-**Deprecations:**
+* A new `stop()` method disables auto-flushing and flushes any currently buffered metrics (you can leave metrics in the buffer instead with the `flush` option: `stop({flush: false})`). (#141)
 
-TBD
-
-**Bug Fixes:**
-
-TBD
-
-**Maintenance:**
-
-TBD
-
-[View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.12.0...main)
+[View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.12.0...v0.12.1)
 
 
-### 0.12.0 (2024-12-5)
+### 0.12.0 (2024-12-05)
 
 Datadog-metrics now automatically retries failed metric submissions and uses promises for asynchronous actions! There are a handful of other deprecations and small improvements.
 
