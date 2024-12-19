@@ -367,6 +367,31 @@ Contributions are always welcome! For more info on how to contribute or develop 
 
 ## Release History
 
+### In Development:
+
+**Breaking Changes:**
+
+TBD
+
+**New Features:**
+
+TBD
+
+**Deprecations:**
+
+TBD
+
+**Bug Fixes:**
+
+TBD
+
+**Maintenance:**
+
+TBD
+
+[View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.12.1...main)
+
+
 ### 0.12.1 (2024-12-18)
 
 **New Features:**
