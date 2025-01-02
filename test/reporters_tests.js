@@ -23,17 +23,23 @@ describe('NullReporter', function() {
 });
 
 describe('DatadogReporter', function() {
-    afterEach(() => {
+    let originalEnv = Object.entries(process.env)
+        .filter(([key, _]) => !/^(DD|DATADOG)_/.test(key));
+
+    before(() => {
+        nock.disableNetConnect();
+    });
+
+    after(() => {
+        nock.enableNetConnect();
+    });
+
+    beforeEach(() => {
         nock.cleanAll();
+        process.env = Object.fromEntries(originalEnv);
     });
 
     describe('constructor', function() {
-        let originalEnv = Object.entries(process.env);
-
-        afterEach(() => {
-            process.env = Object.fromEntries(originalEnv);
-        });
-
         it('creates a DatadogReporter', () => {
             const instance = new DatadogReporter({
                 apiKey: 'abc',
