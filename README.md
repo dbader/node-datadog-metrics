@@ -371,7 +371,9 @@ Contributions are always welcome! For more info on how to contribute or develop 
 
 **Breaking Changes:**
 
-* The minimum required Node.js version is now 14.0.0.
+* The minimum required Node.js version is now v14.0.0.
+
+* The `code` property on `AuthorizationError` instances has been changed to `DATADOG_METRICS_AUTHORIZATION_ERROR` to make names more clear and consistent (it was previously `DATADOG_AUTHORIZATION_ERROR`). If you are using `errorInstance.code` to check types, make sure to update the string you are looking for.
 
 **New Features:**
 
