@@ -11,7 +11,7 @@ The downside of using the HTTP API is that it can negatively affect your app's p
 
 ## Installation
 
-Datadog-metrics is compatible with Node.js v12 and later. You can install it with NPM:
+Datadog-metrics is compatible with Node.js v14 and later. You can install it with NPM:
 
 ```sh
 npm install datadog-metrics --save
@@ -371,7 +371,9 @@ Contributions are always welcome! For more info on how to contribute or develop 
 
 **Breaking Changes:**
 
-TBD
+* The minimum required Node.js version is now v14.0.0.
+
+* The `code` property on `AuthorizationError` instances has been changed to `DATADOG_METRICS_AUTHORIZATION_ERROR` to make names more clear and consistent (it was previously `DATADOG_AUTHORIZATION_ERROR`). If you are using `errorInstance.code` to check types, make sure to update the string you are looking for.
 
 **New Features:**
 
@@ -387,7 +389,7 @@ TBD
 
 **Maintenance:**
 
-TBD
+* Under the hood, we’ve removed a dependency on the official Datadog client (`@datadog/datadog-api-client`). This is an attempt to streamline the package, since the official client comes at a sizeable 15 MB of code for you to download and then load in your application. (#144)
 
 [View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.12.1...main)
 
