@@ -30,7 +30,7 @@ For changes to this repo, follow the [local development](#local-development) ste
 
 1. If you don't have commit rights to this repo, [fork it][fork].
 
-2. Install Node.js 12 or newer.
+2. Install Node.js 14 or newer.
 
 3. Clone your fork (or this repo if you have commit rights) to your local development machine:
 
