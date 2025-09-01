@@ -367,6 +367,33 @@ Contributions are always welcome! For more info on how to contribute or develop 
 
 ## Release History
 
+### In Development:
+
+**Breaking Changes:**
+
+* The minimum required Node.js version is now v14.0.0.
+
+* The `code` property on `AuthorizationError` instances has been changed to `DATADOG_METRICS_AUTHORIZATION_ERROR` for clarity and consistency (it was previously `DATADOG_AUTHORIZATION_ERROR`). If you are using `errorInstance.code` to check types, make sure to update the string you were looking for.
+
+**New Features:**
+
+TBD
+
+**Deprecations:**
+
+TBD
+
+**Bug Fixes:**
+
+TBD
+
+**Maintenance:**
+
+* Under the hood, we’ve removed a dependency on the official Datadog client (`@datadog/datadog-api-client`). This is an attempt to streamline the package, since the official client comes at a sizeable 15 MB of code for you to download and then load in your application. (#144)
+
+[View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.12.1...main)
+
+
 ### **(Pre-release)** 0.13.0-pre.1 (2025-08-31)
 
 This is a pre-release of v0.13.0 for testing. There are no new features, but this contains significant under-the-hood changes. We’ve slimmed things down by no longer relying on the official Datadog client, which is pretty heavy. If your app is pushing size or resource constraints, this update may help.
