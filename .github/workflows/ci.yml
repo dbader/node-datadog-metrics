@@ -19,7 +19,7 @@ jobs:
         node_version: [14, 16, 18, 20, 22, 24]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install Node.js
         uses: actions/setup-node@v4
@@ -38,7 +38,7 @@ jobs:
   test-integration:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install Node.js
         uses: actions/setup-node@v4
@@ -61,7 +61,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install Node.js
         uses: actions/setup-node@v4
@@ -84,7 +84,7 @@ jobs:
     name: Build/Check Types
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install Node.js
         uses: actions/setup-node@v4
