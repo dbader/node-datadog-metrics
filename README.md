@@ -800,4 +800,4 @@ Your contributions are always welcome! See [`CONTRIBUTING.md`](./CONTRIBUTING.md
 [npm-downloads]: https://img.shields.io/npm/dm/datadog-metrics.svg?style=flat-square
 [ci-status-image]: https://github.com/dbader/node-datadog-metrics/actions/workflows/ci.yml/badge.svg?branch=main
 [ci-status-url]: https://github.com/dbader/node-datadog-metrics/actions/workflows/ci.yml?query=branch%3Amain
-[deno-image]: https://shield.deno.dev/deno/2.1
+[deno-image]: https://shield.deno.dev/deno/^2.1
