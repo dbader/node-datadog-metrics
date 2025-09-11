@@ -44,7 +44,13 @@ const testMetrics = [
     },
 ];
 
-export async function main() {
+export async function main({ tagSuffix = '' } = {}) {
+    if (tagSuffix) {
+        for (const metric of testMetrics) {
+            metric.tags = metric.tags.map(tag => `${tag}${tagSuffix}`);
+        }
+    }
+
     datadogMetrics.init({ flushIntervalSeconds: 0 });
 
     for (const metric of testMetrics) {
