@@ -6,7 +6,7 @@
 
 import { main } from './integration_check_lib.mjs';
 
-main({ variant: 'deno' }).catch(error => {
+main({ tagSuffix: '-deno' }).catch(error => {
     process.exitCode = 1;
     console.error(error);
 });
