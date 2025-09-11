@@ -73,9 +73,7 @@ export async function sendMetric(metric) {
 
     for (const [timestamp, value] of testPoints) {
         datadogMetrics[metric.type](metric.name, value, metric.tags, timestamp);
-        await new Promise((resolve, reject) => {
-            datadogMetrics.flush(resolve, reject);
-        });
+        await datadogMetrics.flush();
     }
 }
 
