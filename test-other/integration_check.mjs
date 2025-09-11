@@ -6,7 +6,7 @@
 
 import { main } from './integration_check_lib.mjs';
 
-main().catch(error => {
+main({ tagSuffix: process.argv[2] || '' }).catch(error => {
     process.exitCode = 1;
     console.error(error);
 });
