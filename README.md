@@ -4,6 +4,7 @@
 [![NPM Version][npm-image]][npm-url]
 [![Build Status][ci-status-image]][ci-status-url]
 [![Downloads Stats][npm-downloads]][npm-url]
+![deno compatibility][deno-image]
 
 Datadog-metrics lets you collect application metrics through Datadog's HTTP API. Using the HTTP API has the benefit that you **don't need to install the Datadog Agent (StatsD)**. Just get an API key, install the module and you're ready to go.
 
@@ -11,7 +12,7 @@ The downside of using the HTTP API is that it can negatively affect your app's p
 
 ## Installation
 
-Datadog-metrics is compatible with Node.js v14 and later. You can install it with NPM:
+Datadog-metrics is compatible with Node.js v14 and later and Deno 2.0 and later. You can install it with NPM:
 
 ```sh
 npm install datadog-metrics --save
@@ -371,13 +372,13 @@ Contributions are always welcome! For more info on how to contribute or develop 
 
 **Breaking Changes:**
 
-* The minimum required Node.js version is now v14.0.0.
+* The minimum required Node.js version is now v14.0.0 and Deno version is 2.0.0.
 
 * The `code` property on `AuthorizationError` instances has been changed to `DATADOG_METRICS_AUTHORIZATION_ERROR` for clarity and consistency (it was previously `DATADOG_AUTHORIZATION_ERROR`). If you are using `errorInstance.code` to check types, make sure to update the string you were looking for.
 
 **New Features:**
 
-TBD
+* Clarify this package is compatible with Deno (>= v2.0). We’ve silently worked on Deno for a long time, but never formally supported it before this release.
 
 **Deprecations:**
 
@@ -799,3 +800,4 @@ Your contributions are always welcome! See [`CONTRIBUTING.md`](./CONTRIBUTING.md
 [npm-downloads]: https://img.shields.io/npm/dm/datadog-metrics.svg?style=flat-square
 [ci-status-image]: https://github.com/dbader/node-datadog-metrics/actions/workflows/ci.yml/badge.svg?branch=main
 [ci-status-url]: https://github.com/dbader/node-datadog-metrics/actions/workflows/ci.yml?query=branch%3Amain
+[deno-image]: https://shield.deno.dev/deno/2.0
