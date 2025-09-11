@@ -98,7 +98,7 @@ jobs:
           DATADOG_APP_KEY: ${{ secrets.DATADOG_APP_KEY }}
           DATADOG_SITE: ${{ secrets.DATADOG_API_HOST }}
         run: |
-          bun test-other/integration_check.ts '-bun'
+          bun test-other/integration_check.mjs '-bun'
 
   lint:
     runs-on: ubuntu-latest
