@@ -48,6 +48,13 @@
             "rules": {
                 "max-statements": ["off"]
             }
+        },
+        {
+            "files": ["**/*.mjs"],
+            "parserOptions": {
+                "ecmaVersion": 2019,
+                "sourceType": "module"
+            }
         }
       ]
 }

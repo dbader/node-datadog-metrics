@@ -58,6 +58,48 @@ jobs:
         run: |
           npm run check-integration
 
+  test-deno-integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: '~2.1'
+
+      - name: Install dependencies
+        run: deno install
+
+      - name: Check Integration
+        env:
+          DATADOG_API_KEY: ${{ secrets.DATADOG_API_KEY }}
+          DATADOG_APP_KEY: ${{ secrets.DATADOG_APP_KEY }}
+          DATADOG_SITE: ${{ secrets.DATADOG_API_HOST }}
+        run: |
+          deno --allow-all test-other/integration_check_deno.ts
+
+  test-bun-integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.0.36'
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Check Integration
+        env:
+          DATADOG_API_KEY: ${{ secrets.DATADOG_API_KEY }}
+          DATADOG_APP_KEY: ${{ secrets.DATADOG_APP_KEY }}
+          DATADOG_SITE: ${{ secrets.DATADOG_API_HOST }}
+        run: |
+          bun test-other/integration_check.mjs '-bun'
+
   lint:
     runs-on: ubuntu-latest
     steps:

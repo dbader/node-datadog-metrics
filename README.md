@@ -4,6 +4,8 @@
 [![NPM Version][npm-image]][npm-url]
 [![Build Status][ci-status-image]][ci-status-url]
 [![Downloads Stats][npm-downloads]][npm-url]
+![Supports Deno 2.1 and Newer][deno-image]
+![Supports Bun 1.0 and Newer][bun-image]
 
 Datadog-metrics lets you collect application metrics through Datadog's HTTP API. Using the HTTP API has the benefit that you **don't need to install the Datadog Agent (StatsD)**. Just get an API key, install the module and you're ready to go.
 
@@ -11,7 +13,7 @@ The downside of using the HTTP API is that it can negatively affect your app's p
 
 ## Installation
 
-Datadog-metrics is compatible with Node.js v14 and later. You can install it with NPM:
+Datadog-metrics is compatible with Node.js v14+, Deno 2.1+, and Bun 1.0+. You can install it with NPM:
 
 ```sh
 npm install datadog-metrics --save
@@ -371,13 +373,13 @@ Contributions are always welcome! For more info on how to contribute or develop 
 
 **Breaking Changes:**
 
-* The minimum required Node.js version is now v14.0.0.
+* The minimum required Node.js version is now v14.0.0, Deno version is 2.1.0, and Bun version is 1.0.0.
 
 * The `code` property on `AuthorizationError` instances has been changed to `DATADOG_METRICS_AUTHORIZATION_ERROR` for clarity and consistency (it was previously `DATADOG_AUTHORIZATION_ERROR`). If you are using `errorInstance.code` to check types, make sure to update the string you were looking for.
 
 **New Features:**
 
-TBD
+* Clarify this package is compatible with Deno (>= v2.1) and Bun (>= 1.0). We’ve silently worked on Deno and Bun for a long time, but never formally supported them before this release.
 
 **Deprecations:**
 
@@ -799,3 +801,5 @@ Your contributions are always welcome! See [`CONTRIBUTING.md`](./CONTRIBUTING.md
 [npm-downloads]: https://img.shields.io/npm/dm/datadog-metrics.svg?style=flat-square
 [ci-status-image]: https://github.com/dbader/node-datadog-metrics/actions/workflows/ci.yml/badge.svg?branch=main
 [ci-status-url]: https://github.com/dbader/node-datadog-metrics/actions/workflows/ci.yml?query=branch%3Amain
+[deno-image]: https://img.shields.io/badge/Deno-^2.1-blue?logo=deno&color=70ffaf&logoColor=ffffff
+[bun-image]: https://img.shields.io/badge/Bun-^1.0-blue?logo=bun&color=f368e0

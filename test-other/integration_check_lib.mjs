@@ -4,10 +4,8 @@
  * Datadog and will show up as expected.
  */
 
-'use strict';
-
-const { client, v1 } = require('@datadog/datadog-api-client');
-const datadogMetrics = require('..');
+import { client, v1 } from '@datadog/datadog-api-client';
+import datadogMetrics from '../index.js';
 
 function floorTo(value, points) {
     const factor = 10 ** points;
@@ -46,7 +44,13 @@ const testMetrics = [
     },
 ];
 
-async function main() {
+export async function main({ tagSuffix = '' } = {}) {
+    if (tagSuffix) {
+        for (const metric of testMetrics) {
+            metric.tags = metric.tags.map(tag => `${tag}${tagSuffix}`);
+        }
+    }
+
     datadogMetrics.init({ flushIntervalSeconds: 0 });
 
     for (const metric of testMetrics) {
@@ -64,18 +68,16 @@ async function main() {
     }
 }
 
-async function sendMetric(metric) {
+export async function sendMetric(metric) {
     console.log(`Sending random points for ${metric.type} "${metric.name}"`);
 
     for (const [timestamp, value] of testPoints) {
         datadogMetrics[metric.type](metric.name, value, metric.tags, timestamp);
-        await new Promise((resolve, reject) => {
-            datadogMetrics.flush(resolve, reject);
-        });
+        await datadogMetrics.flush();
     }
 }
 
-async function queryMetric(metric) {
+export async function queryMetric(metric) {
     const configuration = client.createConfiguration({
         authMethods: {
             apiKeyAuth: process.env.DATADOG_API_KEY,
@@ -95,7 +97,7 @@ async function queryMetric(metric) {
     return data.series && data.series[0];
 }
 
-async function waitForSentMetric(metric) {
+export async function waitForSentMetric(metric) {
     const endTime = Date.now() + MAX_WAIT_TIME;
     while (Date.now() < endTime) {
         console.log(`Querying Datadog for sent points in ${metric.type} "${metric.name}"...`);
@@ -130,11 +132,4 @@ async function waitForSentMetric(metric) {
 
     console.log('✘ Nothing found and gave up waiting. Test failed!');
     return false;
-}
-
-if (require.main === module) {
-    main().catch(error => {
-        process.exitCode = 1;
-        console.error(error);
-    });
 }

@@ -2,6 +2,7 @@
   "name": "datadog-metrics",
   "version": "0.13.0-dev",
   "description": "Buffered metrics reporting via the Datadog HTTP API",
+  "type": "commonjs",
   "main": "index.js",
   "types": "dist/index.d.ts",
   "repository": {
@@ -14,7 +15,7 @@
   "scripts": {
     "prepack": "npm run clean && npm run build-types && npm run check-types",
     "test": "mocha --reporter spec",
-    "check-integration": "node test-other/integration_check.js",
+    "check-integration": "node test-other/integration_check.mjs",
     "check-codestyle": "npx eslint .",
     "check-text": "test-other/lint_text.sh",
     "build-types": "tsc --build",
