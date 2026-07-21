@@ -23,6 +23,11 @@ describe('NullReporter', function() {
 });
 
 describe('DatadogReporter', function() {
+    const RETRY_BACKOFF_SECONDS = 0.01;
+    const RETRY_BACKOFF_MS = RETRY_BACKOFF_SECONDS * 1000;
+    // Timers can fire slightly early due to scheduler jitter, so allow a tiny buffer.
+    const MIN_RETRY_DELAY_MS = RETRY_BACKOFF_MS - 2;
+
     let originalEnv = Object.entries(process.env)
         .filter(([key, _]) => !/^(DD|DATADOG)_/.test(key));
 
@@ -71,7 +76,7 @@ describe('DatadogReporter', function() {
         beforeEach(() => {
             reporter = new DatadogReporter({
                 apiKey: 'abc',
-                retryBackoff: 0.01
+                retryBackoff: RETRY_BACKOFF_SECONDS
             });
         });
 
@@ -102,6 +107,29 @@ describe('DatadogReporter', function() {
                 .reply(202, { errors: [] });
 
             await reporter.report([mockMetric]).should.be.fulfilled;
+        });
+
+        it('should use configured retryBackoff for retries', async function () {
+            const callTimes = [];
+
+            nock('https://api.datadoghq.com')
+                .post('/api/v1/series')
+                .times(1)
+                .reply(() => {
+                    callTimes.push(Date.now());
+                    return [500, { errors: ['Unknown!'] }];
+                })
+                .post('/api/v1/series')
+                .times(1)
+                .reply(() => {
+                    callTimes.push(Date.now());
+                    return [202, { errors: [] }];
+                });
+
+            await reporter.report([mockMetric]).should.be.fulfilled;
+
+            const timeDelta = callTimes[1] - callTimes[0];
+            timeDelta.should.be.at.least(MIN_RETRY_DELAY_MS);
         });
 
         it('should respect the `Retry-After` header', async function () {
