@@ -47,7 +47,7 @@ const testMetrics = [
 export async function main({ tagSuffix = '' } = {}) {
     if (tagSuffix) {
         for (const metric of testMetrics) {
-            metric.tags = metric.tags.map(tag => `${tag}${tagSuffix}`);
+            metric.tags = metric.tags.map(tag => `${tag}-${tagSuffix}`);
         }
     }
 

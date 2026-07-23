@@ -87,7 +87,7 @@ jobs:
       - name: Install Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: '1.0.36'
+          bun-version: '1.0.x'
 
       - name: Install dependencies
         run: bun install
@@ -98,7 +98,7 @@ jobs:
           DATADOG_APP_KEY: ${{ secrets.DATADOG_APP_KEY }}
           DATADOG_SITE: ${{ secrets.DATADOG_API_HOST }}
         run: |
-          bun test-other/integration_check.mjs '-bun'
+          bun test-other/integration_check.mjs bun
 
   lint:
     runs-on: ubuntu-latest
