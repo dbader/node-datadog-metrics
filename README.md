@@ -4,6 +4,7 @@
 [![NPM Version][npm-image]][npm-url]
 [![Build Status][ci-status-image]][ci-status-url]
 [![Downloads Stats][npm-downloads]][npm-url]
+![Supports all Node LTS versions][node-image]
 ![Supports Deno 2.1 and Newer][deno-image]
 ![Supports Bun 1.0 and Newer][bun-image]
 
@@ -801,5 +802,6 @@ Your contributions are always welcome! See [`CONTRIBUTING.md`](./CONTRIBUTING.md
 [npm-downloads]: https://img.shields.io/npm/dm/datadog-metrics.svg?style=flat-square
 [ci-status-image]: https://github.com/dbader/node-datadog-metrics/actions/workflows/ci.yml/badge.svg?branch=main
 [ci-status-url]: https://github.com/dbader/node-datadog-metrics/actions/workflows/ci.yml?query=branch%3Amain
+[node-image]: https://img.shields.io/node/v-lts/datadog-metrics/latest
 [deno-image]: https://img.shields.io/badge/Deno-^2.1-blue?logo=deno&color=70ffaf&logoColor=ffffff
 [bun-image]: https://img.shields.io/badge/Bun-^1.0-blue?logo=bun&color=f368e0
