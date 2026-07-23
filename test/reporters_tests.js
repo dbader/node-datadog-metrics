@@ -23,8 +23,6 @@ describe('NullReporter', function() {
 });
 
 describe('DatadogReporter', function() {
-    const RETRY_BACKOFF_SECONDS = 0.01;
-
     let originalEnv = Object.entries(process.env)
         .filter(([key, _]) => !/^(DD|DATADOG)_/.test(key));
 
@@ -73,7 +71,8 @@ describe('DatadogReporter', function() {
         beforeEach(() => {
             reporter = new DatadogReporter({
                 apiKey: 'abc',
-                retryBackoff: RETRY_BACKOFF_SECONDS
+                // Use an extremely short delay to keep tests quick.
+                retryBackoff: 0.01,
             });
         });
 
@@ -107,8 +106,8 @@ describe('DatadogReporter', function() {
         });
 
         it('should use configured retryBackoff for retries', async function () {
-            const retryBackoffSeconds = 0.1;
-            const retryBackoffMs = retryBackoffSeconds * 1000;
+            const retryBackoff = 0.1;
+            const retryBackoffMs = retryBackoff * 1000;
             // Timers can fire slightly early due to scheduler jitter.
             const minRetryDelayMs = retryBackoffMs - 5;
             // Event-loop contention (especially in CI) can delay retry scheduling.
@@ -116,7 +115,7 @@ describe('DatadogReporter', function() {
             const callTimes = [];
             const retryBackoffReporter = new DatadogReporter({
                 apiKey: 'abc',
-                retryBackoff: retryBackoffSeconds
+                retryBackoff
             });
 
             nock('https://api.datadoghq.com')
