@@ -51,7 +51,7 @@ For changes to this repo, follow the [local development](#local-development) ste
     git checkout -b name-of-your-branch
     ```
 
-6. Make your changes to teh relevant files.
+6. Make your changes to the relevant files.
 
 7. Run tests and other checks before committing!
 

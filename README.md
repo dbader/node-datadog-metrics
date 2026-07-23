@@ -385,7 +385,7 @@ TBD
 
 **Bug Fixes:**
 
-TBD
+* Fixed issue where the `retryBackoff` option was not correctly applied in v0.13.0-pre.1. (Thanks to @jjedd97 in #155.)
 
 **Maintenance:**
 

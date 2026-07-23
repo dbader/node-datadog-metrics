@@ -71,7 +71,8 @@ describe('DatadogReporter', function() {
         beforeEach(() => {
             reporter = new DatadogReporter({
                 apiKey: 'abc',
-                retryBackoff: 0.01
+                // Use an extremely short delay to keep tests quick.
+                retryBackoff: 0.01,
             });
         });
 
@@ -102,6 +103,39 @@ describe('DatadogReporter', function() {
                 .reply(202, { errors: [] });
 
             await reporter.report([mockMetric]).should.be.fulfilled;
+        });
+
+        it('should use configured retryBackoff for retries', async function () {
+            const retryBackoff = 0.1;
+            const retryBackoffMs = retryBackoff * 1000;
+            // Timers can fire slightly early due to scheduler jitter.
+            const minRetryDelayMs = retryBackoffMs - 5;
+            // Event-loop contention (especially in CI) can delay retry scheduling.
+            const maxRetryDelayMs = retryBackoffMs + 30;
+            const callTimes = [];
+            const retryBackoffReporter = new DatadogReporter({
+                apiKey: 'abc',
+                retryBackoff
+            });
+
+            nock('https://api.datadoghq.com')
+                .post('/api/v1/series')
+                .times(1)
+                .reply(() => {
+                    callTimes.push(Date.now());
+                    return [500, { errors: ['Unknown!'] }];
+                })
+                .post('/api/v1/series')
+                .times(1)
+                .reply(() => {
+                    callTimes.push(Date.now());
+                    return [202, { errors: [] }];
+                });
+
+            await retryBackoffReporter.report([mockMetric]).should.be.fulfilled;
+
+            const timeDelta = callTimes[1] - callTimes[0];
+            timeDelta.should.be.within(minRetryDelayMs, maxRetryDelayMs);
         });
 
         it('should respect the `Retry-After` header', async function () {
