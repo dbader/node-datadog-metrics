@@ -370,6 +370,31 @@ Contributions are always welcome! For more info on how to contribute or develop 
 
 ## Release History
 
+### In Development:
+
+**Breaking Changes:**
+
+TBD
+
+**New Features:**
+
+TBD
+
+**Deprecations:**
+
+TBD
+
+**Bug Fixes:**
+
+TBD
+
+**Maintenance:**
+
+TBD
+
+[View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.12.1...main)
+
+
 ### **(Pre-release)** 0.13.0-pre.2 (2026-07-24)
 
 This fixes a significant bug when retrying failed metric submissions on v0.13.0-pre.1.
