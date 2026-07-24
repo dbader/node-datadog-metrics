@@ -370,31 +370,19 @@ Contributions are always welcome! For more info on how to contribute or develop 
 
 ## Release History
 
-### In Development:
+### **(Pre-release)** 0.13.0-pre.2 (2026-07-24)
 
-**Breaking Changes:**
-
-* The minimum required Node.js version is now v14.0.0, Deno version is 2.1.0, and Bun version is 1.0.0.
-
-* The `code` property on `AuthorizationError` instances has been changed to `DATADOG_METRICS_AUTHORIZATION_ERROR` for clarity and consistency (it was previously `DATADOG_AUTHORIZATION_ERROR`). If you are using `errorInstance.code` to check types, make sure to update the string you were looking for.
+This fixes a significant bug when retrying failed metric submissions on v0.13.0-pre.1.
 
 **New Features:**
 
 * Clarify this package is compatible with Deno (>= v2.1) and Bun (>= 1.0). We’ve silently worked on Deno and Bun for a long time, but never formally supported them before this release.
 
-**Deprecations:**
-
-TBD
-
 **Bug Fixes:**
 
 * Fixed issue where the `retryBackoff` option was not correctly applied in v0.13.0-pre.1. (Thanks to @jjedd97 in #155.)
 
-**Maintenance:**
-
-* Under the hood, we’ve removed a dependency on the official Datadog client (`@datadog/datadog-api-client`). This is an attempt to streamline the package, since the official client comes at a sizeable 15 MB of code for you to download and then load in your application. (#144)
-
-[View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.12.1...main)
+[View diff](https://github.com/dbader/node-datadog-metrics/compare/v0.13.0-pre.1...v0.13.0-pre.2)
 
 
 ### **(Pre-release)** 0.13.0-pre.1 (2025-08-31)
