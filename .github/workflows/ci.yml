@@ -61,7 +61,7 @@ jobs:
   test-deno-integration:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install Deno
         uses: denoland/setup-deno@v2
@@ -82,7 +82,7 @@ jobs:
   test-bun-integration:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install Bun
         uses: oven-sh/setup-bun@v2
